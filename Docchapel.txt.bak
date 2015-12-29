@@ -171,7 +171,7 @@ All other symbols are terminals.
   | //StmtWhile// | -> | ``while`` //RExpr// ``do`` //Stmt// 
   |  |  **|**  | ``while`` //RExpr// ``{`` //[Stmt]// ``}`` 
   | //StmtDo// | -> | ``do`` ``{`` //[Stmt]// ``}`` ``while`` //RExpr// ``;`` 
-  | //StmtFor// | -> | ``for`` //RExpr// ``in`` //Aggr// ``do`` ``{`` //[Stmt]// ``}`` 
+  | //StmtFor// | -> | ``for`` //RExpr// ``in`` //Aggr// ``do`` //Stmt// 
   |  |  **|**  | ``for`` //RExpr// ``in`` //Aggr// ``{`` //[Stmt]// ``}`` 
   | //Aggr// | -> | //Constant// ``..`` //Constant// 
   | //StmtJump// | -> | ``break`` 

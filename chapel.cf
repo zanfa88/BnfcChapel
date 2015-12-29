@@ -106,11 +106,12 @@ SWhenNoDo.		SWhen 		::= "when" Constant "{" [Stmt] "}" ;
 
 -- StmtWhile
 WhileDo.	StmtWhile 	::= "while" RExpr "do" Stmt ;
-WhileNoDo.	StmtWhile	::= "while" RExpr [Stmt] ;
+WhileNoDo.	StmtWhile	::= "while" RExpr "{" [Stmt] "}" ;
+SDo.		StmtDo 	::= "do" "{" [Stmt] "}" "while" RExpr ";" ;
 
-SDo.		StmtDo 	::= "do" [Stmt] "while" RExpr ";" ;
-SForDo.		StmtFor	::=	"for" RExpr20 "in" Aggr "do" Stmt ;
-SFor.		StmtFor ::= "for"  RExpr20 "in" Aggr [Stmt] ;
+-- StmtFor
+SForDo.		StmtFor	::=	"for" RExpr "in" Aggr "do" "{" [Stmt] "}" ;
+SFor.		StmtFor ::= "for" RExpr "in" Aggr "{" [Stmt] "}";
 ForAggr.	Aggr 	::= Constant ".." Constant ;
 
 

@@ -303,7 +303,7 @@ StmtDo : 'do' '{' ListStmt '}' 'while' RExpr ';' { SDo $3 $6 }
 
 
 StmtFor :: { StmtFor }
-StmtFor : 'for' RExpr 'in' Aggr 'do' '{' ListStmt '}' { SForDo $2 $4 $7 } 
+StmtFor : 'for' RExpr 'in' Aggr 'do' Stmt { SForDo $2 $4 $6 } 
   | 'for' RExpr 'in' Aggr '{' ListStmt '}' { SFor $2 $4 $6 }
 
 

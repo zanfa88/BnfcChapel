@@ -113,7 +113,7 @@ data StmtDo =
   deriving (Eq,Ord,Show)
 
 data StmtFor =
-   SForDo RExpr Aggr [Stmt]
+   SForDo RExpr Aggr Stmt
  | SFor RExpr Aggr [Stmt]
   deriving (Eq,Ord,Show)
 

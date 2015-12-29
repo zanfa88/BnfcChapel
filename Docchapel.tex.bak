@@ -298,7 +298,7 @@ All other symbols are terminals.\\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{StmtFor}} & {\arrow}  &{\terminal{for}} {\nonterminal{RExpr}} {\terminal{in}} {\nonterminal{Aggr}} {\terminal{do}} {\terminal{\{}} {\nonterminal{ListStmt}} {\terminal{\}}}  \\
+{\nonterminal{StmtFor}} & {\arrow}  &{\terminal{for}} {\nonterminal{RExpr}} {\terminal{in}} {\nonterminal{Aggr}} {\terminal{do}} {\nonterminal{Stmt}}  \\
  & {\delimit}  &{\terminal{for}} {\nonterminal{RExpr}} {\terminal{in}} {\nonterminal{Aggr}} {\terminal{\{}} {\nonterminal{ListStmt}} {\terminal{\}}}  \\
 \end{tabular}\\
 
