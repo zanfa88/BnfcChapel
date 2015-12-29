@@ -27,15 +27,16 @@ AssgnSwap.    	Assignment_op ::= "<=>" ;
 Prog.       Program ::= [Stmt] ;
 
 -- Statements
-Asa.		Stmt ::= "{" [Stmt] "}" ;
-Assgn. 		Stmt ::= LExpr Assignment_op RExpr ";" ;	-- ok
-Cond.		Stmt ::= StmtCondition ;
-Select.		Stmt ::= StmtSelect;
-While.		Stmt ::= StmtWhile;
-Do.			Stmt ::= StmtDo;
-For.		Stmt ::= StmtFor;
-(:[]).		[Stmt] ::= Stmt ;
-(:).		[Stmt] ::= Stmt [Stmt] ;
+Asa.		Stmt 	::= "{" [Stmt] "}" ;
+Assgn. 		Stmt 	::= LExpr Assignment_op RExpr ";" ;	-- ok
+Cond.		Stmt 	::= StmtCondition ;
+Select.		Stmt 	::= StmtSelect;
+While.		Stmt 	::= StmtWhile;
+Do.			Stmt 	::= StmtDo;
+For.		Stmt 	::= StmtFor;
+Jump.		Stmt 	::= StmtJump;
+(:[]).		[Stmt] 	::= Stmt ;
+(:).		[Stmt] 	::= Stmt [Stmt] ;
 
 
 -- Left Expression
@@ -114,6 +115,11 @@ SFor.		StmtFor ::= "for"  RExpr20 "in" Aggr [Stmt] ;
 ForAggr.	Aggr 	::= Constant ".." Constant ;
 
 
+Break.		StmtJump ::= "break" ; 
+BreakN.		StmtJump ::= "break" Constant ; 
+Continue.	StmtJump ::= "continue";
+ContinueN.	StmtJump ::= "continue" Constant ;
+
 
 
 Pval.		Param	::= RExpr20 ;
@@ -128,3 +134,6 @@ String.     Constant ::= String ;
 
 -- sepratori e terminatori
 separator RExpr "," ;
+
+
+--ass asa
