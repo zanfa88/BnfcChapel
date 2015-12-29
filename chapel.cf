@@ -1,0 +1,131 @@
+
+
+entrypoints Stmt ;
+rules Boolean ::= "True" | "False" ;
+
+
+-- Commenti
+comment "//" ;
+comment "/*" "*/" ;
+
+
+-- Assegnazioni 
+AssgnBase.   	Assignment_op ::= "=";
+AssgnAdd.   	Assignment_op ::= "+=" ;
+AssgnSub.   	Assignment_op ::= "-=" ;
+AssgnMul.   	Assignment_op ::= "*=" ;
+AssgnDiv.   	Assignment_op ::= "/=" ;
+AssgnMod.   	Assignment_op ::= "%=" ;
+AssgnExp.   	Assignment_op ::= "**=" ;
+AssgnAnd.   	Assignment_op ::= "&=" ;
+AssgnOr.    	Assignment_op ::= "|=" ;
+AssgnPow.   	Assignment_op ::= "^=" ;
+AssgnAnd2.    	Assignment_op ::= "&&=" ;
+AssgnOr2.    	Assignment_op ::= "||=" ;
+AssgnLeft.    	Assignment_op ::= "<<=" ;
+AssgnRight.   	Assignment_op ::= ">>=" ;
+AssgnSwap.    	Assignment_op ::= "<=>" ;
+
+
+-- Statements
+Asa.			Stmt ::= "{" [Stmt] "}" ;
+Assgn. 		Stmt ::= LExpr Assignment_op RExpr ";" ;	-- ok
+Cond.		Stmt ::= StmtCondition ;
+Select.		Stmt ::= StmtSelect;
+While.		Stmt ::= StmtWhile;
+Do.			Stmt ::= StmtDo;
+For.		Stmt ::= StmtFor;
+(:[]).		[Stmt] ::= Stmt ;
+(:).			[Stmt] ::= Stmt [Stmt] ;
+
+
+-- Left Expression
+Id.			LExpr 	::= Ident ;
+ArrayEl.	LExpr	::=	LExpr "[" RExpr20 "]" ;
+
+
+
+
+
+-- Right Expressions
+Eby. 		RExpr ::= RExpr "by" RExpr2;
+Ecount. 	RExpr ::= RExpr "#" RExpr2;
+Ealign. 	RExpr ::= RExpr "align" RExpr2; -- ??
+Elor. 		RExpr2 ::= RExpr2 "||" RExpr3;
+Eland. 		RExpr3 ::= RExpr3 "&&" RExpr4;
+Eeq. 		RExpr4 ::= RExpr4 "==" RExpr5;
+Eneq. 		RExpr4 ::= RExpr4 "!=" RExpr5;
+Eleq. 		RExpr5 ::= RExpr5 "<=" RExpr6;	-- <=
+Egeq. 		RExpr5 ::= RExpr5 ">=" RExpr6;	-- >=
+El. 		RExpr5 ::= RExpr5 "<" RExpr6;	-- <
+Eg. 		RExpr5 ::= RExpr5 ">" RExpr6;	-- >
+Erange. 	RExpr6 ::= RExpr6 ".." RExpr7;
+Eadd. 		RExpr7 ::= RExpr7 "+" RExpr8;
+Esub. 		RExpr7 ::= RExpr7 "-" RExpr8;
+Ebitor. 	RExpr8 ::= RExpr8 "|" RExpr9;
+Ebitxor. 	RExpr9 	::= RExpr9 "^" RExpr10;
+Ebitand. 	RExpr10 ::= RExpr10 "&" RExpr11;
+Eleft. 		RExpr11 ::= RExpr11 "<<" RExpr12;
+Eright. 	RExpr11 ::= RExpr11 ">>" RExpr12;
+Eupos. 		RExpr12 ::= "+" RExpr12;	-- unary positive
+Euneg. 		RExpr12 ::= "-" RExpr12;	-- unary negative
+Emul. 		RExpr13 ::= RExpr13 "*" RExpr14;
+Ediv. 		RExpr13 ::= RExpr13 "/" RExpr14;
+Emod. 		RExpr13 ::= RExpr13 "%" RExpr14;
+Eneg. 		RExpr14 ::= "!" RExpr14;
+Ebneg. 		RExpr14 ::= "~" RExpr14;
+Ereduce. 	RExpr15 ::= RExpr15 "reduce" RExpr16;
+Escan. 		RExpr15 ::= RExpr15 "scan" RExpr16;
+Edmapped. 	RExpr15 ::= RExpr15 "dmapped" RExpr16;
+Eexp. 		RExpr16 ::= "**" RExpr16;
+Ecast. 		RExpr17 ::= RExpr17 ":" RExpr18;
+Enew. 		RExpr18 ::= "by" RExpr18;
+
+Emember.	RExpr19	::=	RExpr19 "." RExpr20;
+Efunc.		RExpr19	::= RExpr19 "(" ")";
+EfuncPar.	RExpr19	::= RExpr19 "(" Param ")";
+Eindex.		RExpr19	::=	RExpr19 "[" RExpr "]";
+Econs.		RExpr20	::= Constant ;
+LExpr.		RExpr21 ::= LExpr ;
+coercions	RExpr 21 ;
+
+
+
+-- StmtCondition
+If1.		StmtCondition 	::= "if" RExpr "then" Stmt ;
+If2.		StmtCondition 	::= "if" "(" RExpr ")" Stmt ;
+IfElse1.	StmtCondition   ::= "if" RExpr "then" Stmt "else" Stmt ;
+IfElse2.	StmtCondition   ::= "if" "(" RExpr ")" Stmt "else" Stmt ;
+
+-- StmtSelect
+SSelect.		StmtSelect	::= "select" RExpr "{" [SWhen] "otherwise" [Stmt] "}" ;
+SWhenDo.		SWhen 		::= "when" Constant "do" Stmt ;
+SWhenNoDo.		SWhen 		::= "when" Constant [Stmt] ;
+(:[]).    [SWhen] ::= SWhen;
+(:).      [SWhen] ::= SWhen [SWhen];
+
+
+-- StmtWhile
+WhileDo.	StmtWhile 	::= "while" RExpr "do" Stmt ;
+WhileNoDo.	StmtWhile	::= "while" RExpr [Stmt] ;
+
+SDo.		StmtDo 	::= "do" [Stmt] "while" RExpr ";" ;
+SForDo.		StmtFor	::=	"for" RExpr20 "in" Aggr "do" Stmt ;
+SFor.		StmtFor ::= "for"  RExpr20 "in" Aggr [Stmt] ;
+ForAggr.	Aggr 	::= Constant ".." Constant ;
+
+
+
+
+Pval.		Param	::= RExpr20 ;
+Pref.		Param	::= "*" RExpr ;
+-- Pcons.		Param	::= Constant ;
+
+Int.        Constant ::= Integer ;
+Bool.       Constant ::= Boolean ;
+Real.      	Constant ::= Double;
+Char.       Constant ::= Char ;
+String.     Constant ::= String ;
+
+-- sepratori e terminatori
+separator RExpr "," ;
