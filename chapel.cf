@@ -1,5 +1,3 @@
--- prova commit da git
-
 entrypoints Stmt ;
 rules Boolean ::= "True" | "False" ;
 
