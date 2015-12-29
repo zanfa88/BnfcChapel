@@ -1,4 +1,4 @@
-entrypoints Stmt ;
+entrypoints Program ;
 rules Boolean ::= "True" | "False" ;
 
 
@@ -23,10 +23,11 @@ AssgnOr2.    	Assignment_op ::= "||=" ;
 AssgnLeft.    	Assignment_op ::= "<<=" ;
 AssgnRight.   	Assignment_op ::= ">>=" ;
 AssgnSwap.    	Assignment_op ::= "<=>" ;
-
+	
+Prog.       Program ::= [Stmt] ;
 
 -- Statements
-Asa.			Stmt ::= "{" [Stmt] "}" ;
+Asa.		Stmt ::= "{" [Stmt] "}" ;
 Assgn. 		Stmt ::= LExpr Assignment_op RExpr ";" ;	-- ok
 Cond.		Stmt ::= StmtCondition ;
 Select.		Stmt ::= StmtSelect;
@@ -34,7 +35,7 @@ While.		Stmt ::= StmtWhile;
 Do.			Stmt ::= StmtDo;
 For.		Stmt ::= StmtFor;
 (:[]).		[Stmt] ::= Stmt ;
-(:).			[Stmt] ::= Stmt [Stmt] ;
+(:).		[Stmt] ::= Stmt [Stmt] ;
 
 
 -- Left Expression
