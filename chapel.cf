@@ -34,6 +34,8 @@ While.		Stmt 	::= StmtWhile;
 Do.			Stmt 	::= StmtDo;
 For.		Stmt 	::= StmtFor;
 Jump.		Stmt 	::= StmtJump;
+Write.		Stmt 	::= StmtWrite;
+Read.		Stmt 	::= StmtRead;
 (:[]).		[Stmt] 	::= Stmt ;
 (:).		[Stmt] 	::= Stmt [Stmt] ;
 
@@ -43,7 +45,15 @@ Id.			LExpr 	::= Ident ;
 ArrayEl.	LExpr	::=	LExpr "[" RExpr20 "]" ;
 
 
+WriteInt 	StmtWrite ::= "writeInt" "(" Integer  ")" ;
+WriteReal 	StmtWrite ::= "writeReal" "(" Double  ")" ;
+WriteChar 	StmtWrite ::= "writeChar" "(" Char ")" ;
+WriteString StmtWrite ::= "writeString" "(" String  ")" ;
 
+ReadInt 	StmtRead ::= "readInt" "(" Integer  ")" ;
+ReadReal 	StmtRead ::= "readReal" "(" Double  ")" ;
+ReadChar 	StmtRead ::= "readChar" "(" Char ")" ;
+ReadString  StmtRead ::= "readString" "(" String  ")" ;
 
 
 -- Right Expressions
