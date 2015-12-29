@@ -27,7 +27,6 @@ AssgnSwap.    	Assignment_op ::= "<=>" ;
 Prog.       Program ::= [Stmt] ;
 
 -- Statements
-Asa.		Stmt 	::= "{" [Stmt] "}" ;
 Assgn. 		Stmt 	::= LExpr Assignment_op RExpr ";" ;	-- ok
 Cond.		Stmt 	::= StmtCondition ;
 Select.		Stmt 	::= StmtSelect;
@@ -93,14 +92,14 @@ coercions	RExpr 21 ;
 
 -- StmtCondition
 If1.		StmtCondition 	::= "if" RExpr "then" Stmt ;
-If2.		StmtCondition 	::= "if" "(" RExpr ")" Stmt ;
+If2.		StmtCondition 	::= "if" "(" RExpr ")" "{" [Stmt] "}" ;
 IfElse1.	StmtCondition   ::= "if" RExpr "then" Stmt "else" Stmt ;
-IfElse2.	StmtCondition   ::= "if" "(" RExpr ")" Stmt "else" Stmt ;
+IfElse2.	StmtCondition   ::= "if" "(" RExpr ")" "{" [Stmt] "}" "else" "{" [Stmt] "}" ;
 
 -- StmtSelect
-SSelect.		StmtSelect	::= "select" RExpr "{" [SWhen] "otherwise" [Stmt] "}" ;
+SSelect.		StmtSelect	::= "select" RExpr "{" [SWhen] "otherwise" "{" [Stmt] "}" "}" ;
 SWhenDo.		SWhen 		::= "when" Constant "do" Stmt ;
-SWhenNoDo.		SWhen 		::= "when" Constant [Stmt] ;
+SWhenNoDo.		SWhen 		::= "when" Constant "{" [Stmt] "}" ;
 (:[]).    [SWhen] ::= SWhen;
 (:).      [SWhen] ::= SWhen [SWhen];
 
@@ -134,6 +133,3 @@ String.     Constant ::= String ;
 
 -- sepratori e terminatori
 separator RExpr "," ;
-
-
---ass asa
