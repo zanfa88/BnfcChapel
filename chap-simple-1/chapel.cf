@@ -1,0 +1,36 @@
+entrypoints Program ;	
+
+RProg.   	Program 	::= [Stmt] ;
+
+RAssign.	Stmt 		::= LExp "=" RExp ; 
+
+
+--elementi di base
+RInt. 		BasicType	::= Integer ;
+RFloat. 	BasicType 	::= Double ;
+RChar. 		BasicType 	::= Char ;
+RString. 	BasicType 	::= String ;
+RBoolean. 	BasicType 	::= Boolean ;
+
+-- left expression
+RLExp. 		LExp 		::= Iden ;
+
+-- right expression
+RAdd. 		RExp 		::= RExp "+" RExp ;
+RGre. 		RExp 		::= RExp ">" RExp ;
+RElem. 		RExp 		::= BasicType ;
+
+--booleani
+RTrue. 		Boolean 	::= "true" ;
+RFalse. 	Boolean 	::= "false" ;
+
+
+RTypeInt. 	Type 		::= "int" ;
+RTypeFloat. Type 		::= "real" ;
+RTypeChar. 	Type 		::= "char" ;
+RTypeString. Type 		::= "string" ;
+RTypeBool. 	Type 		::= "boolean" ;
+
+token Iden (letter | '_')(letter | digit | '_')* ;
+
+separator Stmt ";" ;
