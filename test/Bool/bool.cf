@@ -1,0 +1,14 @@
+entrypoints Program ;	
+
+Prog.       Program ::= Boolean ;
+
+--booleani
+BTrue. 		Boolean ::= "true" ;
+BFalse. 	Boolean ::= "false" ;
+
+
+TypeInt. 	Type ::= "Integer" ;
+TypeFloat. 	Type ::= "Real" ;
+TypeChar. 	Type ::= "Character" ;
+TypeString.	Type ::= "String" ;
+TypeBool. 	Type ::= "Boolean" ;
