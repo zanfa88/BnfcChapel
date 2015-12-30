@@ -1,32 +1,14 @@
 entrypoints Program ;
 rules Boolean ::= "True" | "False" ;
 
-
 -- Commenti
 comment "//" ;
 comment "/*" "*/" ;
-
-
--- Assegnazioni 
-AssgnBase.   	Assignment_op ::= "=";
-AssgnAdd.   	Assignment_op ::= "+=" ;
-AssgnSub.   	Assignment_op ::= "-=" ;
-AssgnMul.   	Assignment_op ::= "*=" ;
-AssgnDiv.   	Assignment_op ::= "/=" ;
-AssgnMod.   	Assignment_op ::= "%=" ;
-AssgnExp.   	Assignment_op ::= "**=" ;
-AssgnAnd.   	Assignment_op ::= "&=" ;
-AssgnOr.    	Assignment_op ::= "|=" ;
-AssgnPow.   	Assignment_op ::= "^=" ;
-AssgnAnd2.    	Assignment_op ::= "&&=" ;
-AssgnOr2.    	Assignment_op ::= "||=" ;
-AssgnLeft.    	Assignment_op ::= "<<=" ;
-AssgnRight.   	Assignment_op ::= ">>=" ;
-AssgnSwap.    	Assignment_op ::= "<=>" ;
 	
+-- Statement per program: un programma può essere una lista di Statement	
 Prog.       Program ::= [Stmt] ;
 
--- Statements
+-- Statements generali
 Assgn. 		Stmt 	::= LExpr Assignment_op RExpr ";" ;	-- ok
 Cond.		Stmt 	::= StmtCondition ;
 Select.		Stmt 	::= StmtSelect;
@@ -39,22 +21,9 @@ Read.		Stmt 	::= StmtRead;
 (:[]).		[Stmt] 	::= Stmt ;
 (:).		[Stmt] 	::= Stmt [Stmt] ;
 
-
 -- Left Expression
 Id.			LExpr 	::= Ident ;
 ArrayEl.	LExpr	::=	LExpr "[" RExpr20 "]" ;
-
-
-WriteInt 	StmtWrite ::= "writeInt" "(" Integer  ")" ;
-WriteReal 	StmtWrite ::= "writeReal" "(" Double  ")" ;
-WriteChar 	StmtWrite ::= "writeChar" "(" Char ")" ;
-WriteString StmtWrite ::= "writeString" "(" String  ")" ;
-
-ReadInt 	StmtRead ::= "readInt" "(" Integer  ")" ;
-ReadReal 	StmtRead ::= "readReal" "(" Double  ")" ;
-ReadChar 	StmtRead ::= "readChar" "(" Char ")" ;
-ReadString  StmtRead ::= "readString" "(" String  ")" ;
-
 
 -- Right Expressions
 Eby. 		RExpr ::= RExpr "by" RExpr2;
@@ -89,7 +58,6 @@ Edmapped. 	RExpr15 ::= RExpr15 "dmapped" RExpr16;
 Eexp. 		RExpr16 ::= "**" RExpr16;
 Ecast. 		RExpr17 ::= RExpr17 ":" RExpr18;
 Enew. 		RExpr18 ::= "by" RExpr18;
-
 Emember.	RExpr19	::=	RExpr19 "." RExpr20;
 Efunc.		RExpr19	::= RExpr19 "(" ")";
 EfuncPar.	RExpr19	::= RExpr19 "(" Param ")";
@@ -98,44 +66,70 @@ Econs.		RExpr20	::= Constant ;
 LExpr.		RExpr21 ::= LExpr ;
 coercions	RExpr 21 ;
 
+-- Assegnazioni possibili tra LExpr e RExpr
+AssgnBase.   	Assignment_op ::= "=";
+AssgnAdd.   	Assignment_op ::= "+=" ;
+AssgnSub.   	Assignment_op ::= "-=" ;
+AssgnMul.   	Assignment_op ::= "*=" ;
+AssgnDiv.   	Assignment_op ::= "/=" ;
+AssgnMod.   	Assignment_op ::= "%=" ;
+AssgnExp.   	Assignment_op ::= "**=" ;
+AssgnAnd.   	Assignment_op ::= "&=" ;
+AssgnOr.    	Assignment_op ::= "|=" ;
+AssgnPow.   	Assignment_op ::= "^=" ;
+AssgnAnd2.    	Assignment_op ::= "&&=" ;
+AssgnOr2.    	Assignment_op ::= "||=" ;
+AssgnLeft.    	Assignment_op ::= "<<=" ;
+AssgnRight.   	Assignment_op ::= ">>=" ;
+AssgnSwap.    	Assignment_op ::= "<=>" ;
 
+-- Statement per write
+WriteInt 	StmtWrite ::= "writeInt" "(" Integer  ")" ;
+WriteReal 	StmtWrite ::= "writeReal" "(" Double  ")" ;
+WriteChar 	StmtWrite ::= "writeChar" "(" Char ")" ;
+WriteString StmtWrite ::= "writeString" "(" String  ")" ;
 
--- StmtCondition
+-- Statement per read
+ReadInt 	StmtRead ::= "readInt" "(" Integer  ")" ;
+ReadReal 	StmtRead ::= "readReal" "(" Double  ")" ;
+ReadChar 	StmtRead ::= "readChar" "(" Char ")" ;
+ReadString  StmtRead ::= "readString" "(" String  ")" ;
+
+-- Statement per le condizioni if
 If1.		StmtCondition 	::= "if" RExpr "then" Stmt ;
 If2.		StmtCondition 	::= "if" "(" RExpr ")" "{" [Stmt] "}" ;
 IfElse1.	StmtCondition   ::= "if" RExpr "then" Stmt "else" Stmt ;
 IfElse2.	StmtCondition   ::= "if" "(" RExpr ")" "{" [Stmt] "}" "else" "{" [Stmt] "}" ;
 
--- StmtSelect
+-- Statement per la select
 SSelect.		StmtSelect	::= "select" RExpr "{" [SWhen] "otherwise" "{" [Stmt] "}" "}" ;
 SWhenDo.		SWhen 		::= "when" Constant "do" Stmt ;
 SWhenNoDo.		SWhen 		::= "when" Constant "{" [Stmt] "}" ;
-(:[]).    [SWhen] ::= SWhen;
-(:).      [SWhen] ::= SWhen [SWhen];
+(:[]).    		[SWhen] 	::= SWhen;
+(:).      		[SWhen] 	::= SWhen [SWhen];
 
-
--- StmtWhile
+--  Statement per il while
 WhileDo.	StmtWhile 	::= "while" RExpr "do" Stmt ;
 WhileNoDo.	StmtWhile	::= "while" RExpr "{" [Stmt] "}" ;
 SDo.		StmtDo 	::= "do" "{" [Stmt] "}" "while" RExpr ";" ;
 
--- StmtFor
+-- Statement per il for
 SForDo.		StmtFor	::=	"for" RExpr "in" Aggr "do" "{" [Stmt] "}" ;
 SFor.		StmtFor ::= "for" RExpr "in" Aggr "{" [Stmt] "}";
 ForAggr.	Aggr 	::= Constant ".." Constant ;
 
-
+-- Statement per break e continue
 Break.		StmtJump ::= "break" ; 
 BreakN.		StmtJump ::= "break" Constant ; 
 Continue.	StmtJump ::= "continue";
 ContinueN.	StmtJump ::= "continue" Constant ;
 
-
-
+-- Passaggio valori per valore e referenza
 Pval.		Param	::= RExpr20 ;
 Pref.		Param	::= "*" RExpr ;
--- Pcons.		Param	::= Constant ;
+Pcons.		Param	::= Constant ;
 
+-- Le costanti possono essere di tipo:
 Int.        Constant ::= Integer ;
 Bool.       Constant ::= Boolean ;
 Real.      	Constant ::= Double;
