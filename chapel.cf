@@ -62,9 +62,6 @@ Eexp. 		RExpr16 ::= "**" RExpr16;
 Ecast. 		RExpr17 ::= RExpr17 ":" RExpr18;
 Enew. 		RExpr18 ::= "by" RExpr18;
 Emember.	RExpr19	::=	RExpr19 "." RExpr20;
-Efunc.		RExpr19	::= RExpr19 "(" ")";           -- isto ku CFunc
-EfuncPar.	RExpr19	::= RExpr19 "(" Param ")";
-Eindex.		RExpr19	::=	RExpr19 "[" RExpr "]";
 Econs.		RExpr20	::= Constant ;
 LExprR.		RExpr21 ::= LExpr ;
 coercions	RExpr 21 ;
