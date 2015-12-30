@@ -9,15 +9,15 @@ comment "/*" "*/" ;
 Prog.       Program ::= [Stmt] ;
 
 -- Statements generali
-Assgn. 		Stmt 	::= LExpr Assignment_op RExpr ";" ;	-- ok
+Assgn. 		Stmt 	::= LExpr Assignment_op RExpr ";" ;	
 Cond.		Stmt 	::= StmtCondition ;
 Select.		Stmt 	::= StmtSelect;
 While.		Stmt 	::= StmtWhile;
 Do.			Stmt 	::= StmtDo;
 For.		Stmt 	::= StmtFor;
-Jump.		Stmt 	::= StmtJump;
-Write.		Stmt 	::= StmtWrite;
-Read.		Stmt 	::= StmtRead;
+Jump.		Stmt 	::= StmtJump ";";
+Write.		Stmt 	::= StmtWrite ";";
+Read.		Stmt 	::= StmtRead ";";
 (:[]).		[Stmt] 	::= Stmt ;
 (:).		[Stmt] 	::= Stmt [Stmt] ;
 
@@ -84,16 +84,16 @@ AssgnRight.   	Assignment_op ::= ">>=" ;
 AssgnSwap.    	Assignment_op ::= "<=>" ;
 
 -- Statement per write
-WriteInt 	StmtWrite ::= "writeInt" "(" Integer  ")" ;
-WriteReal 	StmtWrite ::= "writeReal" "(" Double  ")" ;
-WriteChar 	StmtWrite ::= "writeChar" "(" Char ")" ;
-WriteString StmtWrite ::= "writeString" "(" String  ")" ;
+WriteInt. 	 StmtWrite ::= "writeInt" "(" Integer  ")" ;
+WriteReal. 	 StmtWrite ::= "writeReal" "(" Double  ")" ;
+WriteChar. 	 StmtWrite ::= "writeChar" "(" Char ")" ;
+WriteString. StmtWrite ::= "writeString" "(" String  ")" ;
 
 -- Statement per read
-ReadInt 	StmtRead ::= "readInt" "(" Integer  ")" ;
-ReadReal 	StmtRead ::= "readReal" "(" Double  ")" ;
-ReadChar 	StmtRead ::= "readChar" "(" Char ")" ;
-ReadString  StmtRead ::= "readString" "(" String  ")" ;
+ReadInt. 	 StmtRead ::= "readInt" "(" Integer  ")" ;
+ReadReal. 	 StmtRead ::= "readReal" "(" Double  ")" ;
+ReadChar. 	 StmtRead ::= "readChar" "(" Char ")" ;
+ReadString.  StmtRead ::= "readString" "(" String  ")" ;
 
 -- Statement per le condizioni if
 If1.		StmtCondition 	::= "if" RExpr "then" Stmt ;
@@ -127,7 +127,7 @@ ContinueN.	StmtJump ::= "continue" Constant ;
 -- Passaggio valori per valore e referenza
 Pval.		Param	::= RExpr20 ;
 Pref.		Param	::= "*" RExpr ;
-Pcons.		Param	::= Constant ;
+-- Pcons.		Param	::= Constant ; -- crea conflitto R/R
 
 -- Le costanti possono essere di tipo:
 Int.        Constant ::= Integer ;
