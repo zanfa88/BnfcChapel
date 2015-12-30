@@ -19,7 +19,7 @@ $i = [$l $d _ ']          -- identifier character
 $u = [\0-\255]          -- universal: any character
 
 @rsyms =    -- symbols and non-identifier-like reserved words
-   \= | \+ \= | \- \= | \* \= | \/ \= | \% \= | \* \* \= | \& \= | \| \= | \^ \= | \& \& \= | \| \| \= | \< \< \= | \> \> \= | \< \= \> | \; | \[ | \] | \# | \| \| | \& \& | \= \= | \! \= | \< \= | \> \= | \< | \> | \. \. | \+ | \- | \| | \^ | \& | \< \< | \> \> | \* | \/ | \% | \! | \~ | \* \* | \: | \. | \( | \) | \{ | \} | \,
+   \; | \[ | \] | \# | \| \| | \& \& | \= \= | \! \= | \< \= | \> \= | \< | \> | \. \. | \+ | \- | \| | \^ | \& | \< \< | \> \> | \* | \/ | \% | \! | \~ | \* \* | \: | \. | \( | \) | \= | \+ \= | \- \= | \* \= | \/ \= | \% \= | \* \* \= | \& \= | \| \= | \^ \= | \& \& \= | \| \| \= | \< \< \= | \> \> \= | \< \= \> | \{ | \} | "config" \  "const" | "config" \  "param" | \,
 
 :-
 "//" [.]* ; -- Toss single line comments
@@ -85,7 +85,7 @@ eitherResIdent tv s = treeFind resWords
                               | s > a  = treeFind right
                               | s == a = t
 
-resWords = b ">" 34 (b "+=" 17 (b "&=" 9 (b "%=" 5 (b "#" 3 (b "!=" 2 (b "!" 1 N N) N) (b "%" 4 N N)) (b "&&" 7 (b "&" 6 N N) (b "&&=" 8 N N))) (b "**" 13 (b ")" 11 (b "(" 10 N N) (b "*" 12 N N)) (b "*=" 15 (b "**=" 14 N N) (b "+" 16 N N)))) (b ";" 26 (b ".." 22 (b "-=" 20 (b "-" 19 (b "," 18 N N) N) (b "." 21 N N)) (b "/=" 24 (b "/" 23 N N) (b ":" 25 N N))) (b "<=" 30 (b "<<" 28 (b "<" 27 N N) (b "<<=" 29 N N)) (b "=" 32 (b "<=>" 31 N N) (b "==" 33 N N))))) (b "for" 51 (b "^=" 43 (b "True" 39 (b ">>=" 37 (b ">>" 36 (b ">=" 35 N N) N) (b "False" 38 N N)) (b "]" 41 (b "[" 40 N N) (b "^" 42 N N))) (b "continue" 47 (b "break" 45 (b "align" 44 N N) (b "by" 46 N N)) (b "do" 49 (b "dmapped" 48 N N) (b "else" 50 N N)))) (b "while" 60 (b "scan" 56 (b "otherwise" 54 (b "in" 53 (b "if" 52 N N) N) (b "reduce" 55 N N)) (b "then" 58 (b "select" 57 N N) (b "when" 59 N N))) (b "||" 64 (b "|" 62 (b "{" 61 N N) (b "|=" 63 N N)) (b "}" 66 (b "||=" 65 N N) (b "~" 67 N N)))))
+resWords = b "by" 45 (b "/" 23 (b "*" 12 (b "&" 6 (b "#" 3 (b "!=" 2 (b "!" 1 N N) N) (b "%=" 5 (b "%" 4 N N) N)) (b "&=" 9 (b "&&=" 8 (b "&&" 7 N N) N) (b ")" 11 (b "(" 10 N N) N))) (b "," 18 (b "*=" 15 (b "**=" 14 (b "**" 13 N N) N) (b "+=" 17 (b "+" 16 N N) N)) (b "." 21 (b "-=" 20 (b "-" 19 N N) N) (b ".." 22 N N)))) (b ">" 34 (b "<<=" 29 (b ";" 26 (b ":" 25 (b "/=" 24 N N) N) (b "<<" 28 (b "<" 27 N N) N)) (b "=" 32 (b "<=>" 31 (b "<=" 30 N N) N) (b "==" 33 N N))) (b "^" 40 (b ">>=" 37 (b ">>" 36 (b ">=" 35 N N) N) (b "]" 39 (b "[" 38 N N) N)) (b "bool" 43 (b "align" 42 (b "^=" 41 N N) N) (b "break" 44 N N))))) (b "real" 67 (b "function" 56 (b "dmapped" 51 (b "config param" 48 (b "config const" 47 (b "complex" 46 N N) N) (b "continue" 50 (b "const" 49 N N) N)) (b "false" 54 (b "else" 53 (b "do" 52 N N) N) (b "for" 55 N N))) (b "param" 62 (b "in" 59 (b "imag" 58 (b "if" 57 N N) N) (b "otherwise" 61 (b "int" 60 N N) N)) (b "readReal" 65 (b "readInt" 64 (b "readChar" 63 N N) N) (b "readString" 66 N N)))) (b "writeChar" 78 (b "true" 73 (b "select" 70 (b "scan" 69 (b "reduce" 68 N N) N) (b "then" 72 (b "string" 71 N N) N)) (b "when" 76 (b "var" 75 (b "uint" 74 N N) N) (b "while" 77 N N))) (b "|=" 84 (b "writeString" 81 (b "writeReal" 80 (b "writeInt" 79 N N) N) (b "|" 83 (b "{" 82 N N) N)) (b "}" 87 (b "||=" 86 (b "||" 85 N N) N) (b "~" 88 N N)))))
    where b s n = let bs = id s
                   in B bs (TS bs n)
 

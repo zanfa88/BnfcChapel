@@ -16,27 +16,8 @@ transIdent x = case x of
 
 transBoolean :: Boolean -> Result
 transBoolean x = case x of
-  Boolean_True  -> failure x
-  Boolean_False  -> failure x
-
-
-transAssignment_op :: Assignment_op -> Result
-transAssignment_op x = case x of
-  AssgnBase  -> failure x
-  AssgnAdd  -> failure x
-  AssgnSub  -> failure x
-  AssgnMul  -> failure x
-  AssgnDiv  -> failure x
-  AssgnMod  -> failure x
-  AssgnExp  -> failure x
-  AssgnAnd  -> failure x
-  AssgnOr  -> failure x
-  AssgnPow  -> failure x
-  AssgnAnd2  -> failure x
-  AssgnOr2  -> failure x
-  AssgnLeft  -> failure x
-  AssgnRight  -> failure x
-  AssgnSwap  -> failure x
+  Boolean_true  -> failure x
+  Boolean_false  -> failure x
 
 
 transProgram :: Program -> Result
@@ -53,6 +34,11 @@ transStmt x = case x of
   Do stmtdo  -> failure x
   For stmtfor  -> failure x
   Jump stmtjump  -> failure x
+  Write stmtwrite  -> failure x
+  Read stmtread  -> failure x
+  VarD stmtvar  -> failure x
+  DFunc deffunc  -> failure x
+  CFunc callfunc  -> failure x
 
 
 transLExpr :: LExpr -> Result
@@ -100,7 +86,42 @@ transRExpr x = case x of
   EfuncPar rexpr param  -> failure x
   Eindex rexpr1 rexpr2  -> failure x
   Econs constant  -> failure x
-  LExpr lexpr  -> failure x
+  LExprR lexpr  -> failure x
+
+
+transAssignment_op :: Assignment_op -> Result
+transAssignment_op x = case x of
+  AssgnBase  -> failure x
+  AssgnAdd  -> failure x
+  AssgnSub  -> failure x
+  AssgnMul  -> failure x
+  AssgnDiv  -> failure x
+  AssgnMod  -> failure x
+  AssgnExp  -> failure x
+  AssgnAnd  -> failure x
+  AssgnOr  -> failure x
+  AssgnPow  -> failure x
+  AssgnAnd2  -> failure x
+  AssgnOr2  -> failure x
+  AssgnLeft  -> failure x
+  AssgnRight  -> failure x
+  AssgnSwap  -> failure x
+
+
+transStmtWrite :: StmtWrite -> Result
+transStmtWrite x = case x of
+  WriteInt n  -> failure x
+  WriteReal d  -> failure x
+  WriteChar c  -> failure x
+  WriteString str  -> failure x
+
+
+transStmtRead :: StmtRead -> Result
+transStmtRead x = case x of
+  ReadInt n  -> failure x
+  ReadReal d  -> failure x
+  ReadChar c  -> failure x
+  ReadString str  -> failure x
 
 
 transStmtCondition :: StmtCondition -> Result
@@ -165,6 +186,55 @@ transConstant x = case x of
   Real d  -> failure x
   Char c  -> failure x
   String str  -> failure x
+
+
+transStmtVar :: StmtVar -> Result
+transStmtVar x = case x of
+  SVarBlock blockvars  -> failure x
+  SVarCon id typespec rexpr  -> failure x
+  SVarParam id typespec rexpr  -> failure x
+  SVarCCon id typespec rexpr  -> failure x
+  SVarCParam id typespec rexpr  -> failure x
+
+
+transBlockVar :: BlockVar -> Result
+transBlockVar x = case x of
+  SBlockVar id typespec rexpr  -> failure x
+  SBlockVarU id typespec  -> failure x
+  SBlockVarT id rexpr  -> failure x
+
+
+transDefFunc :: DefFunc -> Result
+transDefFunc x = case x of
+  SDefFunc id args stmts  -> failure x
+  SDefFuncV id stmts  -> failure x
+
+
+transCallFunc :: CallFunc -> Result
+transCallFunc x = case x of
+  SCallFunc id rexprs  -> failure x
+  SCallFuncV id  -> failure x
+
+
+transArg :: Arg -> Result
+transArg x = case x of
+  SArg id typespec  -> failure x
+
+
+transTypeSpec :: TypeSpec -> Result
+transTypeSpec x = case x of
+  BasTyp basictype  -> failure x
+
+
+transBasicType :: BasicType -> Result
+transBasicType x = case x of
+  BasicType_bool  -> failure x
+  BasicType_uint  -> failure x
+  BasicType_int  -> failure x
+  BasicType_real  -> failure x
+  BasicType_imag  -> failure x
+  BasicType_complex  -> failure x
+  BasicType_string  -> failure x
 
 
 

@@ -5,7 +5,8 @@ module Parchapel where
 import Abschapel
 import Lexchapel
 import ErrM
-
+import Environment
+import TAC
 }
 
 %name pProgram Program

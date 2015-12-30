@@ -200,5 +200,6 @@ data BasicType =
  | BasicType_imag
  | BasicType_complex
  | BasicType_string
+ | TypeVoid
   deriving (Eq,Ord,Show)
 

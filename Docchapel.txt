@@ -41,25 +41,31 @@ except ``"`` unless preceded by ``\``.
 The set of reserved words is the set of terminals appearing in the grammar. Those reserved words that consist of non-letter characters are called symbols, and they are treated in a different way from those that are similar to identifiers. The lexer follows rules familiar from languages like Haskell, C, and Java, including longest match and spacing conventions.
 
 The reserved words used in chapel are the following:
-  | ``False`` | ``True`` | ``align`` | ``break``
-  | ``by`` | ``continue`` | ``dmapped`` | ``do``
-  | ``else`` | ``for`` | ``if`` | ``in``
-  | ``otherwise`` | ``reduce`` | ``scan`` | ``select``
-  | ``then`` | ``when`` | ``while`` | 
+  | ``align`` | ``bool`` | ``break`` | ``by``
+  | ``complex`` | ``const`` | ``continue`` | ``dmapped``
+  | ``do`` | ``else`` | ``false`` | ``for``
+  | ``function`` | ``if`` | ``imag`` | ``in``
+  | ``int`` | ``otherwise`` | ``param`` | ``readChar``
+  | ``readInt`` | ``readReal`` | ``readString`` | ``real``
+  | ``reduce`` | ``scan`` | ``select`` | ``string``
+  | ``then`` | ``true`` | ``uint`` | ``var``
+  | ``when`` | ``while`` | ``writeChar`` | ``writeInt``
+  | ``writeReal`` | ``writeString`` |  | 
 
 The symbols used in chapel are the following:
-  | = | += | -= | *=
-  | /= | %= | **= | &=
-  | |= | ^= | &&= | ||=
-  | <<= | >>= | <=> | ;
-  | [ | ] | # | ||
-  | && | == | != | <=
-  | >= | < | > | ..
-  | + | - | | | ^
-  | & | << | >> | *
-  | / | % | ! | ~
-  | ** | : | . | (
-  | ) | { | } | ,
+  | ; | [ | ] | #
+  | || | && | == | !=
+  | <= | >= | < | >
+  | .. | + | - | |
+  | ^ | & | << | >>
+  | * | / | % | !
+  | ~ | ** | : | .
+  | ( | ) | = | +=
+  | -= | *= | /= | %=
+  | **= | &= | |= | ^=
+  | &&= | ||= | <<= | >>=
+  | <=> | { | } | config const
+  | config param | , |  | 
 
 ===Comments===
 Single-line comments begin with //.Multiple-line comments are  enclosed with /* and */.
@@ -70,23 +76,8 @@ The symbols -> (production),  **|**  (union)
 and **eps** (empty rule) belong to the BNF notation. 
 All other symbols are terminals.
 
-  | //Boolean// | -> | ``True`` 
-  |  |  **|**  | ``False`` 
-  | //Assignment_op// | -> | ``=`` 
-  |  |  **|**  | ``+=`` 
-  |  |  **|**  | ``-=`` 
-  |  |  **|**  | ``*=`` 
-  |  |  **|**  | ``/=`` 
-  |  |  **|**  | ``%=`` 
-  |  |  **|**  | ``**=`` 
-  |  |  **|**  | ``&=`` 
-  |  |  **|**  | ``|=`` 
-  |  |  **|**  | ``^=`` 
-  |  |  **|**  | ``&&=`` 
-  |  |  **|**  | ``||=`` 
-  |  |  **|**  | ``<<=`` 
-  |  |  **|**  | ``>>=`` 
-  |  |  **|**  | ``<=>`` 
+  | //Boolean// | -> | ``true`` 
+  |  |  **|**  | ``false`` 
   | //Program// | -> | //[Stmt]// 
   | //Stmt// | -> | //LExpr// //Assignment_op// //RExpr// ``;`` 
   |  |  **|**  | //StmtCondition// 
@@ -94,7 +85,12 @@ All other symbols are terminals.
   |  |  **|**  | //StmtWhile// 
   |  |  **|**  | //StmtDo// 
   |  |  **|**  | //StmtFor// 
-  |  |  **|**  | //StmtJump// 
+  |  |  **|**  | //StmtJump// ``;`` 
+  |  |  **|**  | //StmtWrite// ``;`` 
+  |  |  **|**  | //StmtRead// ``;`` 
+  |  |  **|**  | //StmtVar// ``;`` 
+  |  |  **|**  | //DefFunc// 
+  |  |  **|**  | //CallFunc// 
   | //[Stmt]// | -> | //Stmt// 
   |  |  **|**  | //Stmt// //[Stmt]// 
   | //LExpr// | -> | //Ident// 
@@ -159,6 +155,29 @@ All other symbols are terminals.
   | //RExpr21// | -> | //LExpr// 
   |  |  **|**  | ``(`` //RExpr// ``)`` 
   | //RExpr1// | -> | //RExpr2// 
+  | //Assignment_op// | -> | ``=`` 
+  |  |  **|**  | ``+=`` 
+  |  |  **|**  | ``-=`` 
+  |  |  **|**  | ``*=`` 
+  |  |  **|**  | ``/=`` 
+  |  |  **|**  | ``%=`` 
+  |  |  **|**  | ``**=`` 
+  |  |  **|**  | ``&=`` 
+  |  |  **|**  | ``|=`` 
+  |  |  **|**  | ``^=`` 
+  |  |  **|**  | ``&&=`` 
+  |  |  **|**  | ``||=`` 
+  |  |  **|**  | ``<<=`` 
+  |  |  **|**  | ``>>=`` 
+  |  |  **|**  | ``<=>`` 
+  | //StmtWrite// | -> | ``writeInt`` ``(`` //Integer// ``)`` 
+  |  |  **|**  | ``writeReal`` ``(`` //Double// ``)`` 
+  |  |  **|**  | ``writeChar`` ``(`` //Char// ``)`` 
+  |  |  **|**  | ``writeString`` ``(`` //String// ``)`` 
+  | //StmtRead// | -> | ``readInt`` ``(`` //Integer// ``)`` 
+  |  |  **|**  | ``readReal`` ``(`` //Double// ``)`` 
+  |  |  **|**  | ``readChar`` ``(`` //Char// ``)`` 
+  |  |  **|**  | ``readString`` ``(`` //String// ``)`` 
   | //StmtCondition// | -> | ``if`` //RExpr// ``then`` //Stmt// 
   |  |  **|**  | ``if`` ``(`` //RExpr// ``)`` ``{`` //[Stmt]// ``}`` 
   |  |  **|**  | ``if`` //RExpr// ``then`` //Stmt// ``else`` //Stmt// 
@@ -185,8 +204,35 @@ All other symbols are terminals.
   |  |  **|**  | //Double// 
   |  |  **|**  | //Char// 
   |  |  **|**  | //String// 
+  | //StmtVar// | -> | ``var`` //[BlockVar]// 
+  |  |  **|**  | ``const`` //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
+  |  |  **|**  | ``param`` //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
+  |  |  **|**  | ``config const`` //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
+  |  |  **|**  | ``config param`` //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
+  | //BlockVar// | -> | //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
+  |  |  **|**  | //Ident// ``:`` //TypeSpec// 
+  |  |  **|**  | //Ident// ``=`` //RExpr// 
+  | //DefFunc// | -> | ``function`` //Ident// ``(`` //[Arg]// ``)`` ``{`` //[Stmt]// ``}`` 
+  |  |  **|**  | ``function`` //Ident// ``(`` ``)`` ``{`` //[Stmt]// ``}`` 
+  | //CallFunc// | -> | //Ident// ``(`` //[RExpr]// ``)`` ``;`` 
+  |  |  **|**  | //Ident// ``(`` ``)`` ``;`` 
+  | //Arg// | -> | //Ident// ``:`` //TypeSpec// 
+  | //TypeSpec// | -> | //BasicType// 
+  | //BasicType// | -> | ``bool`` 
+  |  |  **|**  | ``uint`` 
+  |  |  **|**  | ``int`` 
+  |  |  **|**  | ``real`` 
+  |  |  **|**  | ``imag`` 
+  |  |  **|**  | ``complex`` 
+  |  |  **|**  | ``string`` 
   | //[RExpr]// | -> | **eps**
   |  |  **|**  | //RExpr// 
   |  |  **|**  | //RExpr// ``,`` //[RExpr]// 
+  | //[BlockVar]// | -> | **eps**
+  |  |  **|**  | //BlockVar// 
+  |  |  **|**  | //BlockVar// ``,`` //[BlockVar]// 
+  | //[Arg]// | -> | **eps**
+  |  |  **|**  | //Arg// 
+  |  |  **|**  | //Arg// ``,`` //[Arg]// 
 
 
