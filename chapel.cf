@@ -19,6 +19,8 @@ Jump.		Stmt 	::= StmtJump ";" ;
 Write.		Stmt 	::= StmtWrite ";" ;
 Read.		Stmt 	::= StmtRead ";" ;
 VarD.		Stmt 	::= StmtVar ";" ;
+DFunc.		Stmt 	::= DefFunc ;
+CFunc.		Stmt 	::= CallFunc ;
 (:[]).		[Stmt] 	::= Stmt ;
 (:).		[Stmt] 	::= Stmt [Stmt] ;
 
@@ -60,11 +62,11 @@ Eexp. 		RExpr16 ::= "**" RExpr16;
 Ecast. 		RExpr17 ::= RExpr17 ":" RExpr18;
 Enew. 		RExpr18 ::= "by" RExpr18;
 Emember.	RExpr19	::=	RExpr19 "." RExpr20;
-Efunc.		RExpr19	::= RExpr19 "(" ")";
+Efunc.		RExpr19	::= RExpr19 "(" ")";           -- isto ku CFunc
 EfuncPar.	RExpr19	::= RExpr19 "(" Param ")";
 Eindex.		RExpr19	::=	RExpr19 "[" RExpr "]";
 Econs.		RExpr20	::= Constant ;
-LExpr.		RExpr21 ::= LExpr ;
+LExprR.		RExpr21 ::= LExpr ;
 coercions	RExpr 21 ;
 
 -- Assegnazioni possibili tra LExpr e RExpr
@@ -139,11 +141,26 @@ String.     Constant ::= String ;
 
 -- Dichiarazione variabili
 SVarBlock. 		StmtVar 	::= "var" [BlockVar];
+SVarCon. 		StmtVar 	::= "const" Ident ":" TypeSpec "=" RExpr ;
+SVarParam. 		StmtVar 	::= "param" Ident ":" TypeSpec "=" RExpr ;
+SVarCCon. 		StmtVar 	::= "config const" Ident ":" TypeSpec "=" RExpr ;
+SVarCParam. 	StmtVar 	::= "config param" Ident ":" TypeSpec "=" RExpr ;
 
 SBlockVar.		BlockVar 	::= Ident ":" TypeSpec "=" RExpr ;
 SBlockVarU.		BlockVar 	::= Ident ":" TypeSpec ;
 SBlockVarT.		BlockVar 	::= Ident "=" RExpr ;
- 
+
+-- Definizione delle funzioni
+SDefFunc. 	DefFunc 	::= "function" Ident "(" [Arg] ")" "{" [Stmt] "}" ;
+SDefFuncV. 	DefFunc 	::= "function" Ident "(" ")" "{" [Stmt] "}" ;
+
+-- Definizione delle chiamate alle funzioni
+SCallFunc. 	CallFunc 	::= Ident "(" [RExpr] ")" ";" ;
+SCallFuncV. CallFunc 	::= Ident "(" ")" ";" ;
+
+-- Argomenti delle funzioni
+SArg. 		Arg 	::= Ident ":" TypeSpec ; 
+
 -- Tipi di base
 BasTyp.     TypeSpec ::= BasicType ;
 rules BasicType ::= "bool" | "uint" | "int" | "real" | "imag" | "complex" | "string" ;
@@ -151,3 +168,4 @@ rules BasicType ::= "bool" | "uint" | "int" | "real" | "imag" | "complex" | "str
 -- sepratori e terminatori
 separator RExpr		"," ;
 separator BlockVar 	"," ;
+separator Arg 	"," ;
