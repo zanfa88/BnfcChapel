@@ -1,5 +1,5 @@
 entrypoints Program ;
-rules Boolean ::= "True" | "False" ;
+rules Boolean ::= "true" | "false" ;
 
 -- Commenti
 comment "//" ;
@@ -11,13 +11,14 @@ Prog.       Program ::= [Stmt] ;
 -- Statements generali
 Assgn. 		Stmt 	::= LExpr Assignment_op RExpr ";" ;	
 Cond.		Stmt 	::= StmtCondition ;
-Select.		Stmt 	::= StmtSelect;
-While.		Stmt 	::= StmtWhile;
-Do.			Stmt 	::= StmtDo;
-For.		Stmt 	::= StmtFor;
-Jump.		Stmt 	::= StmtJump ";";
-Write.		Stmt 	::= StmtWrite ";";
-Read.		Stmt 	::= StmtRead ";";
+Select.		Stmt 	::= StmtSelect ;
+While.		Stmt 	::= StmtWhile ;
+Do.			Stmt 	::= StmtDo ;
+For.		Stmt 	::= StmtFor ;
+Jump.		Stmt 	::= StmtJump ";" ;
+Write.		Stmt 	::= StmtWrite ";" ;
+Read.		Stmt 	::= StmtRead ";" ;
+VarD.		Stmt 	::= StmtVar ";" ;
 (:[]).		[Stmt] 	::= Stmt ;
 (:).		[Stmt] 	::= Stmt [Stmt] ;
 
@@ -136,5 +137,17 @@ Real.      	Constant ::= Double;
 Char.       Constant ::= Char ;
 String.     Constant ::= String ;
 
+-- Dichiarazione variabili
+SVarBlock. 		StmtVar 	::= "var" [BlockVar];
+
+SBlockVar.		BlockVar 	::= Ident ":" TypeSpec "=" RExpr ;
+SBlockVarU.		BlockVar 	::= Ident ":" TypeSpec ;
+SBlockVarT.		BlockVar 	::= Ident "=" RExpr ;
+ 
+-- Tipi di base
+BasTyp.     TypeSpec ::= BasicType ;
+rules BasicType ::= "bool" | "uint" | "int" | "real" | "imag" | "complex" | "string" ;
+
 -- sepratori e terminatori
-separator RExpr "," ;
+separator RExpr		"," ;
+separator BlockVar 	"," ;
