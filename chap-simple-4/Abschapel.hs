@@ -139,5 +139,7 @@ data BasicType =
  | BasicType_imag
  | BasicType_complex
  | BasicType_string
+ | TypeVoid
+ | VarNotDec
   deriving (Eq,Ord,Show)
 
