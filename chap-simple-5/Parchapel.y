@@ -106,34 +106,89 @@ Stmt : LExpr '=' RExpr { Assgn $1 $3 }
 
 LExpr :: { LExpr }
 LExpr : Ident { Id $1 } 
-  | LExpr '[' RExpr ']' { ArrayEl $1 $3 }
+  | LExpr '[' RExpr13 ']' { ArrayEl $1 $3 }
 
 
 RExpr :: { RExpr }
-RExpr 
-  : RExpr '#' RExpr { Ecount $1 $3 } 
-  | RExpr '||' RExpr { Elor $1 $3 } 
-  | RExpr '&&' RExpr { Eland $1 $3 } 
-  | RExpr '==' RExpr { Eeq $1 $3 } 
-  | RExpr '!=' RExpr { Eneq $1 $3 }
-  | RExpr '<=' RExpr { Eleq $1 $3 } 
-  | RExpr '>=' RExpr { Egeq $1 $3 }
-  | RExpr '<' RExpr { El $1 $3 }
-  | RExpr '>' RExpr { Eg $1 $3 }
-  | RExpr '..' RExpr { Erange $1 $3 } 
-  | RExpr '+' RExpr { Eadd $1 $3 } 
-  | RExpr '-' RExpr { Esub $1 $3 }
-  | RExpr '|' RExpr { Ebitor $1 $3 } 
-  | RExpr '^' RExpr { Ebitxor $1 $3 } 
-  | RExpr '&' RExpr { Ebitand $1 $3 } 
-  | '+' RExpr { Eupos $2 } 
-  | '-' RExpr { Euneg $2 }
-  | RExpr '*' RExpr { Emul $1 $3 } 
-  | RExpr '/' RExpr { Ediv $1 $3 }
-  | RExpr '%' RExpr { Emod $1 $3 }
-  | BasicType { Econs $1 } 
-  | LExpr { LExprR $1 } 
+RExpr : RExpr '#' RExpr2 { Ecount $1 $3 } 
+  | RExpr1 { $1 }
+
+
+RExpr2 :: { RExpr }
+RExpr2 : RExpr2 '||' RExpr3 { Elor $1 $3 } 
+  | RExpr3 { $1 }
+
+
+RExpr3 :: { RExpr }
+RExpr3 : RExpr3 '&&' RExpr4 { Eland $1 $3 } 
+  | RExpr4 { $1 }
+
+
+RExpr4 :: { RExpr }
+RExpr4 : RExpr4 '==' RExpr5 { Eeq $1 $3 } 
+  | RExpr4 '!=' RExpr5 { Eneq $1 $3 }
+  | RExpr5 { $1 }
+
+
+RExpr5 :: { RExpr }
+RExpr5 : RExpr5 '<=' RExpr6 { Eleq $1 $3 } 
+  | RExpr5 '>=' RExpr6 { Egeq $1 $3 }
+  | RExpr5 '<' RExpr6 { El $1 $3 }
+  | RExpr5 '>' RExpr6 { Eg $1 $3 }
+  | RExpr6 { $1 }
+
+
+RExpr6 :: { RExpr }
+RExpr6 : RExpr6 '..' RExpr7 { Erange $1 $3 } 
+  | RExpr7 { $1 }
+
+
+RExpr7 :: { RExpr }
+RExpr7 : RExpr7 '+' RExpr8 { Eadd $1 $3 } 
+  | RExpr7 '-' RExpr8 { Esub $1 $3 }
+  | RExpr8 { $1 }
+
+
+RExpr8 :: { RExpr }
+RExpr8 : RExpr8 '|' RExpr9 { Ebitor $1 $3 } 
+  | RExpr9 { $1 }
+
+
+RExpr9 :: { RExpr }
+RExpr9 : RExpr9 '^' RExpr10 { Ebitxor $1 $3 } 
+  | RExpr10 { $1 }
+
+
+RExpr10 :: { RExpr }
+RExpr10 : RExpr10 '&' RExpr11 { Ebitand $1 $3 } 
+  | RExpr11 { $1 }
+
+
+RExpr11 :: { RExpr }
+RExpr11 : '+' RExpr11 { Eupos $2 } 
+  | '-' RExpr11 { Euneg $2 }
+  | RExpr12 { $1 }
+
+
+RExpr12 :: { RExpr }
+RExpr12 : RExpr12 '*' RExpr13 { Emul $1 $3 } 
+  | RExpr12 '/' RExpr13 { Ediv $1 $3 }
+  | RExpr12 '%' RExpr13 { Emod $1 $3 }
+  | RExpr13 { $1 }
+
+
+RExpr13 :: { RExpr }
+RExpr13 : BasicType { Econs $1 } 
+  | RExpr14 { $1 }
+
+
+RExpr14 :: { RExpr }
+RExpr14 : LExpr { LExprR $1 } 
   | '(' RExpr ')' { $2 }
+
+
+RExpr1 :: { RExpr }
+RExpr1 : RExpr2 { $1 } 
 
 
 StmtWrite :: { StmtWrite }
@@ -179,8 +234,7 @@ StmtJump : 'break' { Break }
 
 
 Param :: { Param }
-Param 
-  : RExpr { Pval $1 } 
+Param : RExpr13 { Pval $1 } 
   | '*' RExpr { Pref $2 }
 
 
@@ -206,8 +260,7 @@ Arg : Ident ':' Type { SArg $1 $3 }
 
 
 BasicType :: { BasicType }
-BasicType 
-  : Integer { RInt $1 } 
+BasicType : Integer { RInt $1 } 
   | Double { RDouble $1 }
   | Char { RChar $1 }
   | String { RString $1 }
@@ -215,14 +268,12 @@ BasicType
 
 
 Boolean :: { Boolean }
-Boolean   
-  : 'true' { RTrue } 
+Boolean : 'true' { RTrue } 
   | 'false' { RFalse }
 
 
 Type :: { Type }
-Type 
-  : 'int' { RTypeInt } 
+Type : 'int' { RTypeInt } 
   | 'real' { RTypeDouble }
   | 'char' { RTypeChar }
   | 'string' { RTypeString }
@@ -230,27 +281,25 @@ Type
 
 
 ListStmt :: { [Stmt] }
-ListStmt 
-  : {- empty -} { [] } 
+ListStmt : {- empty -} { [] } 
+  | Stmt { (:[]) $1 }
   | Stmt ';' ListStmt { (:) $1 $3 }
 
 
 ListRExpr :: { [RExpr] }
-ListRExpr 
-  : {- empty -} { [] } 
+ListRExpr : {- empty -} { [] } 
   | RExpr { (:[]) $1 }
   | RExpr ',' ListRExpr { (:) $1 $3 }
 
 
 ListBlockVar :: { [BlockVar] }
-ListBlockVar 
-  : {- empty -} { [] } 
+ListBlockVar : {- empty -} { [] } 
+  | BlockVar { (:[]) $1 }
   | BlockVar ',' ListBlockVar { (:) $1 $3 }
 
 
 ListArg :: { [Arg] }
-ListArg 
-  : {- empty -} { [] } 
+ListArg : {- empty -} { [] } 
   | Arg { (:[]) $1 }
   | Arg ',' ListArg { (:) $1 $3 }
 
