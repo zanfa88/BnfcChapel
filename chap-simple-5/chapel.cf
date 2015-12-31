@@ -68,7 +68,7 @@ SDo.        StmtDo     ::= "do" "{" [Stmt] "}" "while" RExpr ";" ;
 
 -- Statement per il for
 SForDo.   	StmtFor 	::= "for" RExpr "in" Aggr "do" "{" [Stmt] "}" ;
-SForDo.   	StmtFor 	::= "for" RExpr "in" Aggr "{" [Stmt] "}" ;
+SForDoBloc. StmtFor 	::= "for" RExpr "in" Aggr "{" [Stmt] "}" ;
 ForAggr. 	Aggr  		::= Integer ".." Integer ;
 
 -- Statement per break e continue

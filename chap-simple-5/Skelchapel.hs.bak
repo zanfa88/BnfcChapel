@@ -87,6 +87,7 @@ transStmtCondition x = case x of
 transStmtWhile :: StmtWhile -> Result
 transStmtWhile x = case x of
   WhileDo rexpr stmt  -> failure x
+  WhileDoS rexpr stmts  -> failure x
 
 
 transStmtDo :: StmtDo -> Result

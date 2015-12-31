@@ -175,6 +175,7 @@ instance Print StmtDo where
 instance Print StmtFor where
   prt i e = case e of
    SForDo rexpr aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 rexpr , doc (showString "in") , prt 0 aggr , doc (showString "do") , doc (showString "{") , prt 0 stmts , doc (showString "}")])
+   SForDoBloc rexpr aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 rexpr , doc (showString "in") , prt 0 aggr , doc (showString "{") , prt 0 stmts , doc (showString "}")])
 
 
 instance Print Aggr where

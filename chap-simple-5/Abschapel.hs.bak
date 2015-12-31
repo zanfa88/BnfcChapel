@@ -69,6 +69,7 @@ data StmtCondition =
 
 data StmtWhile =
    WhileDo RExpr Stmt
+ | WhileDoS RExpr [Stmt]
   deriving (Eq,Ord,Show)
 
 data StmtDo =

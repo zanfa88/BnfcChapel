@@ -98,6 +98,7 @@ transStmtDo x = case x of
 transStmtFor :: StmtFor -> Result
 transStmtFor x = case x of
   SForDo rexpr aggr stmts  -> failure x
+  SForDoBloc rexpr aggr stmts  -> failure x
 
 
 transAggr :: Aggr -> Result

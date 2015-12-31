@@ -1011,7 +1011,7 @@ happyReduction_67 (happy_x_7 `HappyStk`
 	case happyOut33 happy_x_4 of { happy_var_4 -> 
 	case happyOut44 happy_x_6 of { happy_var_6 -> 
 	happyIn32
-		 (SForDo happy_var_2 happy_var_4 happy_var_6
+		 (SForDoBloc happy_var_2 happy_var_4 happy_var_6
 	) `HappyStk` happyRest}}}
 
 happyReduce_68 = happySpecReduce_3  29# happyReduction_68
