@@ -5,13 +5,16 @@ module Parchapel where
 import Abschapel
 import Lexchapel
 import ErrM
-
+import Envchapel
 }
 
 
-%attributetype    {MyAttribute a}
+%attributetype        {MyAttribute a}
 %attribute parsetree  {a}
-
+%attribute tip        {Type}      -- tipo nodo
+%attribute err        {String}    -- errore
+%attribute envIn      {[Env]}     -- environment in
+%attribute envOut     {[Env]}     -- environment out
 
 %name pProgram Program
 
@@ -92,11 +95,31 @@ Char    : L_charac { $$ =  (read ( $1)) :: Char }
 String  : L_quoted { $$ =   $1 }
 
 Program 
-  : ListStmt { $$ = Prog $1 } 
-
+  : ListStmt { 
+    $$ = RProg $1 ;
+    $$.tip    = TypeVoid ;
+    $$.envIn  = [] ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $1.envOut ;
+    }
 
 Stmt 
-  : LExpr '=' RExpr { $$ =  Assgn $1 $3 } 
+  : LExpr '=' RExpr { 
+    $$ =  Assgn $1 $3 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.err    = (checkDefVar $1.tip $3.tip) ;
+    where ( 
+      if ($1.tip == VarNotDec)
+        then (Bad $ (prntErrNotDec $1))
+        else (   
+          if ($$.err == "")
+            then (Ok())
+            else (Bad $ (prntErrAss $2 $1.tip $3.tip))
+        )
+    ) ;
+  } 
   | StmtCondition { $$ =  Cond $1 }
   | StmtWhile { $$ =  While $1 }
   | StmtDo { $$ =  Do $1 }
@@ -104,13 +127,24 @@ Stmt
   | StmtJump { $$ =  Jump $1 }
   | StmtWrite { $$ =  Write $1 }
   | StmtRead { $$ =  Read $1 }
-  | StmtVar { $$ =  VarD $1 }
+  | StmtVar { 
+    $$ =  VarD $1 ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $1.envOut ;
+  }
   | DefFunc { $$ =  DFunc $1 }
   | CallFunc { $$ =  CFunc $1 }
 
 
 LExpr 
-  : Ident { $$ =  Id $1 } 
+  : Ident { 
+    $$ =  Id $1 ;
+    $$.tip  = (getVarTip $$.envIn $1) ; 
+    where ( if ($$.tip == VarNotDec)
+              then (Bad $ (prntErrNotDec $1))
+              else (Ok())
+    ) ;
+  } 
   | LExpr '[' RExpr ']' { $$ =  ArrayEl $1 $3 }
 
 
@@ -125,7 +159,16 @@ RExpr
   | RExpr '<' RExpr { $$ = El $1 $3 }
   | RExpr '>' RExpr {$$ =  Eg $1 $3 }
   | RExpr '..' RExpr { $$ = Erange $1 $3 } 
-  | RExpr '+' RExpr { $$ = Eadd $1 $3 } 
+  | RExpr '+' RExpr { 
+    $$ = Eadd $1 $3 ;
+    $$.tip  = $1.tip ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( if ($$.err == "") 
+      then (Ok())
+      else (Bad $ (prntErrAdd $2 ))
+    ) ;
+
+  } 
   | RExpr '-' RExpr { $$ = Esub $1 $3 }
   | RExpr '|' RExpr { $$ = Ebitor $1 $3 } 
   | RExpr '^' RExpr { $$ = Ebitxor $1 $3 } 
@@ -135,7 +178,10 @@ RExpr
   | RExpr '*' RExpr { $$ = Emul $1 $3 } 
   | RExpr '/' RExpr { $$ = Ediv $1 $3 }
   | RExpr '%' RExpr { $$ = Emod $1 $3 }
-  | BasicType { $$ = Econs $1 } 
+  | BasicType { 
+    $$ = Econs $1 ;
+    $$.tip  = $1.tip ;
+  } 
   | LExpr { $$ = LExprR $1 } 
   | '(' RExpr ')' { $$ = $2 }
 
@@ -188,12 +234,24 @@ Param
 
 
 StmtVar 
-  : 'var' ListBlockVar { $$ = SVarBlock $2 } 
+  : 'var' ListBlockVar { 
+    $$ = SVarBlock $2 ;
+    $2.envIn = $$.envIn ;
+    $$.envOut = $2.envOut ; 
+  } 
   | 'const' ListBlockVar { $$ = SVarCon $2 }
 
 
 BlockVar 
-  : Ident ':' Type '=' RExpr { $$ = SBlockVar $1 $3 $5 } 
+  : Ident ':' Type '=' RExpr { 
+    $$ = SBlockVar $1 $3 $5 ;
+    $$.envOut   = (insVarEnv (Var $1 $3.tip) $$.envIn);
+    $$.err      = (checkDefVar $3 $5.tip) ;
+    where ( if ($$.err == "")   
+      then (Ok())
+      else (Bad $ (prntErrDiffType $2))
+    ) ;
+  } 
 
 
 DefFunc 
@@ -209,29 +267,48 @@ Arg
 
 
 BasicType 
-  : Integer { $$ = RInt $1 } 
-  | Double { $$ = RDouble $1 }
+  : Integer { 
+    $$ = RInt $1 ;
+    $$.tip = RTypeInt ;
+    $$.err = "" ;
+    $$.addr = show $1 ; 
+  } 
+  | Double { 
+    $$ = RDouble $1 ;
+    $$.tip = RTypeDouble ;
+    $$.err = "" ;
+    $$.addr = show $1 ;
+  }
   | Char { $$ = RChar $1 }
   | String { $$ = RString $1 }
   | Boolean { $$ = RBoolean $1 }
 
 
 Boolean   
-  : 'true' { $$ =RTrue } 
+  : 'true' { $$ = RTrue } 
   | 'false' { $$ = RFalse }
 
 
 Type 
-  : 'int' { $$ = RTypeInt } 
-  | 'real' { $$ = RTypeDouble }
-  | 'char' { $$ = RTypeChar }
-  | 'string' { $$ = RTypeString }
-  | 'boolean' { $$ = RTypeBool }
+  : 'int' { $$ = RTypeInt ; $$.tip = $$ ; } 
+  | 'real' { $$ = RTypeDouble ; $$.tip = $$ ;}
+  | 'char' { $$ = RTypeChar ; $$.tip = $$ ;}
+  | 'string' { $$ = RTypeString ; $$.tip = $$ ;}
+  | 'boolean' { $$ = RTypeBool ; $$.tip = $$ ;}
 
 
+-- TODO manca solo Stmt. Puo essere un errore?
 ListStmt 
-  : {- empty -} { $$ =[] } 
-  | Stmt ';' ListStmt { $$ = (:) $1 $3 }
+  : {- empty -} { 
+    $$ =[] ;
+    $$.envOut = $$.envIn ;      
+  } 
+  | Stmt ';' ListStmt {
+    $$ = (:) $1 $3 ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $1.envOut ;
+    $$.envOut = $3.envOut ;
+  }
 
 
 ListRExpr 
@@ -240,9 +317,18 @@ ListRExpr
   | RExpr ',' ListRExpr { $$ = (:) $1 $3 }
 
 
+-- TODO manca solo BlockVar. Puo essere un errore?
 ListBlockVar 
-  : {- empty -} { $$ = [] } 
-  | BlockVar ',' ListBlockVar { $$ = (:) $1 $3 }
+  : {- empty -} { 
+    $$ = [] ; 
+    $$.envOut = $$.envIn ;
+  } 
+  | BlockVar ',' ListBlockVar { 
+    $$ = (:) $1 $3 ;
+    $$.envOut = $3.envOut ; 
+    $1.envIn = $$.envIn ;
+    $3.envIn = $1.envOut ;
+  }
 
 
 ListArg 
