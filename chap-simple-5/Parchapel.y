@@ -15,6 +15,7 @@ import Envchapel
 %attribute err        {String}    -- errore
 %attribute envIn      {[Env]}     -- environment in
 %attribute envOut     {[Env]}     -- environment out
+%attribute inLoop     {Bool}
 
 %name pProgram Program
 
@@ -96,7 +97,7 @@ String  : L_quoted { $$ =   $1 }
 
 Program 
   : ListStmt { 
-    $$ = RProg $1 ;
+    $$ = Prog $1 ;
     $$.tip    = TypeVoid ;
     $$.envIn  = [] ;
     $1.envIn  = $$.envIn ;
@@ -120,20 +121,65 @@ Stmt
         )
     ) ;
   } 
-  | StmtCondition { $$ =  Cond $1 }
-  | StmtWhile { $$ =  While $1 }
-  | StmtDo { $$ =  Do $1 }
-  | StmtFor { $$ =  For $1 }
-  | StmtJump { $$ =  Jump $1 }
-  | StmtWrite { $$ =  Write $1 }
-  | StmtRead { $$ =  Read $1 }
+  | StmtCondition { 
+    $$ =  Cond $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+  }
+  | StmtWhile { 
+    $$ =  While $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    }
+  | StmtDo { 
+    $$ =  Do $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    }
+  | StmtFor { 
+    $$ = For $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    }
+  | StmtJump { 
+    $$ =  Jump $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+  }
+  | StmtWrite { 
+    $$ =  Write $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+  }
+  | StmtRead { 
+    $$ =  Read $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    }
   | StmtVar { 
     $$ =  VarD $1 ;
     $1.envIn  = $$.envIn ;
     $$.envOut = $1.envOut ;
   }
-  | DefFunc { $$ =  DFunc $1 }
-  | CallFunc { $$ =  CFunc $1 }
+  | DefFunc { 
+    $$ =  DFunc $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+  }
+  | CallFunc { 
+    $$ =  CFunc $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+  }
 
 
 LExpr 
@@ -182,7 +228,10 @@ RExpr
     $$ = Econs $1 ;
     $$.tip  = $1.tip ;
   } 
-  | LExpr { $$ = LExprR $1 } 
+  | LExpr { 
+    $$ = LExprR $1 ;
+    $$.tip  = $1.tip ;
+  } 
   | '(' RExpr ')' { $$ = $2 }
 
 
@@ -206,7 +255,10 @@ StmtCondition
 
 
 StmtWhile 
-  : 'while' RExpr 'do' Stmt { $$ = WhileDo $2 $4 } 
+  : 'while' RExpr 'do' Stmt { 
+    $$ = WhileDo $2 $4 ;
+    $$.inLoop = True;
+  }
   | 'while' RExpr '{' ListStmt '}' { $$ = WhileDoS $2 $4 }
 
 
@@ -224,8 +276,30 @@ Aggr
 
 
 StmtJump 
-  : 'break' { $$ = Break } 
-  | 'continue' { $$ = Continue }
+  : 'break' { 
+    $$ = Break ;
+    $$.envIn = $$.envOut;
+    $$.err = (if ($$.inLoop) 
+      then ""
+      else "Syntax error: break statement not in a loop statement! At " ++ tokenPos2 $1
+    );
+    where (if ($$.inLoop) 
+      then Ok()
+      else Bad $ ($$.err)
+    );
+  } 
+  | 'continue' { 
+    $$ = Continue ;
+    $$.envIn = $$.envOut;
+    $$.err = (if ($$.inLoop) 
+      then ""
+      else "Syntax error: continue statement not in a loop statement! At " ++ tokenPos2 $1
+    );
+    where (if ($$.inLoop) 
+      then Ok()
+      else Bad $ ($$.err)
+    );
+  }
 
 
 Param 
@@ -271,13 +345,11 @@ BasicType
     $$ = RInt $1 ;
     $$.tip = RTypeInt ;
     $$.err = "" ;
-    $$.addr = show $1 ; 
   } 
   | Double { 
     $$ = RDouble $1 ;
     $$.tip = RTypeDouble ;
     $$.err = "" ;
-    $$.addr = show $1 ;
   }
   | Char { $$ = RChar $1 }
   | String { $$ = RString $1 }
