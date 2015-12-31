@@ -5,27 +5,51 @@ echo "[OK] Assegnamento normale:"
 echo "var a:int=3;" | ./Testchapel 
 
 echo "-----------------"
+echo "-----------------"
 echo "[BAD] Assegnamento di real a variabile int:" 
 echo "var a:int=3.0;a=3;" | ./Testchapel 
+echo "-----------------"
 echo "-----------------" 
 echo "[BAD] Assegnamento a una variabile non dichiarata:" 
 echo "var a:int=3;c=3;" | ./Testchapel 
+echo "-----------------"
 echo "-----------------" 
 echo "[BAD] Assegno un valore real ad una variabile int:" 
 echo "var a:int=3;a=3.0;" | ./Testchapel 
+echo "-----------------"
+echo "-----------------" 
+echo "[BAD] Assegno un valore char ad una variabile int:" 
+echo "var a:int=3;a='a'" | ./Testchapel 
+echo "-----------------"
+echo "-----------------"
+echo "[OK] DICHIARO variabile di tipo String"
+echo "var a:string='232sdsd';" | ./Testchapel 
+echo "-----------------"
+echo "-----------------" 
+echo "[OK] Dichiaro variabile di tipo Char "
+echo "var a:char='a';" | ./Testchapel  
+echo "-----------------"
 echo "-----------------" 
 echo "[OK] Modifica valore di una variabile int ad un tipo int:" 
 echo "var a:int=3;a=4;" | ./Testchapel 
+echo "-----------------"
 echo "-----------------" 
 echo "[OK] Più dichiarazioni e più variabili:" 
 echo "var a:real=1.0,b:int=4;b=20+1;a=2.0+2.3;" | ./Testchapel 
 echo "-----------------" 
+echo "-----------------"
 echo "[BAD] Somma tipi diversi:" 
 echo "var a:real=1.0,b:int=4;b=20+1.0;a=2.0+2.3;" | ./Testchapel 
 echo "-----------------" 
+echo "-----------------"
 echo "[BAD] Assegnamento tipi diversi:" 
 echo "var a:real=1.0,b:int=4;b=20.0+1.0;a=2.0+2.3;" | ./Testchapel 
 echo "-----------------" 
+echo "-----------------"
+echo "[OK] While"
+echo "var a:real=1.0,b:int=4;while (a < b) do a = a + 1 ; " | ./Testchapel 
+echo "-----------------" 
+echo "-----------------"
 echo "var a:real=1.0,b:int=4;b=20.0+1.0;a=2.0+2.3;" | ./Testchapel 
 echo "var a:real=1.0,b:int=4;b=20.0+1.0;a=2.0+2.3;" | ./Testchapel 
 echo "var q:int=2;if (q<=2) then q=3;" | ./Testchapel 
