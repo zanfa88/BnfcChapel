@@ -8,6 +8,11 @@ import ErrM
 
 }
 
+
+%attributetype    {MyAttribute a}
+%attribute parsetree  {a}
+
+
 %name pProgram Program
 
 -- no lexer declaration
@@ -80,228 +85,170 @@ L_err    { _ }
 
 %%
 
-Ident   :: { Ident }   : L_ident  { Ident $1 }
-Integer :: { Integer } : L_integ  { (read ( $1)) :: Integer }
-Double  :: { Double }  : L_doubl  { (read ( $1)) :: Double }
-Char    :: { Char }    : L_charac { (read ( $1)) :: Char }
-String  :: { String }  : L_quoted {  $1 }
+Ident   : L_ident  { $$ =  Ident $1 }
+Integer : L_integ  { $$ =  (read ( $1)) :: Integer }
+Double  : L_doubl  { $$ =  (read ( $1)) :: Double }
+Char    : L_charac { $$ =  (read ( $1)) :: Char }
+String  : L_quoted { $$ =   $1 }
 
-Program :: { Program }
-Program : ListStmt { Prog $1 } 
+Program 
+  : ListStmt { $$ = Prog $1 } 
 
 
-Stmt :: { Stmt }
-Stmt : LExpr '=' RExpr { Assgn $1 $3 } 
-  | StmtCondition { Cond $1 }
-  | StmtWhile { While $1 }
-  | StmtDo { Do $1 }
-  | StmtFor { For $1 }
-  | StmtJump { Jump $1 }
-  | StmtWrite { Write $1 }
-  | StmtRead { Read $1 }
-  | StmtVar { VarD $1 }
-  | DefFunc { DFunc $1 }
-  | CallFunc { CFunc $1 }
+Stmt 
+  : LExpr '=' RExpr { $$ =  Assgn $1 $3 } 
+  | StmtCondition { $$ =  Cond $1 }
+  | StmtWhile { $$ =  While $1 }
+  | StmtDo { $$ =  Do $1 }
+  | StmtFor { $$ =  For $1 }
+  | StmtJump { $$ =  Jump $1 }
+  | StmtWrite { $$ =  Write $1 }
+  | StmtRead { $$ =  Read $1 }
+  | StmtVar { $$ =  VarD $1 }
+  | DefFunc { $$ =  DFunc $1 }
+  | CallFunc { $$ =  CFunc $1 }
 
 
-LExpr :: { LExpr }
-LExpr : Ident { Id $1 } 
-  | LExpr '[' RExpr13 ']' { ArrayEl $1 $3 }
+LExpr 
+  : Ident { $$ =  Id $1 } 
+  | LExpr '[' RExpr ']' { $$ =  ArrayEl $1 $3 }
 
 
-RExpr :: { RExpr }
-RExpr : RExpr '#' RExpr2 { Ecount $1 $3 } 
-  | RExpr1 { $1 }
+RExpr 
+  : RExpr '#' RExpr { $$ = Ecount $1 $3 } 
+  | RExpr '||' RExpr { $$ = Elor $1 $3 } 
+  | RExpr '&&' RExpr { $$ = Eland $1 $3 } 
+  | RExpr '==' RExpr { $$ = Eeq $1 $3 } 
+  | RExpr '!=' RExpr { $$ = Eneq $1 $3 }
+  | RExpr '<=' RExpr { $$ = Eleq $1 $3 } 
+  | RExpr '>=' RExpr {$$ =  Egeq $1 $3 }
+  | RExpr '<' RExpr { $$ = El $1 $3 }
+  | RExpr '>' RExpr {$$ =  Eg $1 $3 }
+  | RExpr '..' RExpr { $$ = Erange $1 $3 } 
+  | RExpr '+' RExpr { $$ = Eadd $1 $3 } 
+  | RExpr '-' RExpr { $$ = Esub $1 $3 }
+  | RExpr '|' RExpr { $$ = Ebitor $1 $3 } 
+  | RExpr '^' RExpr { $$ = Ebitxor $1 $3 } 
+  | RExpr '&' RExpr { $$ = Ebitand $1 $3 } 
+  | '+' RExpr { $$ = Eupos $2 } 
+  | '-' RExpr {$$ =  Euneg $2 }
+  | RExpr '*' RExpr { $$ = Emul $1 $3 } 
+  | RExpr '/' RExpr { $$ = Ediv $1 $3 }
+  | RExpr '%' RExpr { $$ = Emod $1 $3 }
+  | BasicType { $$ = Econs $1 } 
+  | LExpr { $$ = LExprR $1 } 
+  | '(' RExpr ')' { $$ = $2 }
 
 
-RExpr2 :: { RExpr }
-RExpr2 : RExpr2 '||' RExpr3 { Elor $1 $3 } 
-  | RExpr3 { $1 }
+StmtWrite 
+  : 'writeInt' '(' Integer ')' { $$ = WriteInt $3 } 
+  | 'writeReal' '(' Double ')' { $$ = WriteReal $3 }
+  | 'writeChar' '(' Char ')' { $$ = WriteChar $3 }
+  | 'writeString' '(' String ')' { $$ = WriteString $3 }
 
 
-RExpr3 :: { RExpr }
-RExpr3 : RExpr3 '&&' RExpr4 { Eland $1 $3 } 
-  | RExpr4 { $1 }
+StmtRead 
+  : 'readInt' '(' Integer ')' { $$ = ReadInt $3 } 
+  | 'readReal' '(' Double ')' { $$ = ReadReal $3 }
+  | 'readChar' '(' Char ')' { $$ = ReadChar $3 }
+  | 'readString' '(' String ')' { $$ = ReadString $3 }
 
 
-RExpr4 :: { RExpr }
-RExpr4 : RExpr4 '==' RExpr5 { Eeq $1 $3 } 
-  | RExpr4 '!=' RExpr5 { Eneq $1 $3 }
-  | RExpr5 { $1 }
+StmtCondition 
+  : 'if' RExpr 'then' Stmt { $$ = If1 $2 $4 } 
+  | 'if' '(' RExpr ')' '{' ListStmt '}' { $$ = If2 $3 $6 }
 
 
-RExpr5 :: { RExpr }
-RExpr5 : RExpr5 '<=' RExpr6 { Eleq $1 $3 } 
-  | RExpr5 '>=' RExpr6 { Egeq $1 $3 }
-  | RExpr5 '<' RExpr6 { El $1 $3 }
-  | RExpr5 '>' RExpr6 { Eg $1 $3 }
-  | RExpr6 { $1 }
+StmtWhile 
+  : 'while' RExpr 'do' Stmt { $$ = WhileDo $2 $4 } 
+  | 'while' RExpr '{' ListStmt '}' { $$ = WhileDoS $2 $4 }
 
 
-RExpr6 :: { RExpr }
-RExpr6 : RExpr6 '..' RExpr7 { Erange $1 $3 } 
-  | RExpr7 { $1 }
+StmtDo 
+  : 'do' '{' ListStmt '}' 'while' RExpr ';' { $$ = SDo $3 $6 } 
 
 
-RExpr7 :: { RExpr }
-RExpr7 : RExpr7 '+' RExpr8 { Eadd $1 $3 } 
-  | RExpr7 '-' RExpr8 { Esub $1 $3 }
-  | RExpr8 { $1 }
+StmtFor 
+  : 'for' RExpr 'in' Aggr 'do' '{' ListStmt '}' { $$ = SForDo $2 $4 $7 } 
+  | 'for' RExpr 'in' Aggr '{' ListStmt '}' { $$ = SForDoBloc $2 $4 $6 }
 
 
-RExpr8 :: { RExpr }
-RExpr8 : RExpr8 '|' RExpr9 { Ebitor $1 $3 } 
-  | RExpr9 { $1 }
+Aggr 
+  : Integer '..' Integer { $$ = ForAggr $1 $3 } 
 
 
-RExpr9 :: { RExpr }
-RExpr9 : RExpr9 '^' RExpr10 { Ebitxor $1 $3 } 
-  | RExpr10 { $1 }
+StmtJump 
+  : 'break' { $$ = Break } 
+  | 'continue' { $$ = Continue }
 
 
-RExpr10 :: { RExpr }
-RExpr10 : RExpr10 '&' RExpr11 { Ebitand $1 $3 } 
-  | RExpr11 { $1 }
+Param 
+  : RExpr {$$ =  Pval $1 } 
+  | '*' RExpr { $$ = Pref $2 }
 
 
-RExpr11 :: { RExpr }
-RExpr11 : '+' RExpr11 { Eupos $2 } 
-  | '-' RExpr11 { Euneg $2 }
-  | RExpr12 { $1 }
+StmtVar 
+  : 'var' ListBlockVar { $$ = SVarBlock $2 } 
+  | 'const' ListBlockVar { $$ = SVarCon $2 }
 
 
-RExpr12 :: { RExpr }
-RExpr12 : RExpr12 '*' RExpr13 { Emul $1 $3 } 
-  | RExpr12 '/' RExpr13 { Ediv $1 $3 }
-  | RExpr12 '%' RExpr13 { Emod $1 $3 }
-  | RExpr13 { $1 }
+BlockVar 
+  : Ident ':' Type '=' RExpr { $$ = SBlockVar $1 $3 $5 } 
 
 
-RExpr13 :: { RExpr }
-RExpr13 : BasicType { Econs $1 } 
-  | RExpr14 { $1 }
+DefFunc 
+  : 'function' Ident '(' ListArg ')' '{' ListStmt '}' { $$ = SDefFunc $2 $4 $7 } 
 
 
-RExpr14 :: { RExpr }
-RExpr14 : LExpr { LExprR $1 } 
-  | '(' RExpr ')' { $2 }
+CallFunc 
+  : Ident '(' ListRExpr ')' { $$ = SCallFunc $1 $3 } 
 
 
-RExpr1 :: { RExpr }
-RExpr1 : RExpr2 { $1 } 
+Arg 
+  : Ident ':' Type { $$ = SArg $1 $3 } 
 
 
-StmtWrite :: { StmtWrite }
-StmtWrite : 'writeInt' '(' Integer ')' { WriteInt $3 } 
-  | 'writeReal' '(' Double ')' { WriteReal $3 }
-  | 'writeChar' '(' Char ')' { WriteChar $3 }
-  | 'writeString' '(' String ')' { WriteString $3 }
+BasicType 
+  : Integer { $$ = RInt $1 } 
+  | Double { $$ = RDouble $1 }
+  | Char { $$ = RChar $1 }
+  | String { $$ = RString $1 }
+  | Boolean { $$ = RBoolean $1 }
 
 
-StmtRead :: { StmtRead }
-StmtRead : 'readInt' '(' Integer ')' { ReadInt $3 } 
-  | 'readReal' '(' Double ')' { ReadReal $3 }
-  | 'readChar' '(' Char ')' { ReadChar $3 }
-  | 'readString' '(' String ')' { ReadString $3 }
+Boolean   
+  : 'true' { $$ =RTrue } 
+  | 'false' { $$ = RFalse }
 
 
-StmtCondition :: { StmtCondition }
-StmtCondition : 'if' RExpr 'then' Stmt { If1 $2 $4 } 
-  | 'if' '(' RExpr ')' '{' ListStmt '}' { If2 $3 $6 }
+Type 
+  : 'int' { $$ = RTypeInt } 
+  | 'real' { $$ = RTypeDouble }
+  | 'char' { $$ = RTypeChar }
+  | 'string' { $$ = RTypeString }
+  | 'boolean' { $$ = RTypeBool }
 
 
-StmtWhile :: { StmtWhile }
-StmtWhile : 'while' RExpr 'do' Stmt { WhileDo $2 $4 } 
-  | 'while' RExpr '{' ListStmt '}' { WhileDoS $2 $4 }
+ListStmt 
+  : {- empty -} { $$ =[] } 
+  | Stmt ';' ListStmt { $$ = (:) $1 $3 }
 
 
-StmtDo :: { StmtDo }
-StmtDo : 'do' '{' ListStmt '}' 'while' RExpr ';' { SDo $3 $6 } 
+ListRExpr 
+  : {- empty -} {$$ = [] } 
+  | RExpr { $$ = (:[]) $1 }
+  | RExpr ',' ListRExpr { $$ = (:) $1 $3 }
 
 
-StmtFor :: { StmtFor }
-StmtFor : 'for' RExpr 'in' Aggr 'do' '{' ListStmt '}' { SForDo $2 $4 $7 } 
-  | 'for' RExpr 'in' Aggr '{' ListStmt '}' { SForDoBloc $2 $4 $6 }
+ListBlockVar 
+  : {- empty -} { $$ = [] } 
+  | BlockVar ',' ListBlockVar { $$ = (:) $1 $3 }
 
 
-Aggr :: { Aggr }
-Aggr : Integer '..' Integer { ForAggr $1 $3 } 
-
-
-StmtJump :: { StmtJump }
-StmtJump : 'break' { Break } 
-  | 'continue' { Continue }
-
-
-Param :: { Param }
-Param : RExpr13 { Pval $1 } 
-  | '*' RExpr { Pref $2 }
-
-
-StmtVar :: { StmtVar }
-StmtVar : 'var' ListBlockVar { SVarBlock $2 } 
-  | 'const' ListBlockVar { SVarCon $2 }
-
-
-BlockVar :: { BlockVar }
-BlockVar : Ident ':' Type '=' RExpr { SBlockVar $1 $3 $5 } 
-
-
-DefFunc :: { DefFunc }
-DefFunc : 'function' Ident '(' ListArg ')' '{' ListStmt '}' { SDefFunc $2 $4 $7 } 
-
-
-CallFunc :: { CallFunc }
-CallFunc : Ident '(' ListRExpr ')' { SCallFunc $1 $3 } 
-
-
-Arg :: { Arg }
-Arg : Ident ':' Type { SArg $1 $3 } 
-
-
-BasicType :: { BasicType }
-BasicType : Integer { RInt $1 } 
-  | Double { RDouble $1 }
-  | Char { RChar $1 }
-  | String { RString $1 }
-  | Boolean { RBoolean $1 }
-
-
-Boolean :: { Boolean }
-Boolean : 'true' { RTrue } 
-  | 'false' { RFalse }
-
-
-Type :: { Type }
-Type : 'int' { RTypeInt } 
-  | 'real' { RTypeDouble }
-  | 'char' { RTypeChar }
-  | 'string' { RTypeString }
-  | 'boolean' { RTypeBool }
-
-
-ListStmt :: { [Stmt] }
-ListStmt : {- empty -} { [] } 
-  | Stmt { (:[]) $1 }
-  | Stmt ';' ListStmt { (:) $1 $3 }
-
-
-ListRExpr :: { [RExpr] }
-ListRExpr : {- empty -} { [] } 
-  | RExpr { (:[]) $1 }
-  | RExpr ',' ListRExpr { (:) $1 $3 }
-
-
-ListBlockVar :: { [BlockVar] }
-ListBlockVar : {- empty -} { [] } 
-  | BlockVar { (:[]) $1 }
-  | BlockVar ',' ListBlockVar { (:) $1 $3 }
-
-
-ListArg :: { [Arg] }
-ListArg : {- empty -} { [] } 
-  | Arg { (:[]) $1 }
-  | Arg ',' ListArg { (:) $1 $3 }
+ListArg 
+  : {- empty -} { $$ = [] } 
+  | Arg { $$ = (:[]) $1 }
+  | Arg ',' ListArg { $$ = (:) $1 $3 }
 
 
 
