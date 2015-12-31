@@ -11,17 +11,17 @@ data Env =
   deriving(Eq,Ord,Show)
 
 --estrae dall'env il tipo della variabile in input
--- getVarTip Nothing = TypeVoid
--- getVarTip (Just (Var i t f)) = t
 getVarTip [] id = VarNotDec
 getVarTip (x@(Var i t):xs) id = if (i == id)
 									then t
 									else getVarTip xs id ;
 
+-- controlla se i tipi sono uguali
 checkEqualType tipL tipR 	= if (tipL == tipR)
 								then ""
 								else "Somma tra tipi diversi"
 
+-- controlla gli assegnamenti
 checkDefVar tipL tipR 		= case (tipL) of
 								RTypeDouble 	-> if (tipR == RTypeInt || tipR == RTypeDouble)
 												then ""
