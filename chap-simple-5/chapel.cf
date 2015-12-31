@@ -1,0 +1,117 @@
+entrypoints Program ;
+
+-- Commenti
+comment "//" ;
+comment "/*" "*/" ;
+
+-- Statement per program: un programma può essere una lista di Statement
+Prog.       Program ::= [Stmt] ;
+
+-- Statements generali
+Assgn.      Stmt    ::= LExpr "=" RExpr ;
+Cond.       Stmt    ::= StmtCondition ;
+While.      Stmt    ::= StmtWhile ;
+Do.         Stmt    ::= StmtDo ;
+For.        Stmt    ::= StmtFor ;
+Jump.       Stmt    ::= StmtJump ;
+Write.      Stmt    ::= StmtWrite ;
+Read.       Stmt    ::= StmtRead ;
+VarD.       Stmt    ::= StmtVar ;
+DFunc.      Stmt    ::= DefFunc ;
+CFunc.      Stmt    ::= CallFunc ;
+
+-- Left Expression
+Id.         LExpr ::= Ident ;
+ArrayEl.    LExpr ::= LExpr "[" RExpr13 "]" ;
+
+-- Right Expressions
+Ecount.     RExpr ::= RExpr "#" RExpr2;
+Elor.       RExpr2 ::= RExpr2 "||" RExpr3;
+Eland.      RExpr3 ::= RExpr3 "&&" RExpr4;
+Eeq.        RExpr4 ::= RExpr4 "==" RExpr5;
+Eneq.       RExpr4 ::= RExpr4 "!=" RExpr5;
+Eleq.       RExpr5 ::= RExpr5 "<=" RExpr6;    -- <=
+Egeq.       RExpr5 ::= RExpr5 ">=" RExpr6;    -- >=
+El.         RExpr5 ::= RExpr5 "<" RExpr6;    -- <
+Eg.         RExpr5 ::= RExpr5 ">" RExpr6;    -- >
+Erange.     RExpr6 ::= RExpr6 ".." RExpr7;
+Eadd.       RExpr7 ::= RExpr7 "+" RExpr8;
+Esub.       RExpr7 ::= RExpr7 "-" RExpr8;
+Ebitor.     RExpr8 ::= RExpr8 "|" RExpr9;
+Ebitxor.    RExpr9 ::= RExpr9 "^" RExpr10;
+Ebitand.    RExpr10 ::= RExpr10 "&" RExpr11;
+Eupos.      RExpr11 ::= "+" RExpr11;    -- unary positive
+Euneg.      RExpr11 ::= "-" RExpr11;    -- unary negative
+Emul.       RExpr12 ::= RExpr12 "*" RExpr13;
+Ediv.       RExpr12 ::= RExpr12 "/" RExpr13;
+Emod.       RExpr12 ::= RExpr12 "%" RExpr13;
+Econs.      RExpr13 ::= BasicType ;
+LExprR.     RExpr14 ::= LExpr ;
+coercions   RExpr 14 ;
+
+-- Statement per write
+WriteInt.      StmtWrite ::= "writeInt" "(" Integer  ")" ;
+WriteReal.     StmtWrite ::= "writeReal" "(" Double  ")" ;
+
+-- Statement per read
+ReadInt.      StmtRead ::= "readInt" "(" Integer  ")" ;
+ReadReal.      StmtRead ::= "readReal" "(" Double  ")" ;
+
+-- Statement per le condizioni if
+If1.        StmtCondition     ::= "if" RExpr "then" Stmt ;
+If2.        StmtCondition     ::= "if" "(" RExpr ")" "{" [Stmt] "}" ;
+
+--  Statement per il while
+WhileDo.    StmtWhile     ::= "while" RExpr "do" Stmt ;
+SDo.        StmtDo     ::= "do" "{" [Stmt] "}" "while" RExpr ";" ;
+
+-- Statement per il for
+SForDo.        StmtFor    ::=    "for" RExpr "in" Aggr "do" "{" [Stmt] "}" ;
+ForAggr.    Aggr     ::= Integer ".." Integer ;
+
+-- Statement per break e continue
+Break.        StmtJump ::= "break" ;
+Continue.    StmtJump ::= "continue";
+
+-- Passaggio valori per valore e referenza
+Pval.        Param    ::= RExpr13 ;
+Pref.        Param    ::= "*" RExpr ;
+
+-- Dichiarazione variabili
+SVarBlock.       StmtVar     ::= "var" [BlockVar];
+SVarCon.         StmtVar     ::= "const" [BlockVar];
+
+SBlockVar.        BlockVar     ::= Ident ":" Type "=" RExpr ;
+
+-- Definizione delle funzioni
+SDefFunc.     DefFunc     ::= "function" Ident "(" [Arg] ")" "{" [Stmt] "}" ;
+
+-- Definizione delle chiamate alle funzioni
+SCallFunc.     CallFunc     ::= Ident "(" [RExpr] ")" ";" ;
+
+-- Argomenti delle funzioni
+SArg.         Arg     ::= Ident ":" Type ;
+
+--elementi di base
+RInt. 		BasicType	::= Integer ;
+RDouble. 	BasicType 	::= Double ;
+RChar. 		BasicType 	::= Char ;
+RString. 	BasicType 	::= String ;
+RBoolean. 	BasicType 	::= Boolean ;
+
+-- booleani
+RTrue. 		Boolean 	::= "true" ;
+RFalse. 	Boolean 	::= "false" ;
+
+-- tipi 
+RTypeInt. 	Type 		::= "int" ;
+RTypeDouble. Type 		::= "real" ;
+RTypeChar. 	Type 		::= "char" ;
+RTypeString. Type 		::= "string" ;
+RTypeBool. 	Type 		::= "boolean" ;
+
+-- sepratori e terminatori
+separator Stmt 		";" ;
+separator RExpr     "," ;
+separator BlockVar  "," ;
+separator Arg     	"," ;
