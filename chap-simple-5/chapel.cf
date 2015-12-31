@@ -63,11 +63,13 @@ If2.        StmtCondition     ::= "if" "(" RExpr ")" "{" [Stmt] "}" ;
 
 --  Statement per il while
 WhileDo.    StmtWhile     ::= "while" RExpr "do" Stmt ;
+WhileDoS.  	StmtWhile     ::= "while" RExpr "{" [Stmt] "}" ;
 SDo.        StmtDo     ::= "do" "{" [Stmt] "}" "while" RExpr ";" ;
 
 -- Statement per il for
-SForDo.        StmtFor    ::=    "for" RExpr "in" Aggr "do" "{" [Stmt] "}" ;
-ForAggr.    Aggr     ::= Integer ".." Integer ;
+SForDo.   	StmtFor 	::= "for" RExpr "in" Aggr "do" "{" [Stmt] "}" ;
+SForDo.   	StmtFor 	::= "for" RExpr "in" Aggr "{" [Stmt] "}" ;
+ForAggr. 	Aggr  		::= Integer ".." Integer ;
 
 -- Statement per break e continue
 Break.        StmtJump ::= "break" ;
@@ -87,7 +89,7 @@ SBlockVar.        BlockVar     ::= Ident ":" Type "=" RExpr ;
 SDefFunc.     DefFunc     ::= "function" Ident "(" [Arg] ")" "{" [Stmt] "}" ;
 
 -- Definizione delle chiamate alle funzioni
-SCallFunc.     CallFunc     ::= Ident "(" [RExpr] ")" ";" ;
+SCallFunc.     CallFunc     ::= Ident "(" [RExpr] ")" ;
 
 -- Argomenti delle funzioni
 SArg.         Arg     ::= Ident ":" Type ;
