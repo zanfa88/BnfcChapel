@@ -347,7 +347,7 @@ happyReduce_6 = happySpecReduce_1  4# happyReduction_6
 happyReduction_6 happy_x_1
 	 =  case happyOut10 happy_x_1 of { happy_var_1 -> 
 	happyIn8
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envOut happySubAttrs_1) , envIn = [] , tip = TypeVoid , parsetree = RProg (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envOut happySubAttrs_1) , envIn = [] , tip = TypeVoid , parsetree = Prog (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_7 = happyReduce 4# 5# happyReduction_7
@@ -678,7 +678,7 @@ happyReduce_43 = happySpecReduce_1  8# happyReduction_43
 happyReduction_43 happy_x_1
 	 =  case happyOut11 happy_x_1 of { happy_var_1 -> 
 	happyIn12
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = LExprR (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ tip = (tip happySubAttrs_1) , parsetree = LExprR (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_44 = happySpecReduce_3  8# happyReduction_44
@@ -776,7 +776,7 @@ happyReduction_52 (happy_x_4 `HappyStk`
 	 = case happyOut12 happy_x_2 of { happy_var_2 -> 
 	case happyOut9 happy_x_4 of { happy_var_4 -> 
 	happyIn17
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = WhileDo (parsetree happySubAttrs_2) (parsetree happySubAttrs_4)  }; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; (happyConditions_4,happySubAttrs_4) = happy_var_4 happyEmptyAttrs; happyConditions = []++happyConditions_2++happyConditions_4 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ inLoop = True , parsetree = WhileDo (parsetree happySubAttrs_2) (parsetree happySubAttrs_4)  }; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; (happyConditions_4,happySubAttrs_4) = happy_var_4 happyEmptyAttrs; happyConditions = []++happyConditions_2++happyConditions_4 } in (happyConditions,happySelfAttrs)
 	) `HappyStk` happyRest}}
 
 happyReduce_53 = happyReduce 7# 14# happyReduction_53
@@ -823,15 +823,17 @@ happyReduction_55 happy_x_3
 
 happyReduce_56 = happySpecReduce_1  17# happyReduction_56
 happyReduction_56 happy_x_1
-	 =  happyIn21
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Break  }; happyConditions = [] } in (happyConditions,happySelfAttrs)
-	)
+	 =  case happyOutTok happy_x_1 of { happy_var_1 -> 
+	happyIn21
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (if ( (inLoop happySelfAttrs) ) then "" else "Syntax error: break statement not in a loop statement! At " ++ tokenPos2 happy_var_1 ) , envIn = (envOut happySelfAttrs) , parsetree = Break  }; happyConditions = [(if ( (inLoop happySelfAttrs) ) then Ok() else Bad $ ( (err happySelfAttrs) ) ) ] } in (happyConditions,happySelfAttrs)
+	)}
 
 happyReduce_57 = happySpecReduce_1  17# happyReduction_57
 happyReduction_57 happy_x_1
-	 =  happyIn21
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Continue  }; happyConditions = [] } in (happyConditions,happySelfAttrs)
-	)
+	 =  case happyOutTok happy_x_1 of { happy_var_1 -> 
+	happyIn21
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (if ( (inLoop happySelfAttrs) ) then "" else "Syntax error: continue statement not in a loop statement! At " ++ tokenPos2 happy_var_1 ) , envIn = (envOut happySelfAttrs) , parsetree = Continue  }; happyConditions = [(if ( (inLoop happySelfAttrs) ) then Ok() else Bad $ ( (err happySelfAttrs) ) ) ] } in (happyConditions,happySelfAttrs)
+	)}
 
 happyReduce_58 = happySpecReduce_1  18# happyReduction_58
 happyReduction_58 happy_x_1
@@ -1125,8 +1127,8 @@ pProgram toks = do { f <- do_pProgram toks; let { (conds,attrs) = f happyEmptyAt
 
 happySeq = happyDontSeq
 
-data MyAttribute a = HappyAttributes {parsetree :: a, tip :: Type, err :: String, addr :: String, envIn :: [Env], envOut :: [Env]}
-happyEmptyAttrs = HappyAttributes {parsetree = error "invalid reference to attribute 'parsetree'", tip = error "invalid reference to attribute 'tip'", err = error "invalid reference to attribute 'err'", addr = error "invalid reference to attribute 'addr'", envIn = error "invalid reference to attribute 'envIn'", envOut = error "invalid reference to attribute 'envOut'"}
+data MyAttribute a = HappyAttributes {parsetree :: a, tip :: Type, err :: String, addr :: String, envIn :: [Env], envOut :: [Env], inLoop :: Boolean}
+happyEmptyAttrs = HappyAttributes {parsetree = error "invalid reference to attribute 'parsetree'", tip = error "invalid reference to attribute 'tip'", err = error "invalid reference to attribute 'err'", addr = error "invalid reference to attribute 'addr'", envIn = error "invalid reference to attribute 'envIn'", envOut = error "invalid reference to attribute 'envOut'", inLoop = error "invalid reference to attribute 'inLoop'"}
 
 returnM :: a -> Err a
 returnM = return

@@ -16,6 +16,7 @@ import Envchapel
 %attribute addr       {String}
 %attribute envIn      {[Env]}    --contiene l'environment per le variabili in input ad un nodo
 %attribute envOut     {[Env]}    --contiene l'environment per le variabili in output da un nodo
+%attribute inLoop     {Boolean}
 
 
 %name pProgram Program
@@ -96,7 +97,7 @@ Boolean
   | 'false' { $$ = Boolean_false }
 
 
-Program : ListStmt {  $$        = RProg $1 ;
+Program : ListStmt {  $$        = Prog $1 ;
                       $$.tip    = TypeVoid ;
                       $$.envIn  = [] ;
                       $1.envIn  = $$.envIn ;
@@ -239,9 +240,11 @@ RExpr
   | RExpr '/' RExpr { $$ = Ediv $1 $3 }
   | RExpr '%' RExpr { $$ = Emod $1 $3 }
   | Constant { $$ = Econs $1 } 
-  | LExpr { $$ = LExprR $1 } 
+  | LExpr { 
+        $$ = LExprR $1 ;
+        $$.tip  = $1.tip ;
+    } 
   | '(' RExpr ')' { $$ = $2 }
-
 
 
 
@@ -261,7 +264,11 @@ StmtCondition : 'if' RExpr 'then' Stmt { $$ = If1 $2 $4 }
   | 'if' '(' RExpr ')' '{' ListStmt '}' { $$ = If2 $3 $6 }
 
 
-StmtWhile : 'while' RExpr 'do' Stmt { $$ = WhileDo $2 $4 } 
+StmtWhile 
+  : 'while' RExpr 'do' Stmt { 
+        $$ = WhileDo $2 $4 ;
+        $$.inLoop = True;
+    } 
 
 
 StmtDo : 'do' '{' ListStmt '}' 'while' RExpr ';' { $$ = SDo $3 $6 } 
@@ -273,8 +280,31 @@ StmtFor : 'for' RExpr 'in' Aggr 'do' '{' ListStmt '}' { $$ = SForDo $2 $4 $7 }
 Aggr : Constant '..' Constant { $$ = ForAggr $1 $3 } 
 
 
-StmtJump : 'break' { $$ = Break } 
-  | 'continue' { $$ = Continue }
+StmtJump 
+  : 'break' { 
+        $$ = Break ;
+        $$.envIn = $$.envOut;
+        $$.err = (if ($$.inLoop) 
+          then ""
+          else "Syntax error: break statement not in a loop statement! At " ++ tokenPos2 $1
+        );
+        where (if ($$.inLoop) 
+          then Ok()
+          else Bad $ ($$.err)
+        );
+    } 
+  | 'continue' { 
+        $$ = Continue ;
+        $$.envIn = $$.envOut;
+        $$.err = (if ($$.inLoop) 
+          then ""
+          else "Syntax error: continue statement not in a loop statement! At " ++ tokenPos2 $1
+        );
+        where (if ($$.inLoop) 
+          then Ok()
+          else Bad $ ($$.err)
+        );
+    }
 
 
 Param 

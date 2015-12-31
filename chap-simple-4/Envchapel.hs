@@ -7,7 +7,7 @@ rd = (Ident "read")
 wr = (Ident "write")
 
 data Env = 
- Var Ident Type
+ Var Ident BasicType
  | Prog Ident
   deriving(Eq,Ord,Show)
 
@@ -24,10 +24,10 @@ checkEqualType tipL tipR 	= if (tipL == tipR)
 								else "Somma tra tipi diversi"
 
 checkDefVar tipL tipR 		= case (tipL) of
-								RTypeFloat 	-> if (tipR == RTypeInt || tipR == RTypeFloat)
+								BasicType_real 	-> if (tipR == BasicType_real || tipR == BasicType_real)
 												then ""
 												else "Assegnamento non permesso"
-								RTypeInt 	-> if (tipR == RTypeInt)
+								BasicType_int 	-> if (tipR == BasicType_int)
 												then ""
 												else "Assegnamento non permesso"
 								VarNotDec	-> "variabile non assegnata"
@@ -61,5 +61,5 @@ prntErrAdd pos  			= "Error at "++(tokenPos2 pos)++": operation between differen
 
 
 -- Funzioni ausiliarie per messaggi di errore
-showType RTypeInt = (show "int") 
-showType RTypeFloat = (show "real") 
+showType BasicType_int = (show "int") 
+showType BasicType_real = (show "real") 
