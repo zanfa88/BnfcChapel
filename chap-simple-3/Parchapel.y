@@ -56,8 +56,13 @@ Char    : L_charac  { $$ = ((read ( $1)) :: Char); }
 String  : L_quoted  { $$ = ($1); }
 Iden    : L_Iden    { $$ = (Iden ($1));}
 
-Program : ListStmt  { $$      = RProg $1 ;
-                      $$.tip  = TypeVoid ;
+Program : ListStmt  { $$        = RProg $1 ;
+                      $$.tip    = TypeVoid ;
+                      $$.envIn  = [] ;
+                      $1.envIn  = $$.envIn ;
+                      $$.envOut = $1.envOut ;
+                        where ( Bad $ (printE $$.envOut ) ) ;
+
                     } 
 
 Stmt : LExp '=' RExp  { $$      = RAssign $1 $3 ;
@@ -67,7 +72,10 @@ Stmt : LExp '=' RExp  { $$      = RAssign $1 $3 ;
                                                   else (Bad $ "Error on assigment")
                         ) ;
                       } 
-  | StmtVar { $$      = RDecVar $1 }
+  | StmtVar { $$        = RDecVar $1 ;
+              $1.envIn  = $$.envIn ;
+              $$.envOut = $1.envOut ;
+  }
 
 BasicType 
   : Integer   { $$ = RInt $1 ;
@@ -103,11 +111,15 @@ RExp : RExp '+' RExp { $$      = RAdd $1 $3 ;
                 $$.tip  = $1.tip ;
               }
 
-StmtVar : 'var' ListBlockVar { $$ = RVarBlock $2 } 
+StmtVar : 'var' ListBlockVar { 
+                              $$ = RVarBlock $2 ;
+                              $2.envIn = $$.envIn ;
+                              $$.envOut = $2.envOut ; 
+                              } 
 
 BlockVar : Iden ':' Type '=' RExp { 
   $$          = RBlockVar $1 $3 $5 ;
-  $$.envOut   = (insVarEnv (Var $1 $3.tip) $$.envIn);
+  $$.envOut   = (insVarEnv (Var $1 $3.tip) []);
   $$.err      = (checkDefVar $3 $5.tip) ;
   where ( if ($$.err == "")   
     then (Ok())
@@ -140,11 +152,13 @@ ListBlockVar
 ListStmt 
   : {- empty -} { $$ = ([]) } 
   | Stmt              { $$ = ((:[]) $1) ;
-                        $1.envIn = $$.envIn ;
+                        $1.envIn  = $$.envIn ;
+                        $$.envOut = $1.envOut ;
                       }
   | Stmt ';' ListStmt { $$ = ((:) $1 $3) ; 
-                        $1.envIn = $$.envIn ;
-                        $3.envIn = $$.envIn;
+                        $3.envIn = $$.envIn ;
+                        $1.envIn = $3.envOut ;
+                        $$.envOut = $1.envOut ;
                       }
 
 
