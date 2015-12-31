@@ -360,7 +360,7 @@ happyReduction_7 (happy_x_4 `HappyStk`
 	case happyOut13 happy_x_2 of { happy_var_2 -> 
 	case happyOut12 happy_x_3 of { happy_var_3 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (checkDefVar (tip happySubAttrs_1) (tip happySubAttrs_3) ) , envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = Assgn (parsetree happySubAttrs_1) (parsetree happySubAttrs_2) (parsetree happySubAttrs_3)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; happyConditions = [( if ( (tip happySubAttrs_1) ==VarNotDec) then (Bad $ (prntErrNotDec (parsetree happySubAttrs_1) )) else ( if ( (err happySelfAttrs) =="") then (Ok()) else (Bad $ (prntErrAss (parsetree happySubAttrs_2) (tip happySubAttrs_1) (tip happySubAttrs_3) )) ) ) ]++happyConditions_1++happyConditions_2++happyConditions_3 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (checkDefVar (tip happySubAttrs_1) (tip happySubAttrs_3) ) , envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = Assgn (parsetree happySubAttrs_1) (parsetree happySubAttrs_2) (parsetree happySubAttrs_3)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; happyConditions = [( if ( (tip happySubAttrs_1) ==VarNotDec) then (Bad $ (prntErrNotDec (parsetree happySubAttrs_1) )) else ( if ( (err happySelfAttrs) =="") then (Ok()) else (Bad $ (prntErrAss (tip happySubAttrs_1) (tip happySubAttrs_3) )) ) ) ]++happyConditions_1++happyConditions_2++happyConditions_3 } in (happyConditions,happySelfAttrs)
 	) `HappyStk` happyRest}}}
 
 happyReduce_8 = happySpecReduce_1  5# happyReduction_8
@@ -1127,7 +1127,7 @@ pProgram toks = do { f <- do_pProgram toks; let { (conds,attrs) = f happyEmptyAt
 
 happySeq = happyDontSeq
 
-data MyAttribute a = HappyAttributes {parsetree :: a, tip :: Type, err :: String, addr :: String, envIn :: [Env], envOut :: [Env], inLoop :: Boolean}
+data MyAttribute a = HappyAttributes {parsetree :: a, tip :: BasicType, err :: String, addr :: String, envIn :: [Env], envOut :: [Env], inLoop :: Bool}
 happyEmptyAttrs = HappyAttributes {parsetree = error "invalid reference to attribute 'parsetree'", tip = error "invalid reference to attribute 'tip'", err = error "invalid reference to attribute 'err'", addr = error "invalid reference to attribute 'addr'", envIn = error "invalid reference to attribute 'envIn'", envOut = error "invalid reference to attribute 'envOut'", inLoop = error "invalid reference to attribute 'inLoop'"}
 
 returnM :: a -> Err a

@@ -11,12 +11,12 @@ import Envchapel
 
 %attributetype    {MyAttribute a}
 %attribute parsetree  {a}
-%attribute tip        {Type}      -- tipo nodo
+%attribute tip        {BasicType}      -- tipo nodo
 %attribute err        {String}    -- errore
 %attribute addr       {String}
 %attribute envIn      {[Env]}    --contiene l'environment per le variabili in input ad un nodo
 %attribute envOut     {[Env]}    --contiene l'environment per le variabili in output da un nodo
-%attribute inLoop     {Boolean}
+%attribute inLoop     {Bool}
 
 
 %name pProgram Program
@@ -117,7 +117,7 @@ Stmt
             else (   
               if ($$.err == "")
                 then (Ok())
-                else (Bad $ (prntErrAss $2 $1.tip $3.tip))
+                else (Bad $ (prntErrAss $1.tip $3.tip))
             )
         ) ;
       } 

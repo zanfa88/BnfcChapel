@@ -8,7 +8,6 @@ wr = (Ident "write")
 
 data Env = 
  Var Ident BasicType
- | Prog Ident
   deriving(Eq,Ord,Show)
 
 --estrae dall'env il tipo della variabile in input
@@ -54,7 +53,7 @@ isVarPres id ((Var i _):xs)
 	| otherwise = isVarPres id xs
 
 -- Messaggi di errore:
-prntErrAss pos tipL tipR 	= "Error at "++(tokenPos2 pos)++": assigment of a "++(showType tipR)++" value to a variable of type "++(showType tipL)++" not allowed."
+prntErrAss tipL tipR 	= "Error: assigment of a "++(showType tipR)++" value to a variable of type "++(showType tipL)++" not allowed."
 prntErrNotDec var 			= "Error: variable "++(show var)++" not declared."
 prntErrDiffType pos         = "Error at "++(tokenPos2 pos)++": invalid declaration, type are different."
 prntErrAdd pos  			= "Error at "++(tokenPos2 pos)++": operation between different type not allowed."
