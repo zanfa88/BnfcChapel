@@ -215,7 +215,7 @@ happyReduce_6 = happySpecReduce_1  5# happyReduction_6
 happyReduction_6 happy_x_1
 	 =  case happyOut19 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ tip = TypeVoid , parsetree = RProg (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envOut happySubAttrs_1) , envIn = [] , tip = TypeVoid , parsetree = RProg (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_7 = happySpecReduce_3  6# happyReduction_7
@@ -223,17 +223,16 @@ happyReduction_7 happy_x_3
 	happy_x_2
 	happy_x_1
 	 =  case happyOut12 happy_x_1 of { happy_var_1 -> 
-	case happyOutTok happy_x_2 of { happy_var_2 -> 
 	case happyOut13 happy_x_3 of { happy_var_3 -> 
 	happyIn10
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (contrRAssign (tip happySubAttrs_1) (tip happySubAttrs_3) happy_var_2 ) , tip = TypeVoid , parsetree = RAssign (parsetree happySubAttrs_1) (parsetree happySubAttrs_3)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; happyConditions = [( if ( (err happySelfAttrs) =="") then (Ok()) else (Bad $ "Error on assigment") ) ]++happyConditions_1++happyConditions_3 } in (happyConditions,happySelfAttrs)
-	)}}}
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (checkDefVar (tip happySubAttrs_1) (tip happySubAttrs_3) ) , tip = TypeVoid , parsetree = RAssign (parsetree happySubAttrs_1) (parsetree happySubAttrs_3)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; happyConditions = [( if ( (tip happySubAttrs_1) ==VarNotDec) then (Bad $ "Variable "++(show (parsetree happySubAttrs_1) )++" not declared ") else ( if ( (err happySelfAttrs) =="") then (Ok()) else (Bad $ "Assigment of variable "++(show (tip happySubAttrs_3) )++" to a variable of type "++(show (tip happySubAttrs_1) )++" not allowed.") ) ) ]++happyConditions_1++happyConditions_3 } in (happyConditions,happySelfAttrs)
+	)}}
 
 happyReduce_8 = happySpecReduce_1  6# happyReduction_8
 happyReduction_8 happy_x_1
 	 =  case happyOut14 happy_x_1 of { happy_var_1 -> 
 	happyIn10
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = RDecVar (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envOut happySubAttrs_1) , parsetree = RDecVar (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_9 = happySpecReduce_1  7# happyReduction_9
@@ -275,7 +274,7 @@ happyReduce_14 = happySpecReduce_1  8# happyReduction_14
 happyReduction_14 happy_x_1
 	 =  case happyOut8 happy_x_1 of { happy_var_1 -> 
 	happyIn12
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ tip = (getVarTip (parsetree happySubAttrs_1) ) , parsetree = RLExp (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ tip = (getVarTip (envIn happySelfAttrs) (parsetree happySubAttrs_1) ) , parsetree = RLExp (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = [( if ( (tip happySelfAttrs) ==VarNotDec) then (Bad $ "Variable "++(show (parsetree happySubAttrs_1) )++" not declared ") else (Ok()) ) ]++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_15 = happySpecReduce_3  9# happyReduction_15
@@ -321,7 +320,7 @@ happyReduction_19 happy_x_2
 	happy_x_1
 	 =  case happyOut18 happy_x_2 of { happy_var_2 -> 
 	happyIn14
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = RVarBlock (parsetree happySubAttrs_2)  }; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; happyConditions = []++happyConditions_2 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envOut happySubAttrs_2) , parsetree = RVarBlock (parsetree happySubAttrs_2)  }; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_2 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_20 = happyReduce 5# 11# happyReduction_20
@@ -336,7 +335,7 @@ happyReduction_20 (happy_x_5 `HappyStk`
 	case happyOut17 happy_x_3 of { happy_var_3 -> 
 	case happyOut13 happy_x_5 of { happy_var_5 -> 
 	happyIn15
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (checkDefVar (parsetree happySubAttrs_3) (tip happySubAttrs_5) ) , envOut = (insVarEnv (Var (parsetree happySubAttrs_1) (tip happySubAttrs_3) ) (envIn happySelfAttrs) ) , parsetree = RBlockVar (parsetree happySubAttrs_1) (parsetree happySubAttrs_3) (parsetree happySubAttrs_5)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; (happyConditions_5,happySubAttrs_5) = happy_var_5 happyEmptyAttrs; happyConditions = [( if ( (err happySelfAttrs) =="") then (Ok()) else (Bad $ "Error on variable assignment at " ++ tokenPos2 happy_var_2 ++ ". Type are different") ) ]++happyConditions_1++happyConditions_3++happyConditions_5 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (checkDefVar (parsetree happySubAttrs_3) (tip happySubAttrs_5) ) , envOut = (insVarEnv (Var (parsetree happySubAttrs_1) (tip happySubAttrs_3) ) []) , parsetree = RBlockVar (parsetree happySubAttrs_1) (parsetree happySubAttrs_3) (parsetree happySubAttrs_5)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; (happyConditions_5,happySubAttrs_5) = happy_var_5 happyEmptyAttrs; happyConditions = [( if ( (err happySelfAttrs) =="") then (Ok()) else (Bad $ "Error on variable assignment at " ++ tokenPos2 happy_var_2 ++ ". Type are different") ) ]++happyConditions_1++happyConditions_3++happyConditions_5 } in (happyConditions,happySelfAttrs)
 	) `HappyStk` happyRest}}}}
 
 happyReduce_21 = happySpecReduce_1  12# happyReduction_21
@@ -405,7 +404,7 @@ happyReduction_30 happy_x_3
 
 happyReduce_31 = happySpecReduce_0  15# happyReduction_31
 happyReduction_31  =  happyIn19
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = ([])  }; happyConditions = [] } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , parsetree = ([])  }; happyConditions = [] } in (happyConditions,happySelfAttrs)
 	)
 
 happyReduce_32 = happySpecReduce_1  15# happyReduction_32
@@ -422,7 +421,7 @@ happyReduction_33 happy_x_3
 	 =  case happyOut10 happy_x_1 of { happy_var_1 -> 
 	case happyOut19 happy_x_3 of { happy_var_3 -> 
 	happyIn19
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = ((:) (parsetree happySubAttrs_1) (parsetree happySubAttrs_3) )  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1++happyConditions_3 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envOut happySubAttrs_3) , parsetree = ((:) (parsetree happySubAttrs_1) (parsetree happySubAttrs_3) )  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs{ envIn = (envOut happySubAttrs_1)  }; happyConditions = []++happyConditions_1++happyConditions_3 } in (happyConditions,happySelfAttrs)
 	)}}
 
 happyNewToken action sts stk [] =

@@ -6,7 +6,6 @@ import Abschapel
 import Lexchapel
 import ErrM
 import Envchapel
-
 }
 
 %attributetype    {MyAttribute a}
@@ -61,15 +60,20 @@ Program : ListStmt  { $$        = RProg $1 ;
                       $$.envIn  = [] ;
                       $1.envIn  = $$.envIn ;
                       $$.envOut = $1.envOut ;
-                        where ( Bad $ (printE $$.envOut ) ) ;
-
                     } 
 
-Stmt : LExp '=' RExp  { $$      = RAssign $1 $3 ;
-                        $$.tip  = TypeVoid ;
-                        $$.err  = (contrRAssign $1.tip $3.tip $2);
-                        where ( if ($$.err == "") then (Ok())
-                                                  else (Bad $ "Error on assigment")
+Stmt : LExp '=' RExp  { $$        = RAssign $1 $3 ;
+                        $$.tip    = TypeVoid ;
+                        $1.envIn  = $$.envIn ;
+                        $$.err     = (checkDefVar $1.tip $3.tip) ;
+                        where ( 
+                          if ($1.tip == VarNotDec)
+                            then (Bad $ "Variable "++(show $1)++" not declared ")
+                            else (   
+                              if ($$.err == "")
+                                then (Ok())
+                                else (Bad $ "Assigment of variable "++(show $3.tip)++" to a variable of type "++(show $1.tip)++" not allowed.")
+                            )
                         ) ;
                       } 
   | StmtVar { $$        = RDecVar $1 ;
@@ -93,9 +97,12 @@ BasicType
   | Boolean   { $$ = RBoolean $1 }
 
 
--- TODO modificare assegnazione tipo - andare a vedere nel env
 LExp : Iden { $$      = RLExp $1 ;
-              $$.tip  = (getVarTip $1) ; 
+              $$.tip  = (getVarTip $$.envIn $1) ; 
+              where ( if ($$.tip == VarNotDec)
+                        then (Bad $ "Variable "++(show $1)++" not declared ")
+                        else (Ok())
+              ) ;
             }  
 
 RExp : RExp '+' RExp { $$      = RAdd $1 $3 ;
@@ -150,15 +157,16 @@ ListBlockVar
                                 }
 
 ListStmt 
-  : {- empty -} { $$ = ([]) } 
+  : {- empty -} { $$ = ([]) ; 
+                  $$.envOut = $$.envIn ;
+                } 
   | Stmt              { $$ = ((:[]) $1) ;
                         $1.envIn  = $$.envIn ;
-                        $$.envOut = $1.envOut ;
                       }
   | Stmt ';' ListStmt { $$ = ((:) $1 $3) ; 
-                        $3.envIn = $$.envIn ;
-                        $1.envIn = $3.envOut ;
-                        $$.envOut = $1.envOut ;
+                        $1.envIn = $$.envIn ;
+                        $3.envIn = $1.envOut ;
+                        $$.envOut = $3.envOut ;
                       }
 
 

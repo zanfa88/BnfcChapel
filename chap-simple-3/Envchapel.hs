@@ -14,11 +14,10 @@ data Env =
 --estrae dall'env il tipo della variabile in input
 -- getVarTip Nothing = TypeVoid
 -- getVarTip (Just (Var i t f)) = t
-getVarTip _ = RTypeFloat
-
-contrRAssign tipL tipR op 	= if (tipL == RTypeInt)
-								then "Non puoi assegnare a int. In "
-								else ""	
+getVarTip [] id = VarNotDec
+getVarTip (x@(Var i t):xs) id = if (i == id)
+									then t
+									else getVarTip xs id ;
 
 checkEqualType tipL tipR 	= if (tipL == tipR)
 								then ""
@@ -31,6 +30,7 @@ checkDefVar tipL tipR 		= case (tipL) of
 								RTypeInt 	-> if (tipR == RTypeInt)
 												then ""
 												else "Assegnamento non permesso"
+								VarNotDec	-> "variabile non assegnata"
 
 -- funzione ausiliaria per sviluppo e stampa errore
 printE (x@(Var i _):[])  = "Environment var:"++(show i)

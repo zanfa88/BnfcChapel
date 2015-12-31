@@ -52,5 +52,6 @@ data Type =
  | RTypeString
  | RTypeBool
  | TypeVoid
+ | VarNotDec
   deriving (Eq,Ord,Show)
 
