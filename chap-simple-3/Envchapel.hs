@@ -33,8 +33,9 @@ checkDefVar tipL tipR 		= case (tipL) of
 								VarNotDec	-> "variabile non assegnata"
 
 -- funzione ausiliaria per sviluppo e stampa errore
-printE (x@(Var i _):[])  = "Environment var:"++(show i)
-printE (x@(Var i _):xs)  = "Environment var:"++(show i)++" , "++printE(xs)
+printE ([])  				= "Environment vuoto"
+printE (x@(Var i _):[])  	= "Environment var:"++(show i)
+printE (x@(Var i _):xs)  	= "Environment var:"++(show i)++" , "++printE(xs)
 
 
 tokenPos2 (PT (Pn _ l r) _) = "line " ++ show l ++ " column " ++ show r 
@@ -48,5 +49,17 @@ insVarEnv x@(Var i _) xs
 								
 -- verfica se la variabile è già stata definita dell'ambiente 
 isVarPres id [] =  Nothing
-isVarPres id ((Var i _):xs) | id == i = Just i
-			      | otherwise = isVarPres id xs
+isVarPres id ((Var i _):xs) 
+	| id == i = Just i
+	| otherwise = isVarPres id xs
+
+-- Messaggi di errore:
+prntErrAss pos tipL tipR 	= "Error at "++(tokenPos2 pos)++": assigment of a "++(showType tipR)++" value to a variable of type "++(showType tipL)++" not allowed."
+prntErrNotDec var 			= "Error: variable "++(show var)++" not declared."
+prntErrDiffType pos         = "Error at "++(tokenPos2 pos)++": invalid declaration, type are different."
+prntErrAdd pos  			= "Error at "++(tokenPos2 pos)++": operation between different type not allowed."
+
+
+-- Funzioni ausiliarie per messaggi di errore
+showType RTypeInt = (show "int") 
+showType RTypeFloat = (show "real") 

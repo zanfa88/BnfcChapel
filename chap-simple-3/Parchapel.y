@@ -65,14 +65,15 @@ Program : ListStmt  { $$        = RProg $1 ;
 Stmt : LExp '=' RExp  { $$        = RAssign $1 $3 ;
                         $$.tip    = TypeVoid ;
                         $1.envIn  = $$.envIn ;
-                        $$.err     = (checkDefVar $1.tip $3.tip) ;
+                        $$.envOut = $$.envIn ;
+                        $$.err    = (checkDefVar $1.tip $3.tip) ;
                         where ( 
                           if ($1.tip == VarNotDec)
-                            then (Bad $ "Variable "++(show $1)++" not declared ")
+                            then (Bad $ (prntErrNotDec $1))
                             else (   
                               if ($$.err == "")
                                 then (Ok())
-                                else (Bad $ "Assigment of variable "++(show $3.tip)++" to a variable of type "++(show $1.tip)++" not allowed.")
+                                else (Bad $ (prntErrAss $2 $1.tip $3.tip))
                             )
                         ) ;
                       } 
@@ -100,15 +101,17 @@ BasicType
 LExp : Iden { $$      = RLExp $1 ;
               $$.tip  = (getVarTip $$.envIn $1) ; 
               where ( if ($$.tip == VarNotDec)
-                        then (Bad $ "Variable "++(show $1)++" not declared ")
+                        then (Bad $ (prntErrNotDec $1))
                         else (Ok())
               ) ;
             }  
 
 RExp : RExp '+' RExp { $$      = RAdd $1 $3 ;
+                      $$.tip  = $1.tip ;
                       $$.err  = (checkEqualType $1.tip $3.tip) ;
-                      where ( if ($$.err == "") then (Ok())
-                                                else (Bad $ "Error on operation RAdd at " ++ tokenPos2 $2 ++ ". Type are different")
+                      where ( if ($$.err == "") 
+                        then (Ok())
+                        else (Bad $ (prntErrAdd $2 ))
                       ) ;
                     } 
   | RExp '>' RExp { $$      = RGre $1 $3 }
@@ -119,18 +122,19 @@ RExp : RExp '+' RExp { $$      = RAdd $1 $3 ;
               }
 
 StmtVar : 'var' ListBlockVar { 
-                              $$ = RVarBlock $2 ;
+                              $$ = RVarBlock $2 ; 
                               $2.envIn = $$.envIn ;
                               $$.envOut = $2.envOut ; 
                               } 
 
+-- aggiungo una dichiarazione di variabile all'env giò esistente
 BlockVar : Iden ':' Type '=' RExp { 
   $$          = RBlockVar $1 $3 $5 ;
-  $$.envOut   = (insVarEnv (Var $1 $3.tip) []);
+  $$.envOut   = (insVarEnv (Var $1 $3.tip) $$.envIn);
   $$.err      = (checkDefVar $3 $5.tip) ;
   where ( if ($$.err == "")   
     then (Ok())
-    else (Bad $ "Error on variable assignment at " ++ tokenPos2 $2 ++ ". Type are different")
+    else (Bad $ (prntErrDiffType $2))
     ) ;
   }   
 
@@ -162,6 +166,7 @@ ListStmt
                 } 
   | Stmt              { $$ = ((:[]) $1) ;
                         $1.envIn  = $$.envIn ;
+                        $$.envOut = $1.envOut ;
                       }
   | Stmt ';' ListStmt { $$ = ((:) $1 $3) ; 
                         $1.envIn = $$.envIn ;
