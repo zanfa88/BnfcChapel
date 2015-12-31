@@ -44,9 +44,10 @@ The reserved words used in chapel are the following:
   | ``boolean`` | ``break`` | ``char`` | ``const``
   | ``continue`` | ``do`` | ``false`` | ``for``
   | ``function`` | ``if`` | ``in`` | ``int``
-  | ``readInt`` | ``readReal`` | ``real`` | ``string``
-  | ``then`` | ``true`` | ``var`` | ``while``
-  | ``writeInt`` | ``writeReal`` |  | 
+  | ``readChar`` | ``readInt`` | ``readReal`` | ``readString``
+  | ``real`` | ``string`` | ``then`` | ``true``
+  | ``var`` | ``while`` | ``writeChar`` | ``writeInt``
+  | ``writeReal`` | ``writeString`` |  | 
 
 The symbols used in chapel are the following:
   | = | [ | ] | #
@@ -119,8 +120,12 @@ All other symbols are terminals.
   | //RExpr1// | -> | //RExpr2// 
   | //StmtWrite// | -> | ``writeInt`` ``(`` //Integer// ``)`` 
   |  |  **|**  | ``writeReal`` ``(`` //Double// ``)`` 
+  |  |  **|**  | ``writeChar`` ``(`` //Char// ``)`` 
+  |  |  **|**  | ``writeString`` ``(`` //String// ``)`` 
   | //StmtRead// | -> | ``readInt`` ``(`` //Integer// ``)`` 
   |  |  **|**  | ``readReal`` ``(`` //Double// ``)`` 
+  |  |  **|**  | ``readChar`` ``(`` //Char// ``)`` 
+  |  |  **|**  | ``readString`` ``(`` //String// ``)`` 
   | //StmtCondition// | -> | ``if`` //RExpr// ``then`` //Stmt// 
   |  |  **|**  | ``if`` ``(`` //RExpr// ``)`` ``{`` //[Stmt]// ``}`` 
   | //StmtWhile// | -> | ``while`` //RExpr// ``do`` //Stmt// 

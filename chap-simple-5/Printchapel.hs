@@ -147,12 +147,16 @@ instance Print StmtWrite where
   prt i e = case e of
    WriteInt n -> prPrec i 0 (concatD [doc (showString "writeInt") , doc (showString "(") , prt 0 n , doc (showString ")")])
    WriteReal d -> prPrec i 0 (concatD [doc (showString "writeReal") , doc (showString "(") , prt 0 d , doc (showString ")")])
+   WriteChar c -> prPrec i 0 (concatD [doc (showString "writeChar") , doc (showString "(") , prt 0 c , doc (showString ")")])
+   WriteString str -> prPrec i 0 (concatD [doc (showString "writeString") , doc (showString "(") , prt 0 str , doc (showString ")")])
 
 
 instance Print StmtRead where
   prt i e = case e of
    ReadInt n -> prPrec i 0 (concatD [doc (showString "readInt") , doc (showString "(") , prt 0 n , doc (showString ")")])
    ReadReal d -> prPrec i 0 (concatD [doc (showString "readReal") , doc (showString "(") , prt 0 d , doc (showString ")")])
+   ReadChar c -> prPrec i 0 (concatD [doc (showString "readChar") , doc (showString "(") , prt 0 c , doc (showString ")")])
+   ReadString str -> prPrec i 0 (concatD [doc (showString "readString") , doc (showString "(") , prt 0 str , doc (showString ")")])
 
 
 instance Print StmtCondition where

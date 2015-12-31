@@ -52,10 +52,14 @@ coercions   RExpr 14 ;
 -- Statement per write
 WriteInt.      StmtWrite ::= "writeInt" "(" Integer  ")" ;
 WriteReal.     StmtWrite ::= "writeReal" "(" Double  ")" ;
+WriteChar.     StmtWrite ::= "writeChar" "(" Char  ")" ;
+WriteString.   StmtWrite ::= "writeString" "(" String  ")" ;
 
 -- Statement per read
 ReadInt.      StmtRead ::= "readInt" "(" Integer  ")" ;
-ReadReal.      StmtRead ::= "readReal" "(" Double  ")" ;
+ReadReal.     StmtRead ::= "readReal" "(" Double  ")" ;
+ReadChar.     StmtRead ::= "readChar" "(" Char  ")" ;
+ReadString.   StmtRead ::= "readString" "(" String  ")" ;
 
 -- Statement per le condizioni if
 If1.        StmtCondition     ::= "if" RExpr "then" Stmt ;

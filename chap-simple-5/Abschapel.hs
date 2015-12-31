@@ -55,11 +55,15 @@ data RExpr =
 data StmtWrite =
    WriteInt Integer
  | WriteReal Double
+ | WriteChar Char
+ | WriteString String
   deriving (Eq,Ord,Show)
 
 data StmtRead =
    ReadInt Integer
  | ReadReal Double
+ | ReadChar Char
+ | ReadString String
   deriving (Eq,Ord,Show)
 
 data StmtCondition =

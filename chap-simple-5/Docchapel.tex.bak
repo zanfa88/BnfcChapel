@@ -251,7 +251,7 @@ All other symbols are terminals.\\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{CallFunc}} & {\arrow}  &{\nonterminal{Ident}} {\terminal{(}} {\nonterminal{ListRExpr}} {\terminal{)}} {\terminal{;}}  \\
+{\nonterminal{CallFunc}} & {\arrow}  &{\nonterminal{Ident}} {\terminal{(}} {\nonterminal{ListRExpr}} {\terminal{)}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
