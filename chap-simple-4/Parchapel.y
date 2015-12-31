@@ -5,14 +5,17 @@ module Parchapel where
 import Abschapel
 import Lexchapel
 import ErrM
-
+import Envchapel
 }
 
 
 %attributetype    {MyAttribute a}
 %attribute parsetree  {a}
-
-
+%attribute tip        {Type}      -- tipo nodo
+%attribute err        {String}    -- errore
+%attribute addr       {String}
+%attribute envIn      {[Env]}    --contiene l'environment per le variabili in input ad un nodo
+%attribute envOut     {[Env]}    --contiene l'environment per le variabili in output da un nodo
 
 
 %name pProgram Program
@@ -93,28 +96,116 @@ Boolean
   | 'false' { $$ = Boolean_false }
 
 
-Program : ListStmt { $$ = Prog $1 ; } 
+Program : ListStmt {  $$        = RProg $1 ;
+                      $$.tip    = TypeVoid ;
+                      $$.envIn  = [] ;
+                      $1.envIn  = $$.envIn ;
+                      $$.envOut = $1.envOut ; } 
 
 
-Stmt : LExpr Assignment_op RExpr ';' { $$ =  Assgn $1 $2 $3 } 
-  | StmtCondition { $$ =  Cond $1 }
-  | StmtWhile { $$ =  While $1 }
-  | StmtDo { $$ =  Do $1 }
-  | StmtFor { $$ = For $1 }
-  | StmtJump ';' { $$ =  Jump $1 }
-  | StmtWrite ';' { $$ =  Write $1 }
-  | StmtRead ';' { $$ =  Read $1 }
-  | StmtVar ';' { $$ =  VarD $1 }
-  | DefFunc { $$ =  DFunc $1 }
-  | CallFunc { $$ =  CFunc $1 }
+Stmt 
+  : LExpr Assignment_op RExpr ';' { 
+        $$ =  Assgn $1 $2 $3 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+        $$.err    = (checkDefVar $1.tip $3.tip) ;
+        where ( 
+          if ($1.tip == VarNotDec)
+            then (Bad $ (prntErrNotDec $1))
+            else (   
+              if ($$.err == "")
+                then (Ok())
+                else (Bad $ (prntErrAss $2 $1.tip $3.tip))
+            )
+        ) ;
+      } 
+  | StmtCondition { 
+        $$ =  Cond $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | StmtWhile { 
+        $$ =  While $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | StmtDo { 
+        $$ =  Do $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | StmtFor { 
+        $$ = For $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | StmtJump ';' { 
+        $$ =  Jump $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | StmtWrite ';' { 
+        $$ =  Write $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | StmtRead ';' { 
+        $$ =  Read $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | StmtVar ';' { 
+        $$ =  VarD $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | DefFunc { 
+        $$ =  DFunc $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | CallFunc { 
+        $$ =  CFunc $1 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
 
 
 ListStmt 
-  : {- empty -} { $$ = [] }
-  | Stmt ListStmt { $$ = (:) $1 $2 }
+  : {- empty -} { 
+        $$ = [] ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
+  | Stmt ListStmt { 
+        $$ = (:) $1 $2 ;
+        $$.tip    = TypeVoid ;
+        $1.envIn  = $$.envIn ;
+        $$.envOut = $$.envIn ;
+    }
 
 
-LExpr : Ident { $$ = Id $1 } 
+LExpr 
+  : Ident { 
+        $$ = Id $1 ;
+        $$.tip  = (getVarTip $$.envIn $1) ; 
+        where ( if ($$.tip == VarNotDec)
+                  then (Bad $ (prntErrNotDec $1))
+                  else (Ok())
+        ) ;
+    } 
   | LExpr '[' RExpr ']' { $$ = ArrayEl $1 $3 }
 
 
@@ -129,7 +220,15 @@ RExpr
   | RExpr '<' RExpr { $$ = El $1 $3 }
   | RExpr '>' RExpr { $$ = Eg $1 $3 }
   | RExpr '..' RExpr { $$ = Erange $1 $3 } 
-  | RExpr '+' RExpr { $$ = Eadd $1 $3 } 
+  | RExpr '+' RExpr { 
+        $$ = Eadd $1 $3 ;
+        $$.tip  = $1.tip ;
+        $$.err  = (checkEqualType $1.tip $3.tip) ;
+        where ( if ($$.err == "") 
+          then (Ok())
+          else (Bad $ (prntErrAdd $2 ))
+        ) ;
+    } 
   | RExpr '-' RExpr { $$ = Esub $1 $3 }
   | RExpr '|' RExpr { $$ = Ebitor $1 $3 } 
   | RExpr '^' RExpr { $$ = Ebitxor $1 $3 } 

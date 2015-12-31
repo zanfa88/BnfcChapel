@@ -87,6 +87,7 @@ Pref.        Param    ::= "*" RExpr ;
 -- Le costanti possono essere di tipo:
 Int.        Constant ::= Integer ;
 
+
 -- Dichiarazione variabili
 SVarBlock.         StmtVar     ::= "var" [BlockVar];
 SVarCon.         StmtVar     ::= "const" [BlockVar];

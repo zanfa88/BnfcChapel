@@ -3,12 +3,12 @@ module Envchapel where
 import Lexchapel
 import Abschapel
 
-rd = (Iden "read")
-wr = (Iden "write")
+rd = (Ident "read")
+wr = (Ident "write")
 
 data Env = 
- Var Iden Type
- | Prog Iden
+ Var Ident Type
+ | Prog Ident
   deriving(Eq,Ord,Show)
 
 --estrae dall'env il tipo della variabile in input

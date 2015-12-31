@@ -5,6 +5,7 @@ module Parchapel where
 import Abschapel
 import Lexchapel
 import ErrM
+import Envchapel
 import qualified Data.Array as Happy_Data_Array
 import qualified GHC.Exts as Happy_GHC_Exts
 import Control.Applicative(Applicative(..))
@@ -346,7 +347,7 @@ happyReduce_6 = happySpecReduce_1  4# happyReduction_6
 happyReduction_6 happy_x_1
 	 =  case happyOut10 happy_x_1 of { happy_var_1 -> 
 	happyIn8
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Prog (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envOut happySubAttrs_1) , envIn = [] , tip = TypeVoid , parsetree = RProg (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_7 = happyReduce 4# 5# happyReduction_7
@@ -359,35 +360,35 @@ happyReduction_7 (happy_x_4 `HappyStk`
 	case happyOut13 happy_x_2 of { happy_var_2 -> 
 	case happyOut12 happy_x_3 of { happy_var_3 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Assgn (parsetree happySubAttrs_1) (parsetree happySubAttrs_2) (parsetree happySubAttrs_3)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; happyConditions = []++happyConditions_1++happyConditions_2++happyConditions_3 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (checkDefVar (tip happySubAttrs_1) (tip happySubAttrs_3) ) , envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = Assgn (parsetree happySubAttrs_1) (parsetree happySubAttrs_2) (parsetree happySubAttrs_3)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; happyConditions = [( if ( (tip happySubAttrs_1) ==VarNotDec) then (Bad $ (prntErrNotDec (parsetree happySubAttrs_1) )) else ( if ( (err happySelfAttrs) =="") then (Ok()) else (Bad $ (prntErrAss (parsetree happySubAttrs_2) (tip happySubAttrs_1) (tip happySubAttrs_3) )) ) ) ]++happyConditions_1++happyConditions_2++happyConditions_3 } in (happyConditions,happySelfAttrs)
 	) `HappyStk` happyRest}}}
 
 happyReduce_8 = happySpecReduce_1  5# happyReduction_8
 happyReduction_8 happy_x_1
 	 =  case happyOut16 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Cond (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = Cond (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_9 = happySpecReduce_1  5# happyReduction_9
 happyReduction_9 happy_x_1
 	 =  case happyOut17 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = While (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = While (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_10 = happySpecReduce_1  5# happyReduction_10
 happyReduction_10 happy_x_1
 	 =  case happyOut18 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Do (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = Do (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_11 = happySpecReduce_1  5# happyReduction_11
 happyReduction_11 happy_x_1
 	 =  case happyOut19 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = For (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = For (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_12 = happySpecReduce_2  5# happyReduction_12
@@ -395,7 +396,7 @@ happyReduction_12 happy_x_2
 	happy_x_1
 	 =  case happyOut21 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Jump (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = Jump (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_13 = happySpecReduce_2  5# happyReduction_13
@@ -403,7 +404,7 @@ happyReduction_13 happy_x_2
 	happy_x_1
 	 =  case happyOut14 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Write (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = Write (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_14 = happySpecReduce_2  5# happyReduction_14
@@ -411,7 +412,7 @@ happyReduction_14 happy_x_2
 	happy_x_1
 	 =  case happyOut15 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Read (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = Read (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_15 = happySpecReduce_2  5# happyReduction_15
@@ -419,26 +420,26 @@ happyReduction_15 happy_x_2
 	happy_x_1
 	 =  case happyOut24 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = VarD (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = VarD (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_16 = happySpecReduce_1  5# happyReduction_16
 happyReduction_16 happy_x_1
 	 =  case happyOut26 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = DFunc (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = DFunc (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_17 = happySpecReduce_1  5# happyReduction_17
 happyReduction_17 happy_x_1
 	 =  case happyOut27 happy_x_1 of { happy_var_1 -> 
 	happyIn9
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = CFunc (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = CFunc (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_18 = happySpecReduce_0  6# happyReduction_18
 happyReduction_18  =  happyIn10
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = []  }; happyConditions = [] } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = []  }; happyConditions = [] } in (happyConditions,happySelfAttrs)
 	)
 
 happyReduce_19 = happySpecReduce_2  6# happyReduction_19
@@ -447,14 +448,14 @@ happyReduction_19 happy_x_2
 	 =  case happyOut9 happy_x_1 of { happy_var_1 -> 
 	case happyOut10 happy_x_2 of { happy_var_2 -> 
 	happyIn10
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = (:) (parsetree happySubAttrs_1) (parsetree happySubAttrs_2)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; happyConditions = []++happyConditions_1++happyConditions_2 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ envOut = (envIn happySelfAttrs) , tip = TypeVoid , parsetree = (:) (parsetree happySubAttrs_1) (parsetree happySubAttrs_2)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs{ envIn = (envIn happySelfAttrs)  }; (happyConditions_2,happySubAttrs_2) = happy_var_2 happyEmptyAttrs; happyConditions = []++happyConditions_1++happyConditions_2 } in (happyConditions,happySelfAttrs)
 	)}}
 
 happyReduce_20 = happySpecReduce_1  7# happyReduction_20
 happyReduction_20 happy_x_1
 	 =  case happyOut4 happy_x_1 of { happy_var_1 -> 
 	happyIn11
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Id (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = []++happyConditions_1 } in (happyConditions,happySelfAttrs)
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ tip = (getVarTip (envIn happySelfAttrs) (parsetree happySubAttrs_1) ) , parsetree = Id (parsetree happySubAttrs_1)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; happyConditions = [( if ( (tip happySelfAttrs) ==VarNotDec) then (Bad $ (prntErrNotDec (parsetree happySubAttrs_1) )) else (Ok()) ) ]++happyConditions_1 } in (happyConditions,happySelfAttrs)
 	)}
 
 happyReduce_21 = happyReduce 4# 7# happyReduction_21
@@ -574,10 +575,11 @@ happyReduction_32 happy_x_3
 	happy_x_2
 	happy_x_1
 	 =  case happyOut12 happy_x_1 of { happy_var_1 -> 
+	case happyOutTok happy_x_2 of { happy_var_2 -> 
 	case happyOut12 happy_x_3 of { happy_var_3 -> 
 	happyIn12
-		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ parsetree = Eadd (parsetree happySubAttrs_1) (parsetree happySubAttrs_3)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; happyConditions = []++happyConditions_1++happyConditions_3 } in (happyConditions,happySelfAttrs)
-	)}}
+		 (\happyInhAttrs -> let { happySelfAttrs = happyInhAttrs{ err = (checkEqualType (tip happySubAttrs_1) (tip happySubAttrs_3) ) , tip = (tip happySubAttrs_1) , parsetree = Eadd (parsetree happySubAttrs_1) (parsetree happySubAttrs_3)  }; (happyConditions_1,happySubAttrs_1) = happy_var_1 happyEmptyAttrs; (happyConditions_3,happySubAttrs_3) = happy_var_3 happyEmptyAttrs; happyConditions = [( if ( (err happySelfAttrs) =="") then (Ok()) else (Bad $ (prntErrAdd happy_var_2 )) ) ]++happyConditions_1++happyConditions_3 } in (happyConditions,happySelfAttrs)
+	)}}}
 
 happyReduce_33 = happySpecReduce_3  8# happyReduction_33
 happyReduction_33 happy_x_3
@@ -1123,8 +1125,8 @@ pProgram toks = do { f <- do_pProgram toks; let { (conds,attrs) = f happyEmptyAt
 
 happySeq = happyDontSeq
 
-data MyAttribute a = HappyAttributes {parsetree :: a}
-happyEmptyAttrs = HappyAttributes {parsetree = error "invalid reference to attribute 'parsetree'"}
+data MyAttribute a = HappyAttributes {parsetree :: a, tip :: Type, err :: String, addr :: String, envIn :: [Env], envOut :: [Env]}
+happyEmptyAttrs = HappyAttributes {parsetree = error "invalid reference to attribute 'parsetree'", tip = error "invalid reference to attribute 'tip'", err = error "invalid reference to attribute 'err'", addr = error "invalid reference to attribute 'addr'", envIn = error "invalid reference to attribute 'envIn'", envOut = error "invalid reference to attribute 'envOut'"}
 
 returnM :: a -> Err a
 returnM = return
