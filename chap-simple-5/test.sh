@@ -36,3 +36,4 @@ echo "var a:int=2;for a in 1..10 do {a=3;}" | ./Testchapel
 echo "var a:int=2;for a in 1..220 {if (a==3) then break; a=4;}" | ./Testchapel 
 echo "writeInt(4);" | ./Testchapel 
 echo "var a:int=3;function mainA (a:int) { a=3; c=z; }; a=5; c=7; function mainB () { 	a=3; 	c=z; }; function mainC (a:int,b:int) { 	a=3; 	c=z; }; mainC(c,2); mainB(); mainA(a==true); " | ./Testchapel 
+echo "writeInt(\"asd\");" | ./Testchapel 

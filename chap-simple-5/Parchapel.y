@@ -51,20 +51,24 @@ import ErrM
  'if' { PT _ (TS _ 34) }
  'in' { PT _ (TS _ 35) }
  'int' { PT _ (TS _ 36) }
- 'readInt' { PT _ (TS _ 37) }
- 'readReal' { PT _ (TS _ 38) }
- 'real' { PT _ (TS _ 39) }
- 'string' { PT _ (TS _ 40) }
- 'then' { PT _ (TS _ 41) }
- 'true' { PT _ (TS _ 42) }
- 'var' { PT _ (TS _ 43) }
- 'while' { PT _ (TS _ 44) }
- 'writeInt' { PT _ (TS _ 45) }
- 'writeReal' { PT _ (TS _ 46) }
- '{' { PT _ (TS _ 47) }
- '|' { PT _ (TS _ 48) }
- '||' { PT _ (TS _ 49) }
- '}' { PT _ (TS _ 50) }
+ 'readChar' { PT _ (TS _ 37) }
+ 'readInt' { PT _ (TS _ 38) }
+ 'readReal' { PT _ (TS _ 39) }
+ 'readString' { PT _ (TS _ 40) }
+ 'real' { PT _ (TS _ 41) }
+ 'string' { PT _ (TS _ 42) }
+ 'then' { PT _ (TS _ 43) }
+ 'true' { PT _ (TS _ 44) }
+ 'var' { PT _ (TS _ 45) }
+ 'while' { PT _ (TS _ 46) }
+ 'writeChar' { PT _ (TS _ 47) }
+ 'writeInt' { PT _ (TS _ 48) }
+ 'writeReal' { PT _ (TS _ 49) }
+ 'writeString' { PT _ (TS _ 50) }
+ '{' { PT _ (TS _ 51) }
+ '|' { PT _ (TS _ 52) }
+ '||' { PT _ (TS _ 53) }
+ '}' { PT _ (TS _ 54) }
 
 L_ident  { PT _ (TV $$) }
 L_integ  { PT _ (TI $$) }
@@ -190,11 +194,15 @@ RExpr1 : RExpr2 { $1 }
 StmtWrite :: { StmtWrite }
 StmtWrite : 'writeInt' '(' Integer ')' { WriteInt $3 } 
   | 'writeReal' '(' Double ')' { WriteReal $3 }
+  | 'writeChar' '(' Char ')' { WriteChar $3 }
+  | 'writeString' '(' String ')' { WriteString $3 }
 
 
 StmtRead :: { StmtRead }
 StmtRead : 'readInt' '(' Integer ')' { ReadInt $3 } 
   | 'readReal' '(' Double ')' { ReadReal $3 }
+  | 'readChar' '(' Char ')' { ReadChar $3 }
+  | 'readString' '(' String ')' { ReadString $3 }
 
 
 StmtCondition :: { StmtCondition }

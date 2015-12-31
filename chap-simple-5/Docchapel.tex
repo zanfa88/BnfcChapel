@@ -59,10 +59,11 @@ The reserved words used in chapel are the following: \\
 {\reserved{const}} &{\reserved{continue}} &{\reserved{do}} \\
 {\reserved{false}} &{\reserved{for}} &{\reserved{function}} \\
 {\reserved{if}} &{\reserved{in}} &{\reserved{int}} \\
-{\reserved{readInt}} &{\reserved{readReal}} &{\reserved{real}} \\
-{\reserved{string}} &{\reserved{then}} &{\reserved{true}} \\
-{\reserved{var}} &{\reserved{while}} &{\reserved{writeInt}} \\
-{\reserved{writeReal}} & & \\
+{\reserved{readChar}} &{\reserved{readInt}} &{\reserved{readReal}} \\
+{\reserved{readString}} &{\reserved{real}} &{\reserved{string}} \\
+{\reserved{then}} &{\reserved{true}} &{\reserved{var}} \\
+{\reserved{while}} &{\reserved{writeChar}} &{\reserved{writeInt}} \\
+{\reserved{writeReal}} &{\reserved{writeString}} & \\
 \end{tabular}\\
 
 The symbols used in chapel are the following: \\
@@ -197,11 +198,15 @@ All other symbols are terminals.\\
 \begin{tabular}{lll}
 {\nonterminal{StmtWrite}} & {\arrow}  &{\terminal{writeInt}} {\terminal{(}} {\nonterminal{Integer}} {\terminal{)}}  \\
  & {\delimit}  &{\terminal{writeReal}} {\terminal{(}} {\nonterminal{Double}} {\terminal{)}}  \\
+ & {\delimit}  &{\terminal{writeChar}} {\terminal{(}} {\nonterminal{Char}} {\terminal{)}}  \\
+ & {\delimit}  &{\terminal{writeString}} {\terminal{(}} {\nonterminal{String}} {\terminal{)}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
 {\nonterminal{StmtRead}} & {\arrow}  &{\terminal{readInt}} {\terminal{(}} {\nonterminal{Integer}} {\terminal{)}}  \\
  & {\delimit}  &{\terminal{readReal}} {\terminal{(}} {\nonterminal{Double}} {\terminal{)}}  \\
+ & {\delimit}  &{\terminal{readChar}} {\terminal{(}} {\nonterminal{Char}} {\terminal{)}}  \\
+ & {\delimit}  &{\terminal{readString}} {\terminal{(}} {\nonterminal{String}} {\terminal{)}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}

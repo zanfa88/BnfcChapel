@@ -137,7 +137,7 @@ All other symbols are terminals.
   |  |  **|**  | ``const`` //[BlockVar]// 
   | //BlockVar// | -> | //Ident// ``:`` //Type// ``=`` //RExpr// 
   | //DefFunc// | -> | ``function`` //Ident// ``(`` //[Arg]// ``)`` ``{`` //[Stmt]// ``}`` 
-  | //CallFunc// | -> | //Ident// ``(`` //[RExpr]// ``)`` ``;`` 
+  | //CallFunc// | -> | //Ident// ``(`` //[RExpr]// ``)`` 
   | //Arg// | -> | //Ident// ``:`` //Type// 
   | //BasicType// | -> | //Integer// 
   |  |  **|**  | //Double// 
