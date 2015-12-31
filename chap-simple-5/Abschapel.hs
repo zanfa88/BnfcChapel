@@ -139,5 +139,7 @@ data Type =
  | RTypeChar
  | RTypeString
  | RTypeBool
+ | TypeVoid
+ | VarNotDec
   deriving (Eq,Ord,Show)
 

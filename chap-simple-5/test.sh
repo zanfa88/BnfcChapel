@@ -18,18 +18,6 @@ echo "[BAD] Assegno un valore real ad una variabile int:"
 echo "var a:int=3;a=3.0;" | ./Testchapel 
 echo "-----------------"
 echo "-----------------" 
-echo "[BAD] Assegno un valore char ad una variabile int:" 
-echo "var a:int=3;a='a'" | ./Testchapel 
-echo "-----------------"
-echo "-----------------"
-echo "[OK] DICHIARO variabile di tipo String"
-echo "var a:string='232sdsd';" | ./Testchapel 
-echo "-----------------"
-echo "-----------------" 
-echo "[OK] Dichiaro variabile di tipo Char "
-echo "var a:char='a';" | ./Testchapel  
-echo "-----------------"
-echo "-----------------" 
 echo "[OK] Modifica valore di una variabile int ad un tipo int:" 
 echo "var a:int=3;a=4;" | ./Testchapel 
 echo "-----------------"
@@ -60,4 +48,3 @@ echo "var a:int=2;for a in 1..10 do {a=3;}" | ./Testchapel
 echo "var a:int=2;for a in 1..220 {if (a==3) then break; a=4;}" | ./Testchapel 
 echo "writeInt(4);" | ./Testchapel 
 echo "var a:int=3;function mainA (a:int) { a=3; c=z; }; a=5; c=7; function mainB () { 	a=3; 	c=z; }; function mainC (a:int,b:int) { 	a=3; 	c=z; }; mainC(c,2); mainB(); mainA(a==true); " | ./Testchapel 
-echo "writeInt(\"asd\");" | ./Testchapel 
