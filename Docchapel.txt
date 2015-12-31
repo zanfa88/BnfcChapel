@@ -26,15 +26,6 @@ two sequences of digits separated by a decimal point, optionally
 followed by an unsigned or negative exponent.
 
 
-Character literals //Char// have the form
-``'``//c//``'``, where //c// is any single character.
-
-
-String literals //String// have the form
-``"``//x//``"``}, where //x// is any sequence of any characters
-except ``"`` unless preceded by ``\``.
-
-
 
 
 ===Reserved words and symbols===
@@ -42,15 +33,12 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 
 The reserved words used in chapel are the following:
   | ``align`` | ``bool`` | ``break`` | ``by``
-  | ``complex`` | ``const`` | ``continue`` | ``dmapped``
-  | ``do`` | ``else`` | ``false`` | ``for``
-  | ``function`` | ``if`` | ``imag`` | ``in``
-  | ``int`` | ``otherwise`` | ``param`` | ``readChar``
-  | ``readInt`` | ``readReal`` | ``readString`` | ``real``
-  | ``reduce`` | ``scan`` | ``select`` | ``string``
-  | ``then`` | ``true`` | ``uint`` | ``var``
-  | ``when`` | ``while`` | ``writeChar`` | ``writeInt``
-  | ``writeReal`` | ``writeString`` |  | 
+  | ``complex`` | ``const`` | ``continue`` | ``do``
+  | ``false`` | ``for`` | ``function`` | ``if``
+  | ``imag`` | ``in`` | ``int`` | ``readInt``
+  | ``readReal`` | ``real`` | ``string`` | ``then``
+  | ``true`` | ``uint`` | ``var`` | ``while``
+  | ``writeInt`` | ``writeReal`` |  | 
 
 The symbols used in chapel are the following:
   | ; | [ | ] | #
@@ -58,14 +46,9 @@ The symbols used in chapel are the following:
   | <= | >= | < | >
   | .. | + | - | |
   | ^ | & | << | >>
-  | * | / | % | !
-  | ~ | ** | : | .
-  | ( | ) | = | +=
-  | -= | *= | /= | %=
-  | **= | &= | |= | ^=
-  | &&= | ||= | <<= | >>=
-  | <=> | { | } | config const
-  | config param | , |  | 
+  | * | / | % | (
+  | ) | = | { | }
+  | : | , |  | 
 
 ===Comments===
 Single-line comments begin with //.Multiple-line comments are  enclosed with /* and */.
@@ -81,7 +64,6 @@ All other symbols are terminals.
   | //Program// | -> | //[Stmt]// 
   | //Stmt// | -> | //LExpr// //Assignment_op// //RExpr// ``;`` 
   |  |  **|**  | //StmtCondition// 
-  |  |  **|**  | //StmtSelect// 
   |  |  **|**  | //StmtWhile// 
   |  |  **|**  | //StmtDo// 
   |  |  **|**  | //StmtFor// 
@@ -132,90 +114,38 @@ All other symbols are terminals.
   |  |  **|**  | //RExpr13// ``/`` //RExpr14// 
   |  |  **|**  | //RExpr13// ``%`` //RExpr14// 
   |  |  **|**  | //RExpr14// 
-  | //RExpr14// | -> | ``!`` //RExpr14// 
-  |  |  **|**  | ``~`` //RExpr14// 
-  |  |  **|**  | //RExpr15// 
-  | //RExpr15// | -> | //RExpr15// ``reduce`` //RExpr16// 
-  |  |  **|**  | //RExpr15// ``scan`` //RExpr16// 
-  |  |  **|**  | //RExpr15// ``dmapped`` //RExpr16// 
-  |  |  **|**  | //RExpr16// 
-  | //RExpr16// | -> | ``**`` //RExpr16// 
-  |  |  **|**  | //RExpr17// 
-  | //RExpr17// | -> | //RExpr17// ``:`` //RExpr18// 
-  |  |  **|**  | //RExpr18// 
-  | //RExpr18// | -> | ``by`` //RExpr18// 
-  |  |  **|**  | //RExpr19// 
-  | //RExpr19// | -> | //RExpr19// ``.`` //RExpr20// 
-  |  |  **|**  | //RExpr19// ``(`` ``)`` 
-  |  |  **|**  | //RExpr19// ``(`` //Param// ``)`` 
-  |  |  **|**  | //RExpr19// ``[`` //RExpr// ``]`` 
-  |  |  **|**  | //RExpr20// 
   | //RExpr20// | -> | //Constant// 
   |  |  **|**  | //RExpr21// 
   | //RExpr21// | -> | //LExpr// 
   |  |  **|**  | ``(`` //RExpr// ``)`` 
   | //RExpr1// | -> | //RExpr2// 
+  | //RExpr14// | -> | //RExpr15// 
+  | //RExpr15// | -> | //RExpr16// 
+  | //RExpr16// | -> | //RExpr17// 
+  | //RExpr17// | -> | //RExpr18// 
+  | //RExpr18// | -> | //RExpr19// 
+  | //RExpr19// | -> | //RExpr20// 
   | //Assignment_op// | -> | ``=`` 
-  |  |  **|**  | ``+=`` 
-  |  |  **|**  | ``-=`` 
-  |  |  **|**  | ``*=`` 
-  |  |  **|**  | ``/=`` 
-  |  |  **|**  | ``%=`` 
-  |  |  **|**  | ``**=`` 
-  |  |  **|**  | ``&=`` 
-  |  |  **|**  | ``|=`` 
-  |  |  **|**  | ``^=`` 
-  |  |  **|**  | ``&&=`` 
-  |  |  **|**  | ``||=`` 
-  |  |  **|**  | ``<<=`` 
-  |  |  **|**  | ``>>=`` 
-  |  |  **|**  | ``<=>`` 
   | //StmtWrite// | -> | ``writeInt`` ``(`` //Integer// ``)`` 
   |  |  **|**  | ``writeReal`` ``(`` //Double// ``)`` 
-  |  |  **|**  | ``writeChar`` ``(`` //Char// ``)`` 
-  |  |  **|**  | ``writeString`` ``(`` //String// ``)`` 
   | //StmtRead// | -> | ``readInt`` ``(`` //Integer// ``)`` 
   |  |  **|**  | ``readReal`` ``(`` //Double// ``)`` 
-  |  |  **|**  | ``readChar`` ``(`` //Char// ``)`` 
-  |  |  **|**  | ``readString`` ``(`` //String// ``)`` 
   | //StmtCondition// | -> | ``if`` //RExpr// ``then`` //Stmt// 
   |  |  **|**  | ``if`` ``(`` //RExpr// ``)`` ``{`` //[Stmt]// ``}`` 
-  |  |  **|**  | ``if`` //RExpr// ``then`` //Stmt// ``else`` //Stmt// 
-  |  |  **|**  | ``if`` ``(`` //RExpr// ``)`` ``{`` //[Stmt]// ``}`` ``else`` ``{`` //[Stmt]// ``}`` 
-  | //StmtSelect// | -> | ``select`` //RExpr// ``{`` //[SWhen]// ``otherwise`` ``{`` //[Stmt]// ``}`` ``}`` 
-  | //SWhen// | -> | ``when`` //Constant// ``do`` //Stmt// 
-  |  |  **|**  | ``when`` //Constant// ``{`` //[Stmt]// ``}`` 
-  | //[SWhen]// | -> | //SWhen// 
-  |  |  **|**  | //SWhen// //[SWhen]// 
   | //StmtWhile// | -> | ``while`` //RExpr// ``do`` //Stmt// 
-  |  |  **|**  | ``while`` //RExpr// ``{`` //[Stmt]// ``}`` 
   | //StmtDo// | -> | ``do`` ``{`` //[Stmt]// ``}`` ``while`` //RExpr// ``;`` 
   | //StmtFor// | -> | ``for`` //RExpr// ``in`` //Aggr// ``do`` ``{`` //[Stmt]// ``}`` 
-  |  |  **|**  | ``for`` //RExpr// ``in`` //Aggr// ``{`` //[Stmt]// ``}`` 
   | //Aggr// | -> | //Constant// ``..`` //Constant// 
   | //StmtJump// | -> | ``break`` 
-  |  |  **|**  | ``break`` //Constant// 
   |  |  **|**  | ``continue`` 
-  |  |  **|**  | ``continue`` //Constant// 
   | //Param// | -> | //RExpr20// 
   |  |  **|**  | ``*`` //RExpr// 
   | //Constant// | -> | //Integer// 
-  |  |  **|**  | //Boolean// 
-  |  |  **|**  | //Double// 
-  |  |  **|**  | //Char// 
-  |  |  **|**  | //String// 
   | //StmtVar// | -> | ``var`` //[BlockVar]// 
   |  |  **|**  | ``const`` //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
-  |  |  **|**  | ``param`` //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
-  |  |  **|**  | ``config const`` //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
-  |  |  **|**  | ``config param`` //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
   | //BlockVar// | -> | //Ident// ``:`` //TypeSpec// ``=`` //RExpr// 
-  |  |  **|**  | //Ident// ``:`` //TypeSpec// 
-  |  |  **|**  | //Ident// ``=`` //RExpr// 
   | //DefFunc// | -> | ``function`` //Ident// ``(`` //[Arg]// ``)`` ``{`` //[Stmt]// ``}`` 
-  |  |  **|**  | ``function`` //Ident// ``(`` ``)`` ``{`` //[Stmt]// ``}`` 
   | //CallFunc// | -> | //Ident// ``(`` //[RExpr]// ``)`` ``;`` 
-  |  |  **|**  | //Ident// ``(`` ``)`` ``;`` 
   | //Arg// | -> | //Ident// ``:`` //TypeSpec// 
   | //TypeSpec// | -> | //BasicType// 
   | //BasicType// | -> | ``bool`` 

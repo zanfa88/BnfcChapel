@@ -29,7 +29,6 @@ transStmt :: Stmt -> Result
 transStmt x = case x of
   Assgn lexpr assignment_op rexpr  -> failure x
   Cond stmtcondition  -> failure x
-  Select stmtselect  -> failure x
   While stmtwhile  -> failure x
   Do stmtdo  -> failure x
   For stmtfor  -> failure x
@@ -73,18 +72,6 @@ transRExpr x = case x of
   Emul rexpr1 rexpr2  -> failure x
   Ediv rexpr1 rexpr2  -> failure x
   Emod rexpr1 rexpr2  -> failure x
-  Eneg rexpr  -> failure x
-  Ebneg rexpr  -> failure x
-  Ereduce rexpr1 rexpr2  -> failure x
-  Escan rexpr1 rexpr2  -> failure x
-  Edmapped rexpr1 rexpr2  -> failure x
-  Eexp rexpr  -> failure x
-  Ecast rexpr1 rexpr2  -> failure x
-  Enew rexpr  -> failure x
-  Emember rexpr1 rexpr2  -> failure x
-  Efunc rexpr  -> failure x
-  EfuncPar rexpr param  -> failure x
-  Eindex rexpr1 rexpr2  -> failure x
   Econs constant  -> failure x
   LExprR lexpr  -> failure x
 
@@ -92,61 +79,29 @@ transRExpr x = case x of
 transAssignment_op :: Assignment_op -> Result
 transAssignment_op x = case x of
   AssgnBase  -> failure x
-  AssgnAdd  -> failure x
-  AssgnSub  -> failure x
-  AssgnMul  -> failure x
-  AssgnDiv  -> failure x
-  AssgnMod  -> failure x
-  AssgnExp  -> failure x
-  AssgnAnd  -> failure x
-  AssgnOr  -> failure x
-  AssgnPow  -> failure x
-  AssgnAnd2  -> failure x
-  AssgnOr2  -> failure x
-  AssgnLeft  -> failure x
-  AssgnRight  -> failure x
-  AssgnSwap  -> failure x
 
 
 transStmtWrite :: StmtWrite -> Result
 transStmtWrite x = case x of
   WriteInt n  -> failure x
   WriteReal d  -> failure x
-  WriteChar c  -> failure x
-  WriteString str  -> failure x
 
 
 transStmtRead :: StmtRead -> Result
 transStmtRead x = case x of
   ReadInt n  -> failure x
   ReadReal d  -> failure x
-  ReadChar c  -> failure x
-  ReadString str  -> failure x
 
 
 transStmtCondition :: StmtCondition -> Result
 transStmtCondition x = case x of
   If1 rexpr stmt  -> failure x
   If2 rexpr stmts  -> failure x
-  IfElse1 rexpr stmt1 stmt2  -> failure x
-  IfElse2 rexpr stmts1 stmts2  -> failure x
-
-
-transStmtSelect :: StmtSelect -> Result
-transStmtSelect x = case x of
-  SSelect rexpr swhens stmts  -> failure x
-
-
-transSWhen :: SWhen -> Result
-transSWhen x = case x of
-  SWhenDo constant stmt  -> failure x
-  SWhenNoDo constant stmts  -> failure x
 
 
 transStmtWhile :: StmtWhile -> Result
 transStmtWhile x = case x of
   WhileDo rexpr stmt  -> failure x
-  WhileNoDo rexpr stmts  -> failure x
 
 
 transStmtDo :: StmtDo -> Result
@@ -157,7 +112,6 @@ transStmtDo x = case x of
 transStmtFor :: StmtFor -> Result
 transStmtFor x = case x of
   SForDo rexpr aggr stmts  -> failure x
-  SFor rexpr aggr stmts  -> failure x
 
 
 transAggr :: Aggr -> Result
@@ -168,9 +122,7 @@ transAggr x = case x of
 transStmtJump :: StmtJump -> Result
 transStmtJump x = case x of
   Break  -> failure x
-  BreakN constant  -> failure x
   Continue  -> failure x
-  ContinueN constant  -> failure x
 
 
 transParam :: Param -> Result
@@ -182,38 +134,27 @@ transParam x = case x of
 transConstant :: Constant -> Result
 transConstant x = case x of
   Int n  -> failure x
-  Bool boolean  -> failure x
-  Real d  -> failure x
-  Char c  -> failure x
-  String str  -> failure x
 
 
 transStmtVar :: StmtVar -> Result
 transStmtVar x = case x of
   SVarBlock blockvars  -> failure x
   SVarCon id typespec rexpr  -> failure x
-  SVarParam id typespec rexpr  -> failure x
-  SVarCCon id typespec rexpr  -> failure x
-  SVarCParam id typespec rexpr  -> failure x
 
 
 transBlockVar :: BlockVar -> Result
 transBlockVar x = case x of
   SBlockVar id typespec rexpr  -> failure x
-  SBlockVarU id typespec  -> failure x
-  SBlockVarT id rexpr  -> failure x
 
 
 transDefFunc :: DefFunc -> Result
 transDefFunc x = case x of
   SDefFunc id args stmts  -> failure x
-  SDefFuncV id stmts  -> failure x
 
 
 transCallFunc :: CallFunc -> Result
 transCallFunc x = case x of
   SCallFunc id rexprs  -> failure x
-  SCallFuncV id  -> failure x
 
 
 transArg :: Arg -> Result

@@ -8,427 +8,264 @@ import ErrM
 
 }
 
+%attributetype      {MyAttribute a}
+%attribute parsetree  {a}
+
 %name pProgram Program
 
 -- no lexer declaration
 %monad { Err } { thenM } { returnM }
 %tokentype { Token }
 
-%token 
- '!' { PT _ (TS _ 1) }
- '!=' { PT _ (TS _ 2) }
- '#' { PT _ (TS _ 3) }
- '%' { PT _ (TS _ 4) }
- '%=' { PT _ (TS _ 5) }
- '&' { PT _ (TS _ 6) }
- '&&' { PT _ (TS _ 7) }
- '&&=' { PT _ (TS _ 8) }
- '&=' { PT _ (TS _ 9) }
- '(' { PT _ (TS _ 10) }
- ')' { PT _ (TS _ 11) }
- '*' { PT _ (TS _ 12) }
- '**' { PT _ (TS _ 13) }
- '**=' { PT _ (TS _ 14) }
- '*=' { PT _ (TS _ 15) }
- '+' { PT _ (TS _ 16) }
- '+=' { PT _ (TS _ 17) }
- ',' { PT _ (TS _ 18) }
- '-' { PT _ (TS _ 19) }
- '-=' { PT _ (TS _ 20) }
- '.' { PT _ (TS _ 21) }
- '..' { PT _ (TS _ 22) }
- '/' { PT _ (TS _ 23) }
- '/=' { PT _ (TS _ 24) }
- ':' { PT _ (TS _ 25) }
- ';' { PT _ (TS _ 26) }
- '<' { PT _ (TS _ 27) }
- '<<' { PT _ (TS _ 28) }
- '<<=' { PT _ (TS _ 29) }
- '<=' { PT _ (TS _ 30) }
- '<=>' { PT _ (TS _ 31) }
- '=' { PT _ (TS _ 32) }
- '==' { PT _ (TS _ 33) }
- '>' { PT _ (TS _ 34) }
- '>=' { PT _ (TS _ 35) }
- '>>' { PT _ (TS _ 36) }
- '>>=' { PT _ (TS _ 37) }
- '[' { PT _ (TS _ 38) }
- ']' { PT _ (TS _ 39) }
- '^' { PT _ (TS _ 40) }
- '^=' { PT _ (TS _ 41) }
- 'align' { PT _ (TS _ 42) }
- 'bool' { PT _ (TS _ 43) }
- 'break' { PT _ (TS _ 44) }
- 'by' { PT _ (TS _ 45) }
- 'complex' { PT _ (TS _ 46) }
- 'config const' { PT _ (TS _ 47) }
- 'config param' { PT _ (TS _ 48) }
- 'const' { PT _ (TS _ 49) }
- 'continue' { PT _ (TS _ 50) }
- 'dmapped' { PT _ (TS _ 51) }
- 'do' { PT _ (TS _ 52) }
- 'else' { PT _ (TS _ 53) }
- 'false' { PT _ (TS _ 54) }
- 'for' { PT _ (TS _ 55) }
- 'function' { PT _ (TS _ 56) }
- 'if' { PT _ (TS _ 57) }
- 'imag' { PT _ (TS _ 58) }
- 'in' { PT _ (TS _ 59) }
- 'int' { PT _ (TS _ 60) }
- 'otherwise' { PT _ (TS _ 61) }
- 'param' { PT _ (TS _ 62) }
- 'readChar' { PT _ (TS _ 63) }
- 'readInt' { PT _ (TS _ 64) }
- 'readReal' { PT _ (TS _ 65) }
- 'readString' { PT _ (TS _ 66) }
- 'real' { PT _ (TS _ 67) }
- 'reduce' { PT _ (TS _ 68) }
- 'scan' { PT _ (TS _ 69) }
- 'select' { PT _ (TS _ 70) }
- 'string' { PT _ (TS _ 71) }
- 'then' { PT _ (TS _ 72) }
- 'true' { PT _ (TS _ 73) }
- 'uint' { PT _ (TS _ 74) }
- 'var' { PT _ (TS _ 75) }
- 'when' { PT _ (TS _ 76) }
- 'while' { PT _ (TS _ 77) }
- 'writeChar' { PT _ (TS _ 78) }
- 'writeInt' { PT _ (TS _ 79) }
- 'writeReal' { PT _ (TS _ 80) }
- 'writeString' { PT _ (TS _ 81) }
- '{' { PT _ (TS _ 82) }
- '|' { PT _ (TS _ 83) }
- '|=' { PT _ (TS _ 84) }
- '||' { PT _ (TS _ 85) }
- '||=' { PT _ (TS _ 86) }
- '}' { PT _ (TS _ 87) }
- '~' { PT _ (TS _ 88) }
+%token
+ '!=' { PT _ (TS _ 1) }
+ '#' { PT _ (TS _ 2) }
+ '%' { PT _ (TS _ 3) }
+ '&' { PT _ (TS _ 4) }
+ '&&' { PT _ (TS _ 5) }
+ '(' { PT _ (TS _ 6) }
+ ')' { PT _ (TS _ 7) }
+ '*' { PT _ (TS _ 8) }
+ '+' { PT _ (TS _ 9) }
+ ',' { PT _ (TS _ 10) }
+ '-' { PT _ (TS _ 11) }
+ '..' { PT _ (TS _ 12) }
+ '/' { PT _ (TS _ 13) }
+ ':' { PT _ (TS _ 14) }
+ ';' { PT _ (TS _ 15) }
+ '<' { PT _ (TS _ 16) }
+ '<<' { PT _ (TS _ 17) }
+ '<=' { PT _ (TS _ 18) }
+ '=' { PT _ (TS _ 19) }
+ '==' { PT _ (TS _ 20) }
+ '>' { PT _ (TS _ 21) }
+ '>=' { PT _ (TS _ 22) }
+ '>>' { PT _ (TS _ 23) }
+ '[' { PT _ (TS _ 24) }
+ ']' { PT _ (TS _ 25) }
+ '^' { PT _ (TS _ 26) }
+ 'align' { PT _ (TS _ 27) }
+ 'bool' { PT _ (TS _ 28) }
+ 'break' { PT _ (TS _ 29) }
+ 'by' { PT _ (TS _ 30) }
+ 'complex' { PT _ (TS _ 31) }
+ 'const' { PT _ (TS _ 32) }
+ 'continue' { PT _ (TS _ 33) }
+ 'do' { PT _ (TS _ 34) }
+ 'false' { PT _ (TS _ 35) }
+ 'for' { PT _ (TS _ 36) }
+ 'function' { PT _ (TS _ 37) }
+ 'if' { PT _ (TS _ 38) }
+ 'imag' { PT _ (TS _ 39) }
+ 'in' { PT _ (TS _ 40) }
+ 'int' { PT _ (TS _ 41) }
+ 'readInt' { PT _ (TS _ 42) }
+ 'readReal' { PT _ (TS _ 43) }
+ 'real' { PT _ (TS _ 44) }
+ 'string' { PT _ (TS _ 45) }
+ 'then' { PT _ (TS _ 46) }
+ 'true' { PT _ (TS _ 47) }
+ 'uint' { PT _ (TS _ 48) }
+ 'var' { PT _ (TS _ 49) }
+ 'while' { PT _ (TS _ 50) }
+ 'writeInt' { PT _ (TS _ 51) }
+ 'writeReal' { PT _ (TS _ 52) }
+ '{' { PT _ (TS _ 53) }
+ '|' { PT _ (TS _ 54) }
+ '||' { PT _ (TS _ 55) }
+ '}' { PT _ (TS _ 56) }
 
 L_ident  { PT _ (TV $$) }
 L_integ  { PT _ (TI $$) }
 L_doubl  { PT _ (TD $$) }
-L_charac { PT _ (TC $$) }
-L_quoted { PT _ (TL $$) }
 L_err    { _ }
 
 
 %%
 
-Ident   :: { Ident }   : L_ident  { Ident $1 }
-Integer :: { Integer } : L_integ  { (read ( $1)) :: Integer }
-Double  :: { Double }  : L_doubl  { (read ( $1)) :: Double }
-Char    :: { Char }    : L_charac { (read ( $1)) :: Char }
-String  :: { String }  : L_quoted {  $1 }
+Ident   : L_ident  { $$ = ((Ident $1)); }
+Integer : L_integ  { $$ = ((read ( $1)) :: Integer); }
+Double  : L_doubl  { $$ = ((read ( $1)) :: Double); }
 
-Boolean :: { Boolean }
-Boolean : 'true' { Boolean_true } 
-  | 'false' { Boolean_false }
+Boolean : 'true' { $$ = Boolean_true }
+  | 'false' { $$ = Boolean_false }
 
 
-Program :: { Program }
-Program : ListStmt { Prog $1 } 
+Program : ListStmt { $$ = Prog $1 }
 
 
-Stmt :: { Stmt }
-Stmt : LExpr Assignment_op RExpr ';' { Assgn $1 $2 $3 } 
-  | StmtCondition { Cond $1 }
-  | StmtSelect { Select $1 }
-  | StmtWhile { While $1 }
-  | StmtDo { Do $1 }
-  | StmtFor { For $1 }
-  | StmtJump ';' { Jump $1 }
-  | StmtWrite ';' { Write $1 }
-  | StmtRead ';' { Read $1 }
-  | StmtVar ';' { VarD $1 }
-  | DefFunc { DFunc $1 }
-  | CallFunc { CFunc $1 }
+Stmt : LExpr Assignment_op RExpr ';' { $$ = Assgn $1 $2 $3 }
+  | StmtCondition { $$ = Cond $1 }
+  | StmtWhile { $$ = While $1 }
+  | StmtDo { $$ = Do $1 }
+  | StmtFor { $$ = For $1 }
+  | StmtJump ';' { $$ = Jump $1 }
+  | StmtWrite ';' { $$ = Write $1 }
+  | StmtRead ';' { $$ = Read $1 }
+  | StmtVar ';' { $$ = VarD $1 }
+  | DefFunc { $$ = DFunc $1 }
+  | CallFunc { $$ = CFunc $1 }
 
 
-ListStmt :: { [Stmt] }
-ListStmt : Stmt { (:[]) $1 } 
-  | Stmt ListStmt { (:) $1 $2 }
+ListStmt : Stmt { $$ = (:[]) $1 }
+  | Stmt ListStmt { $$ = (:) $1 $2 }
 
+LExpr : Ident { $$ = Id $1 }
+  
 
-LExpr :: { LExpr }
-LExpr : Ident { Id $1 } 
-  | LExpr '[' RExpr20 ']' { ArrayEl $1 $3 }
+RExpr : RExpr 'by' RExpr2 { $$ = Eby $1 $3 }
+  | RExpr '#' RExpr2 { $$ = Ecount $1 $3 }
+  | RExpr 'align' RExpr2 { $$ = Ealign $1 $3 }
+  | RExpr1 { $$ = $1 }
 
+RExpr2 : RExpr2 '||' RExpr3 { $$ = Elor $1 $3 }
+  | RExpr3 { $$ = $1 }
 
-RExpr :: { RExpr }
-RExpr : RExpr 'by' RExpr2 { Eby $1 $3 } 
-  | RExpr '#' RExpr2 { Ecount $1 $3 }
-  | RExpr 'align' RExpr2 { Ealign $1 $3 }
-  | RExpr1 { $1 }
+RExpr3 : RExpr3 '&&' RExpr4 { $$ = Eland $1 $3 }
+  | RExpr4 { $$ = $1 }
 
+RExpr4 : RExpr4 '==' RExpr5 { $$ = Eeq $1 $3 }
+  | RExpr4 '!=' RExpr5 { $$ = Eneq $1 $3 }
+  | RExpr5 { $$ = $1 }
 
-RExpr2 :: { RExpr }
-RExpr2 : RExpr2 '||' RExpr3 { Elor $1 $3 } 
-  | RExpr3 { $1 }
+RExpr5 : RExpr5 '<=' RExpr6 { $$ = Eleq $1 $3 }
+  | RExpr5 '>=' RExpr6 { $$ = Egeq $1 $3 }
+  | RExpr5 '<' RExpr6 { $$ = El $1 $3 }
+  | RExpr5 '>' RExpr6 { $$ = Eg $1 $3 }
+  | RExpr6 { $$ = $1 }
 
+RExpr6 : RExpr6 '..' RExpr7 { $$ = Erange $1 $3 }
+  | RExpr7 { $$ = $1 }
 
-RExpr3 :: { RExpr }
-RExpr3 : RExpr3 '&&' RExpr4 { Eland $1 $3 } 
-  | RExpr4 { $1 }
+RExpr7 : RExpr7 '+' RExpr8 { $$ = Eadd $1 $3 }
+  | RExpr7 '-' RExpr8 { $$ = Esub $1 $3 }
+  | RExpr8 { $$ = $1 }
 
+RExpr8 : RExpr8 '|' RExpr9 { $$ = Ebitor $1 $3 }
+  | RExpr9 { $$ = $1 }
 
-RExpr4 :: { RExpr }
-RExpr4 : RExpr4 '==' RExpr5 { Eeq $1 $3 } 
-  | RExpr4 '!=' RExpr5 { Eneq $1 $3 }
-  | RExpr5 { $1 }
+RExpr9 : RExpr9 '^' RExpr10 { $$ = Ebitxor $1 $3 }
+  | RExpr10 { $$ = $1 }
 
+RExpr10 : RExpr10 '&' RExpr11 { $$ = Ebitand $1 $3 }
+  | RExpr11 { $$ = $1 }
 
-RExpr5 :: { RExpr }
-RExpr5 : RExpr5 '<=' RExpr6 { Eleq $1 $3 } 
-  | RExpr5 '>=' RExpr6 { Egeq $1 $3 }
-  | RExpr5 '<' RExpr6 { El $1 $3 }
-  | RExpr5 '>' RExpr6 { Eg $1 $3 }
-  | RExpr6 { $1 }
+RExpr11 : RExpr11 '<<' RExpr12 { $$ = Eleft $1 $3 }
+  | RExpr11 '>>' RExpr12 { $$ = Eright $1 $3 }
+  | RExpr12 { $$ = $1 }
 
+RExpr12 : '+' RExpr12 { $$ = Eupos $2 }
+  | '-' RExpr12 { $$ = Euneg $2 }
+  | RExpr13 { $$ = $1 }
 
-RExpr6 :: { RExpr }
-RExpr6 : RExpr6 '..' RExpr7 { Erange $1 $3 } 
-  | RExpr7 { $1 }
+RExpr13 : RExpr13 '*' RExpr14 { $$ = Emul $1 $3 }
+  | RExpr13 '/' RExpr14 { $$ =  $$ =Ediv $1 $3 }
+  | RExpr13 '%' RExpr14 { $$ = $$ = Emod $1 $3 }
+  | RExpr14 { $$ = $1 }
 
+RExpr20 : Constant { $$ = Econs $1 }
+  | RExpr21 { $$ = $1 }
 
-RExpr7 :: { RExpr }
-RExpr7 : RExpr7 '+' RExpr8 { Eadd $1 $3 } 
-  | RExpr7 '-' RExpr8 { Esub $1 $3 }
-  | RExpr8 { $1 }
+RExpr21 : LExpr { $$ = LExprR $1 }
+  | '(' RExpr ')' { $$ = $2 }
 
 
-RExpr8 :: { RExpr }
-RExpr8 : RExpr8 '|' RExpr9 { Ebitor $1 $3 } 
-  | RExpr9 { $1 }
+RExpr1 : RExpr2 { $$ = $1 }
 
 
-RExpr9 :: { RExpr }
-RExpr9 : RExpr9 '^' RExpr10 { Ebitxor $1 $3 } 
-  | RExpr10 { $1 }
+RExpr14 : RExpr15 { $$ = $1 }
 
 
-RExpr10 :: { RExpr }
-RExpr10 : RExpr10 '&' RExpr11 { Ebitand $1 $3 } 
-  | RExpr11 { $1 }
+RExpr15 : RExpr16 { $$ = $1 }
 
 
-RExpr11 :: { RExpr }
-RExpr11 : RExpr11 '<<' RExpr12 { Eleft $1 $3 } 
-  | RExpr11 '>>' RExpr12 { Eright $1 $3 }
-  | RExpr12 { $1 }
+RExpr16 : RExpr17 { $$ = $1 }
 
 
-RExpr12 :: { RExpr }
-RExpr12 : '+' RExpr12 { Eupos $2 } 
-  | '-' RExpr12 { Euneg $2 }
-  | RExpr13 { $1 }
+RExpr17 : RExpr18 { $$ = $1 }
 
 
-RExpr13 :: { RExpr }
-RExpr13 : RExpr13 '*' RExpr14 { Emul $1 $3 } 
-  | RExpr13 '/' RExpr14 { Ediv $1 $3 }
-  | RExpr13 '%' RExpr14 { Emod $1 $3 }
-  | RExpr14 { $1 }
+RExpr18 : RExpr19 { $$ = $1 }
 
+RExpr19 : RExpr20 { $$ = $1 }
 
-RExpr14 :: { RExpr }
-RExpr14 : '!' RExpr14 { Eneg $2 } 
-  | '~' RExpr14 { Ebneg $2 }
-  | RExpr15 { $1 }
+Assignment_op : '=' { $$ = AssgnBase }
 
+StmtWrite : 'writeInt' '(' Integer ')' { $$ = WriteInt $3 }
+  | 'writeReal' '(' Double ')' { $$ = WriteReal $3 }
 
-RExpr15 :: { RExpr }
-RExpr15 : RExpr15 'reduce' RExpr16 { Ereduce $1 $3 } 
-  | RExpr15 'scan' RExpr16 { Escan $1 $3 }
-  | RExpr15 'dmapped' RExpr16 { Edmapped $1 $3 }
-  | RExpr16 { $1 }
 
+StmtRead : 'readInt' '(' Integer ')' { $$ = ReadInt $3 }
+  | 'readReal' '(' Double ')' { $$ = ReadReal $3 }
 
-RExpr16 :: { RExpr }
-RExpr16 : '**' RExpr16 { Eexp $2 } 
-  | RExpr17 { $1 }
 
+StmtCondition : 'if' RExpr 'then' Stmt { $$ = If1 $2 $4 }
+  | 'if' '(' RExpr ')' '{' ListStmt '}' { $$ = If2 $3 $6 }
 
-RExpr17 :: { RExpr }
-RExpr17 : RExpr17 ':' RExpr18 { Ecast $1 $3 } 
-  | RExpr18 { $1 }
 
+StmtWhile : 'while' RExpr 'do' Stmt { $$ = WhileDo $2 $4 }
 
-RExpr18 :: { RExpr }
-RExpr18 : 'by' RExpr18 { Enew $2 } 
-  | RExpr19 { $1 }
 
+StmtDo : 'do' '{' ListStmt '}' 'while' RExpr ';' { $$ = SDo $3 $6 } 
 
-RExpr19 :: { RExpr }
-RExpr19 : RExpr19 '.' RExpr20 { Emember $1 $3 } 
-  | RExpr19 '(' ')' { Efunc $1 }
-  | RExpr19 '(' Param ')' { EfuncPar $1 $3 }
-  | RExpr19 '[' RExpr ']' { Eindex $1 $3 }
-  | RExpr20 { $1 }
+StmtFor : 'for' RExpr 'in' Aggr 'do' '{' ListStmt '}' { $$ = SForDo $2 $4 $7 } 
 
 
-RExpr20 :: { RExpr }
-RExpr20 : Constant { Econs $1 } 
-  | RExpr21 { $1 }
+Aggr : Constant '..' Constant { $$ = ForAggr $1 $3 } 
 
 
-RExpr21 :: { RExpr }
-RExpr21 : LExpr { LExprR $1 } 
-  | '(' RExpr ')' { $2 }
+StmtJump : 'break' { $$ = Break } 
+  | 'continue' { $$ = Continue }
 
 
-RExpr1 :: { RExpr }
-RExpr1 : RExpr2 { $1 } 
+Param : RExpr20 { $$ = Pval $1 } 
+  | '*' RExpr { $$ = Pref $2 }
 
 
-Assignment_op :: { Assignment_op }
-Assignment_op : '=' { AssgnBase } 
-  | '+=' { AssgnAdd }
-  | '-=' { AssgnSub }
-  | '*=' { AssgnMul }
-  | '/=' { AssgnDiv }
-  | '%=' { AssgnMod }
-  | '**=' { AssgnExp }
-  | '&=' { AssgnAnd }
-  | '|=' { AssgnOr }
-  | '^=' { AssgnPow }
-  | '&&=' { AssgnAnd2 }
-  | '||=' { AssgnOr2 }
-  | '<<=' { AssgnLeft }
-  | '>>=' { AssgnRight }
-  | '<=>' { AssgnSwap }
+Constant : Integer { $$ = Int $1 } 
 
 
-StmtWrite :: { StmtWrite }
-StmtWrite : 'writeInt' '(' Integer ')' { WriteInt $3 } 
-  | 'writeReal' '(' Double ')' { WriteReal $3 }
-  | 'writeChar' '(' Char ')' { WriteChar $3 }
-  | 'writeString' '(' String ')' { WriteString $3 }
+StmtVar : 'var' ListBlockVar { $$ = SVarBlock $2 } 
+  | 'const' Ident ':' TypeSpec '=' RExpr { $$ = SVarCon $2 $4 $6 }
 
 
-StmtRead :: { StmtRead }
-StmtRead : 'readInt' '(' Integer ')' { ReadInt $3 } 
-  | 'readReal' '(' Double ')' { ReadReal $3 }
-  | 'readChar' '(' Char ')' { ReadChar $3 }
-  | 'readString' '(' String ')' { ReadString $3 }
+BlockVar : Ident ':' TypeSpec '=' RExpr { $$ = SBlockVar $1 $3 $5 } 
 
 
-StmtCondition :: { StmtCondition }
-StmtCondition : 'if' RExpr 'then' Stmt { If1 $2 $4 } 
-  | 'if' '(' RExpr ')' '{' ListStmt '}' { If2 $3 $6 }
-  | 'if' RExpr 'then' Stmt 'else' Stmt { IfElse1 $2 $4 $6 }
-  | 'if' '(' RExpr ')' '{' ListStmt '}' 'else' '{' ListStmt '}' { IfElse2 $3 $6 $10 }
+DefFunc : 'function' Ident '(' ListArg ')' '{' ListStmt '}' { $$ = SDefFunc $2 $4 $7 } 
 
 
-StmtSelect :: { StmtSelect }
-StmtSelect : 'select' RExpr '{' ListSWhen 'otherwise' '{' ListStmt '}' '}' { SSelect $2 $4 $7 } 
+CallFunc : Ident '(' ListRExpr ')' ';' { $$ = SCallFunc $1 $3 } 
 
 
-SWhen :: { SWhen }
-SWhen : 'when' Constant 'do' Stmt { SWhenDo $2 $4 } 
-  | 'when' Constant '{' ListStmt '}' { SWhenNoDo $2 $4 }
+Arg : Ident ':' TypeSpec { $$ = SArg $1 $3 } 
 
 
-ListSWhen :: { [SWhen] }
-ListSWhen : SWhen { (:[]) $1 } 
-  | SWhen ListSWhen { (:) $1 $2 }
+TypeSpec : BasicType { $$ = BasTyp $1 } 
 
 
-StmtWhile :: { StmtWhile }
-StmtWhile : 'while' RExpr 'do' Stmt { WhileDo $2 $4 } 
-  | 'while' RExpr '{' ListStmt '}' { WhileNoDo $2 $4 }
+BasicType : 'bool' { $$ = BasicType_bool } 
+  | 'uint' { $$ = BasicType_uint }
+  | 'int' { $$ = BasicType_int }
+  | 'real' { $$ = BasicType_real }
+  | 'imag' { $$ = BasicType_imag }
+  | 'complex' { $$ = BasicType_complex }
+  | 'string' { $$ = BasicType_string }
 
 
-StmtDo :: { StmtDo }
-StmtDo : 'do' '{' ListStmt '}' 'while' RExpr ';' { SDo $3 $6 } 
+ListRExpr : {- empty -} { $$ = [] } 
+  | RExpr { $$ = (:[]) $1 }
+  | RExpr ',' ListRExpr { $$ = (:) $1 $3 }
 
 
-StmtFor :: { StmtFor }
-StmtFor : 'for' RExpr 'in' Aggr 'do' '{' ListStmt '}' { SForDo $2 $4 $7 } 
-  | 'for' RExpr 'in' Aggr '{' ListStmt '}' { SFor $2 $4 $6 }
+ListBlockVar : {- empty -} { $$ = [] } 
+  | BlockVar { $$ = (:[]) $1 }
+  | BlockVar ',' ListBlockVar { $$ = (:) $1 $3 }
 
 
-Aggr :: { Aggr }
-Aggr : Constant '..' Constant { ForAggr $1 $3 } 
-
-
-StmtJump :: { StmtJump }
-StmtJump : 'break' { Break } 
-  | 'break' Constant { BreakN $2 }
-  | 'continue' { Continue }
-  | 'continue' Constant { ContinueN $2 }
-
-
-Param :: { Param }
-Param : RExpr20 { Pval $1 } 
-  | '*' RExpr { Pref $2 }
-
-
-Constant :: { Constant }
-Constant : Integer { Int $1 } 
-  | Boolean { Bool $1 }
-  | Double { Real $1 }
-  | Char { Char $1 }
-  | String { String $1 }
-
-
-StmtVar :: { StmtVar }
-StmtVar : 'var' ListBlockVar { SVarBlock $2 } 
-  | 'const' Ident ':' TypeSpec '=' RExpr { SVarCon $2 $4 $6 }
-  | 'param' Ident ':' TypeSpec '=' RExpr { SVarParam $2 $4 $6 }
-  | 'config const' Ident ':' TypeSpec '=' RExpr { SVarCCon $2 $4 $6 }
-  | 'config param' Ident ':' TypeSpec '=' RExpr { SVarCParam $2 $4 $6 }
-
-
-BlockVar :: { BlockVar }
-BlockVar : Ident ':' TypeSpec '=' RExpr { SBlockVar $1 $3 $5 } 
-  | Ident ':' TypeSpec { SBlockVarU $1 $3 }
-  | Ident '=' RExpr { SBlockVarT $1 $3 }
-
-
-DefFunc :: { DefFunc }
-DefFunc : 'function' Ident '(' ListArg ')' '{' ListStmt '}' { SDefFunc $2 $4 $7 } 
-  | 'function' Ident '(' ')' '{' ListStmt '}' { SDefFuncV $2 $6 }
-
-
-CallFunc :: { CallFunc }
-CallFunc : Ident '(' ListRExpr ')' ';' { SCallFunc $1 $3 } 
-  | Ident '(' ')' ';' { SCallFuncV $1 }
-
-
-Arg :: { Arg }
-Arg : Ident ':' TypeSpec { SArg $1 $3 } 
-
-
-TypeSpec :: { TypeSpec }
-TypeSpec : BasicType { BasTyp $1 } 
-
-
-BasicType :: { BasicType }
-BasicType : 'bool' { BasicType_bool } 
-  | 'uint' { BasicType_uint }
-  | 'int' { BasicType_int }
-  | 'real' { BasicType_real }
-  | 'imag' { BasicType_imag }
-  | 'complex' { BasicType_complex }
-  | 'string' { BasicType_string }
-
-
-ListRExpr :: { [RExpr] }
-ListRExpr : {- empty -} { [] } 
-  | RExpr { (:[]) $1 }
-  | RExpr ',' ListRExpr { (:) $1 $3 }
-
-
-ListBlockVar :: { [BlockVar] }
-ListBlockVar : {- empty -} { [] } 
-  | BlockVar { (:[]) $1 }
-  | BlockVar ',' ListBlockVar { (:) $1 $3 }
-
-
-ListArg :: { [Arg] }
-ListArg : {- empty -} { [] } 
-  | Arg { (:[]) $1 }
-  | Arg ',' ListArg { (:) $1 $3 }
+ListArg : {- empty -} { $$ = [] } 
+  | Arg { $$ = (:[]) $1 }
+  | Arg ',' ListArg { $$ = (:) $1 $3 }
 
 
 

@@ -16,7 +16,6 @@ data Program =
 data Stmt =
    Assgn LExpr Assignment_op RExpr
  | Cond StmtCondition
- | Select StmtSelect
  | While StmtWhile
  | Do StmtDo
  | For StmtFor
@@ -58,73 +57,31 @@ data RExpr =
  | Emul RExpr RExpr
  | Ediv RExpr RExpr
  | Emod RExpr RExpr
- | Eneg RExpr
- | Ebneg RExpr
- | Ereduce RExpr RExpr
- | Escan RExpr RExpr
- | Edmapped RExpr RExpr
- | Eexp RExpr
- | Ecast RExpr RExpr
- | Enew RExpr
- | Emember RExpr RExpr
- | Efunc RExpr
- | EfuncPar RExpr Param
- | Eindex RExpr RExpr
  | Econs Constant
  | LExprR LExpr
   deriving (Eq,Ord,Show)
 
 data Assignment_op =
    AssgnBase
- | AssgnAdd
- | AssgnSub
- | AssgnMul
- | AssgnDiv
- | AssgnMod
- | AssgnExp
- | AssgnAnd
- | AssgnOr
- | AssgnPow
- | AssgnAnd2
- | AssgnOr2
- | AssgnLeft
- | AssgnRight
- | AssgnSwap
   deriving (Eq,Ord,Show)
 
 data StmtWrite =
    WriteInt Integer
  | WriteReal Double
- | WriteChar Char
- | WriteString String
   deriving (Eq,Ord,Show)
 
 data StmtRead =
    ReadInt Integer
  | ReadReal Double
- | ReadChar Char
- | ReadString String
   deriving (Eq,Ord,Show)
 
 data StmtCondition =
    If1 RExpr Stmt
  | If2 RExpr [Stmt]
- | IfElse1 RExpr Stmt Stmt
- | IfElse2 RExpr [Stmt] [Stmt]
-  deriving (Eq,Ord,Show)
-
-data StmtSelect =
-   SSelect RExpr [SWhen] [Stmt]
-  deriving (Eq,Ord,Show)
-
-data SWhen =
-   SWhenDo Constant Stmt
- | SWhenNoDo Constant [Stmt]
   deriving (Eq,Ord,Show)
 
 data StmtWhile =
    WhileDo RExpr Stmt
- | WhileNoDo RExpr [Stmt]
   deriving (Eq,Ord,Show)
 
 data StmtDo =
@@ -133,7 +90,6 @@ data StmtDo =
 
 data StmtFor =
    SForDo RExpr Aggr [Stmt]
- | SFor RExpr Aggr [Stmt]
   deriving (Eq,Ord,Show)
 
 data Aggr =
@@ -142,9 +98,7 @@ data Aggr =
 
 data StmtJump =
    Break
- | BreakN Constant
  | Continue
- | ContinueN Constant
   deriving (Eq,Ord,Show)
 
 data Param =
@@ -154,34 +108,23 @@ data Param =
 
 data Constant =
    Int Integer
- | Bool Boolean
- | Real Double
- | Char Char
- | String String
   deriving (Eq,Ord,Show)
 
 data StmtVar =
    SVarBlock [BlockVar]
  | SVarCon Ident TypeSpec RExpr
- | SVarParam Ident TypeSpec RExpr
- | SVarCCon Ident TypeSpec RExpr
- | SVarCParam Ident TypeSpec RExpr
   deriving (Eq,Ord,Show)
 
 data BlockVar =
    SBlockVar Ident TypeSpec RExpr
- | SBlockVarU Ident TypeSpec
- | SBlockVarT Ident RExpr
   deriving (Eq,Ord,Show)
 
 data DefFunc =
    SDefFunc Ident [Arg] [Stmt]
- | SDefFuncV Ident [Stmt]
   deriving (Eq,Ord,Show)
 
 data CallFunc =
    SCallFunc Ident [RExpr]
- | SCallFuncV Ident
   deriving (Eq,Ord,Show)
 
 data Arg =

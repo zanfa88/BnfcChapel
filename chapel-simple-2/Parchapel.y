@@ -10,6 +10,7 @@ import ErrM
 
 %attributetype    {MyAttribute a}
 %attribute parsetree  {a}
+--dsdsd
 
 
 
@@ -106,9 +107,10 @@ Stmt : LExpr Assignment_op RExpr ';' { $$ = Assgn $1 $2 $3 }
   | CallFunc { $$ = CFunc $1 }
 
 
-ListStmt : Stmt { $$ = (:[]) $1 } 
-  | Stmt ListStmt { $$ = (:) $1 $2 }
-  | {- empty -} { $$ = [] }
+ListStmt 
+  --: Stmt { $$ = (:[]) $1 } 
+  --| Stmt ListStmt { $$ = (:) $1 $2 }
+  : {- empty -} { $$ = [] }
   | Stmt ListStmt { $$ = (:) $1 $2 }
 
 
@@ -117,8 +119,8 @@ LExpr : Ident { $$ = Id $1 }
 
 
 RExpr 
-  : RExpr { $$ = $1 }
-  | RExpr '#' RExpr { $$ = Ecount $1 $3 } 
+  --: RExpr { $$ = $1 }
+  : RExpr '#' RExpr { $$ = Ecount $1 $3 } 
   | RExpr '||' RExpr { $$ = Elor $1 $3 } 
   | RExpr '&&' RExpr { $$ = Eland $1 $3 } 
   | RExpr '==' RExpr { $$ = Eeq $1 $3 } 
