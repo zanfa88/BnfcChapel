@@ -1,0 +1,45 @@
+entrypoints Program ;	
+
+RProg.   	Program 	::= [Stmt] ;
+
+-- comando: assegnamento
+RAssign.	Stmt 		::= LExp "=" RExp ; 
+-- comando: dichiarazione variabili
+RDecVar.	Stmt 		::= StmtVar ; 
+
+
+--elementi di base
+RInt. 		BasicType	::= Integer ;
+RFloat. 	BasicType 	::= Double ;
+RChar. 		BasicType 	::= Char ;
+RString. 	BasicType 	::= String ;
+RBoolean. 	BasicType 	::= Boolean ;
+
+-- left expression
+RLExp. 		LExp 		::= Iden ;
+
+-- right expression
+RAdd. 		RExp 		::= RExp "+" RExp ;
+RGre. 		RExp 		::= RExp ">" RExp ;
+RDiv. 		RExp 		::= RExp "/" RExp ;
+RElem. 		RExp 		::= BasicType ;
+
+-- Dichiarazione variabili
+RVarBlock. 	StmtVar 	::= "var" [BlockVar];
+RBlockVar.	BlockVar 	::= Iden ":" Type "=" RExp ;
+
+-- booleani
+RTrue. 		Boolean 	::= "true" ;
+RFalse. 	Boolean 	::= "false" ;
+
+-- tipi 
+RTypeInt. 	Type 		::= "int" ;
+RTypeFloat. Type 		::= "real" ;
+RTypeChar. 	Type 		::= "char" ;
+RTypeString. Type 		::= "string" ;
+RTypeBool. 	Type 		::= "boolean" ;
+
+token Iden (letter | '_')(letter | digit | '_')* ;
+
+separator BlockVar "," ;
+separator Stmt ";" ;
