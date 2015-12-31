@@ -109,8 +109,9 @@ BlockVar : Iden ':' Type '=' RExp {
   $$          = RBlockVar $1 $3 $5 ;
   $$.envOut   = (insVarEnv (Var $1 $3.tip) $$.envIn);
   $$.err      = (checkDefVar $3 $5.tip) ;
-  where (
-    Bad $ "--->BlockVar: printE $$.envOut " ++ $$.envOut
+  where ( if ($$.err == "")   
+    then (Ok())
+    else (Bad $ "Error on variable assignment at " ++ tokenPos2 $2 ++ ". Type are different")
     ) ;
   }   
 
