@@ -383,7 +383,7 @@ BasicType
   }
   | String    { 
     $$ = RString $1 ;
-    $$.tip = RTypString ;
+    $$.tip = RTypeString ;
   }
   | Boolean   { 
     $$ = RBoolean $1 ;
