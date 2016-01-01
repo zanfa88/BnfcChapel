@@ -94,11 +94,6 @@ data StmtJump =
  | Continue
   deriving (Eq,Ord,Show)
 
-data Param =
-   Pval RExpr
- | Pref RExpr
-  deriving (Eq,Ord,Show)
-
 data StmtVar =
    SVarBlock [BlockVar]
  | SVarCon [BlockVar]
@@ -118,6 +113,7 @@ data CallFunc =
 
 data Arg =
    SArg Ident Type
+ | PArg Ident Type
   deriving (Eq,Ord,Show)
 
 data BasicType =

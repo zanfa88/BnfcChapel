@@ -131,19 +131,18 @@ All other symbols are terminals.
   | //StmtWhile// | -> | ``while`` //RExpr// ``do`` //Stmt// 
   |  |  **|**  | ``while`` //RExpr// ``{`` //[Stmt]// ``}`` 
   | //StmtDo// | -> | ``do`` ``{`` //[Stmt]// ``}`` ``while`` //RExpr// ``;`` 
-  | //StmtFor// | -> | ``for`` //RExpr// ``in`` //Aggr// ``do`` ``{`` //[Stmt]// ``}`` 
-  |  |  **|**  | ``for`` //RExpr// ``in`` //Aggr// ``{`` //[Stmt]// ``}`` 
+  | //StmtFor// | -> | ``for`` //Ident// ``in`` //Aggr// ``do`` ``{`` //[Stmt]// ``}`` 
+  |  |  **|**  | ``for`` //Ident// ``in`` //Aggr// ``{`` //[Stmt]// ``}`` 
   | //Aggr// | -> | //Integer// ``..`` //Integer// 
   | //StmtJump// | -> | ``break`` 
   |  |  **|**  | ``continue`` 
-  | //Param// | -> | //RExpr13// 
-  |  |  **|**  | ``*`` //RExpr// 
   | //StmtVar// | -> | ``var`` //[BlockVar]// 
   |  |  **|**  | ``const`` //[BlockVar]// 
   | //BlockVar// | -> | //Ident// ``:`` //Type// ``=`` //RExpr// 
   | //DefFunc// | -> | ``function`` //Ident// ``(`` //[Arg]// ``)`` ``{`` //[Stmt]// ``}`` 
   | //CallFunc// | -> | //Ident// ``(`` //[RExpr]// ``)`` 
   | //Arg// | -> | //Ident// ``:`` //Type// 
+  |  |  **|**  | ``*`` //Ident// ``:`` //Type// 
   | //BasicType// | -> | //Integer// 
   |  |  **|**  | //Double// 
   |  |  **|**  | //Char// 

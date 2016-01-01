@@ -70,12 +70,16 @@ transStmtWrite :: StmtWrite -> Result
 transStmtWrite x = case x of
   WriteInt n  -> failure x
   WriteReal d  -> failure x
+  WriteChar c  -> failure x
+  WriteString str  -> failure x
 
 
 transStmtRead :: StmtRead -> Result
 transStmtRead x = case x of
   ReadInt n  -> failure x
   ReadReal d  -> failure x
+  ReadChar c  -> failure x
+  ReadString str  -> failure x
 
 
 transStmtCondition :: StmtCondition -> Result

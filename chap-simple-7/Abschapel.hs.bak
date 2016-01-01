@@ -55,11 +55,15 @@ data RExpr =
 data StmtWrite =
    WriteInt Integer
  | WriteReal Double
+ | WriteChar Char
+ | WriteString String
   deriving (Eq,Ord,Show)
 
 data StmtRead =
    ReadInt Integer
  | ReadReal Double
+ | ReadChar Char
+ | ReadString String
   deriving (Eq,Ord,Show)
 
 data StmtCondition =
@@ -77,8 +81,8 @@ data StmtDo =
   deriving (Eq,Ord,Show)
 
 data StmtFor =
-   SForDo RExpr Aggr [Stmt]
- | SForDoBloc RExpr Aggr [Stmt]
+   SForDo Ident Aggr [Stmt]
+ | SForDoBloc Ident Aggr [Stmt]
   deriving (Eq,Ord,Show)
 
 data Aggr =
@@ -135,5 +139,7 @@ data Type =
  | RTypeChar
  | RTypeString
  | RTypeBool
+ | TypeVoid
+ | VarNotDec
   deriving (Eq,Ord,Show)
 

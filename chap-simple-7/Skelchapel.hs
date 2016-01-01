@@ -101,8 +101,8 @@ transStmtDo x = case x of
 
 transStmtFor :: StmtFor -> Result
 transStmtFor x = case x of
-  SForDo rexpr aggr stmts  -> failure x
-  SForDoBloc rexpr aggr stmts  -> failure x
+  SForDo id aggr stmts  -> failure x
+  SForDoBloc id aggr stmts  -> failure x
 
 
 transAggr :: Aggr -> Result
@@ -114,12 +114,6 @@ transStmtJump :: StmtJump -> Result
 transStmtJump x = case x of
   Break  -> failure x
   Continue  -> failure x
-
-
-transParam :: Param -> Result
-transParam x = case x of
-  Pval rexpr  -> failure x
-  Pref rexpr  -> failure x
 
 
 transStmtVar :: StmtVar -> Result
@@ -146,6 +140,7 @@ transCallFunc x = case x of
 transArg :: Arg -> Result
 transArg x = case x of
   SArg id type'  -> failure x
+  PArg id type'  -> failure x
 
 
 transBasicType :: BasicType -> Result

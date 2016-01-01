@@ -71,17 +71,14 @@ WhileDoS.  	StmtWhile     ::= "while" RExpr "{" [Stmt] "}" ;
 SDo.        StmtDo     ::= "do" "{" [Stmt] "}" "while" RExpr ";" ;
 
 -- Statement per il for
-SForDo.   	StmtFor 	::= "for" RExpr "in" Aggr "do" "{" [Stmt] "}" ;
-SForDoBloc. StmtFor 	::= "for" RExpr "in" Aggr "{" [Stmt] "}" ;
+SForDo.   	StmtFor 	::= "for" Ident "in" Aggr "do" "{" [Stmt] "}" ;
+SForDoBloc. StmtFor 	::= "for" Ident "in" Aggr "{" [Stmt] "}" ;
 ForAggr. 	Aggr  		::= Integer ".." Integer ;
 
 -- Statement per break e continue
 Break.        StmtJump ::= "break" ;
 Continue.    StmtJump ::= "continue";
 
--- Passaggio valori per valore e referenza
-Pval.        Param    ::= RExpr13 ;
-Pref.        Param    ::= "*" RExpr ;
 
 -- Dichiarazione variabili
 SVarBlock.       StmtVar     ::= "var" [BlockVar];
@@ -97,6 +94,7 @@ SCallFunc.     CallFunc     ::= Ident "(" [RExpr] ")" ;
 
 -- Argomenti delle funzioni
 SArg.         Arg     ::= Ident ":" Type ;
+PArg.         Arg     ::= "*" Ident ":" Type ;
 
 --elementi di base
 RInt. 		BasicType	::= Integer ;

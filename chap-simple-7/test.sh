@@ -58,7 +58,7 @@ echo "var a:int=2;for a in 1..10 do {a=3;}" | ./Testchapel
 echo "-----------------" 
 echo "-----------------"
 echo "[OK] if inside for"
-echo "var a:int=2;for a in 1..220 { if a==3 then break; a=4; }" | ./Testchapel 
+echo "var a:int=2;for a in 1..220 { if a==3 then a=4; }" | ./Testchapel 
 echo "writeInt(4);" | ./Testchapel 
 echo "-----------------" 
 echo "-----------------"

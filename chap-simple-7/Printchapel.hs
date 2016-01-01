@@ -178,8 +178,8 @@ instance Print StmtDo where
 
 instance Print StmtFor where
   prt i e = case e of
-   SForDo rexpr aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 rexpr , doc (showString "in") , prt 0 aggr , doc (showString "do") , doc (showString "{") , prt 0 stmts , doc (showString "}")])
-   SForDoBloc rexpr aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 rexpr , doc (showString "in") , prt 0 aggr , doc (showString "{") , prt 0 stmts , doc (showString "}")])
+   SForDo id aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 id , doc (showString "in") , prt 0 aggr , doc (showString "do") , doc (showString "{") , prt 0 stmts , doc (showString "}")])
+   SForDoBloc id aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 id , doc (showString "in") , prt 0 aggr , doc (showString "{") , prt 0 stmts , doc (showString "}")])
 
 
 instance Print Aggr where
@@ -191,12 +191,6 @@ instance Print StmtJump where
   prt i e = case e of
    Break  -> prPrec i 0 (concatD [doc (showString "break")])
    Continue  -> prPrec i 0 (concatD [doc (showString "continue")])
-
-
-instance Print Param where
-  prt i e = case e of
-   Pval rexpr -> prPrec i 0 (concatD [prt 13 rexpr])
-   Pref rexpr -> prPrec i 0 (concatD [doc (showString "*") , prt 0 rexpr])
 
 
 instance Print StmtVar where
@@ -227,6 +221,7 @@ instance Print CallFunc where
 instance Print Arg where
   prt i e = case e of
    SArg id type' -> prPrec i 0 (concatD [prt 0 id , doc (showString ":") , prt 0 type'])
+   PArg id type' -> prPrec i 0 (concatD [doc (showString "*") , prt 0 id , doc (showString ":") , prt 0 type'])
 
   prtList es = case es of
    [] -> (concatD [])

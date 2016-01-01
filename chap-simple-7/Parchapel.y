@@ -579,11 +579,6 @@ StmtJump
   }
 
 
-Param 
-  : RExpr {$$ =  Pval $1 } 
-  | '*' RExpr { $$ = Pref $2 }
-
-
 StmtVar 
   : 'var' ListBlockVar { 
     $$ = SVarBlock $2 ;
@@ -647,6 +642,15 @@ Arg
       else (Bad $ (prntErr $$.err $2 ))
     );
   } 
+  | '*' Ident ':' Type { 
+    $$ = PArg $2 $4 ;
+    $$.envOut = (insVarFuncEnv (Var $2 $4.tip) $$.envIn ) ;
+    $$.err = checkDoubleParam $$.envOut ;
+    where ( if ($$.err == "")
+      then (Ok())
+      else (Bad $ (prntErr $$.err $3 ))
+    );
+  }
 
 
 BasicType 
