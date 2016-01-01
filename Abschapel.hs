@@ -4,11 +4,6 @@ module Abschapel where
 
 
 newtype Ident = Ident String deriving (Eq,Ord,Show)
-data Boolean =
-   Boolean_true
- | Boolean_false
-  deriving (Eq,Ord,Show)
-
 data Program =
    Prog [Stmt]
   deriving (Eq,Ord,Show)
@@ -57,8 +52,20 @@ data RExpr =
  | Emul RExpr RExpr
  | Ediv RExpr RExpr
  | Emod RExpr RExpr
- | Econs Constant
- | LExprR LExpr
+ | Eneg RExpr
+ | Ebneg RExpr
+ | Ereduce RExpr RExpr
+ | Escan RExpr RExpr
+ | Edmapped RExpr RExpr
+ | Eexp RExpr
+ | Ecast RExpr RExpr
+ | Enew RExpr
+ | Emember RExpr RExpr
+ | Efunc RExpr
+ | EfuncPar RExpr [Arg]
+ | Eindex RExpr RExpr
+ | Econs BasicType
+ | LExpr LExpr
   deriving (Eq,Ord,Show)
 
 data Assignment_op =
@@ -68,11 +75,15 @@ data Assignment_op =
 data StmtWrite =
    WriteInt Integer
  | WriteReal Double
+ | WriteChar Char
+ | WriteString String
   deriving (Eq,Ord,Show)
 
 data StmtRead =
    ReadInt Integer
  | ReadReal Double
+ | ReadChar Char
+ | ReadString String
   deriving (Eq,Ord,Show)
 
 data StmtCondition =
@@ -82,6 +93,7 @@ data StmtCondition =
 
 data StmtWhile =
    WhileDo RExpr Stmt
+ | WhileDoS RExpr [Stmt]
   deriving (Eq,Ord,Show)
 
 data StmtDo =
@@ -89,11 +101,12 @@ data StmtDo =
   deriving (Eq,Ord,Show)
 
 data StmtFor =
-   SForDo RExpr Aggr [Stmt]
+   SForDo Ident Aggr [Stmt]
+ | SForDoBloc Ident Aggr [Stmt]
   deriving (Eq,Ord,Show)
 
 data Aggr =
-   ForAggr Constant Constant
+   ForAggr Integer Integer
   deriving (Eq,Ord,Show)
 
 data StmtJump =
@@ -101,22 +114,13 @@ data StmtJump =
  | Continue
   deriving (Eq,Ord,Show)
 
-data Param =
-   Pval RExpr
- | Pref RExpr
-  deriving (Eq,Ord,Show)
-
-data Constant =
-   Int Integer
-  deriving (Eq,Ord,Show)
-
 data StmtVar =
    SVarBlock [BlockVar]
- | SVarCon Ident TypeSpec RExpr
+ | SVarCon Ident Type RExpr
   deriving (Eq,Ord,Show)
 
 data BlockVar =
-   SBlockVar Ident TypeSpec RExpr
+   SBlockVar Ident Type RExpr
   deriving (Eq,Ord,Show)
 
 data DefFunc =
@@ -128,20 +132,28 @@ data CallFunc =
   deriving (Eq,Ord,Show)
 
 data Arg =
-   SArg Ident TypeSpec
-  deriving (Eq,Ord,Show)
-
-data TypeSpec =
-   BasTyp BasicType
+   SArg Ident Type
+ | PArg Ident Type
   deriving (Eq,Ord,Show)
 
 data BasicType =
-   BasicType_bool
- | BasicType_uint
- | BasicType_int
- | BasicType_real
- | BasicType_imag
- | BasicType_complex
- | BasicType_string
+   RInt Integer
+ | RDouble Double
+ | RChar Char
+ | RString String
+ | RBoolean Boolean
+  deriving (Eq,Ord,Show)
+
+data Boolean =
+   RTrue
+ | RFalse
+  deriving (Eq,Ord,Show)
+
+data Type =
+   RTypeInt
+ | RTypeDouble
+ | RTypeChar
+ | RTypeString
+ | RTypeBool
   deriving (Eq,Ord,Show)
 

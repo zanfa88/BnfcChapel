@@ -38,6 +38,15 @@ two sequences of digits separated by a decimal point, optionally
 followed by an unsigned or negative exponent.
 
 
+Character literals \nonterminal{Char}\ have the form
+\terminal{'}$c$\terminal{'}, where $c$ is any single character.
+
+
+String literals \nonterminal{String}\ have the form
+\terminal{"}$x$\terminal{"}, where $x$ is any sequence of any characters
+except \terminal{"}\ unless preceded by \verb6\6.
+
+
 
 
 \subsection*{Reserved words and symbols}
@@ -46,15 +55,17 @@ The set of reserved words is the set of terminals appearing in the grammar. Thos
 The reserved words used in chapel are the following: \\
 
 \begin{tabular}{lll}
-{\reserved{align}} &{\reserved{bool}} &{\reserved{break}} \\
-{\reserved{by}} &{\reserved{complex}} &{\reserved{const}} \\
-{\reserved{continue}} &{\reserved{do}} &{\reserved{false}} \\
-{\reserved{for}} &{\reserved{function}} &{\reserved{if}} \\
-{\reserved{imag}} &{\reserved{in}} &{\reserved{int}} \\
-{\reserved{readInt}} &{\reserved{readReal}} &{\reserved{real}} \\
-{\reserved{string}} &{\reserved{then}} &{\reserved{true}} \\
-{\reserved{uint}} &{\reserved{var}} &{\reserved{while}} \\
-{\reserved{writeInt}} &{\reserved{writeReal}} & \\
+{\reserved{align}} &{\reserved{boolean}} &{\reserved{break}} \\
+{\reserved{by}} &{\reserved{char}} &{\reserved{const}} \\
+{\reserved{continue}} &{\reserved{dmapped}} &{\reserved{do}} \\
+{\reserved{false}} &{\reserved{for}} &{\reserved{function}} \\
+{\reserved{if}} &{\reserved{in}} &{\reserved{int}} \\
+{\reserved{readChar}} &{\reserved{readInt}} &{\reserved{readReal}} \\
+{\reserved{readString}} &{\reserved{real}} &{\reserved{reduce}} \\
+{\reserved{scan}} &{\reserved{string}} &{\reserved{then}} \\
+{\reserved{true}} &{\reserved{var}} &{\reserved{while}} \\
+{\reserved{writeChar}} &{\reserved{writeInt}} &{\reserved{writeReal}} \\
+{\reserved{writeString}} & & \\
 \end{tabular}\\
 
 The symbols used in chapel are the following: \\
@@ -67,9 +78,15 @@ The symbols used in chapel are the following: \\
 {\symb{..}} &{\symb{{$+$}}} &{\symb{{$-$}}} \\
 {\symb{{$|$}}} &{\symb{\^}} &{\symb{\&}} \\
 {\symb{{$<$}{$<$}}} &{\symb{{$>$}{$>$}}} &{\symb{*}} \\
-{\symb{/}} &{\symb{\%}} &{\symb{(}} \\
-{\symb{)}} &{\symb{{$=$}}} &{\symb{\{}} \\
-{\symb{\}}} &{\symb{:}} &{\symb{,}} \\
+{\symb{/}} &{\symb{\%}} &{\symb{!}} \\
+{\symb{\~{}}} &{\symb{**}} &{\symb{:}} \\
+{\symb{.}} &{\symb{(}} &{\symb{)}} \\
+{\symb{{$=$}}} &{\symb{{$+$}{$=$}}} &{\symb{{$-$}{$=$}}} \\
+{\symb{*{$=$}}} &{\symb{/{$=$}}} &{\symb{\%{$=$}}} \\
+{\symb{**{$=$}}} &{\symb{\&{$=$}}} &{\symb{\&\&{$=$}}} \\
+{\symb{{$|$}{$=$}}} &{\symb{{$|$}{$|$}{$=$}}} &{\symb{{$<$}{$<$}{$=$}}} \\
+{\symb{{$>$}{$>$}{$=$}}} &{\symb{\^{$=$}}} &{\symb{\{}} \\
+{\symb{\}}} &{\symb{,}} & \\
 \end{tabular}\\
 
 \subsection*{Comments}
@@ -80,11 +97,6 @@ Non-terminals are enclosed between $\langle$ and $\rangle$.
 The symbols  {\arrow}  (production),  {\delimit}  (union) 
 and {\emptyP} (empty rule) belong to the BNF notation. 
 All other symbols are terminals.\\
-
-\begin{tabular}{lll}
-{\nonterminal{Boolean}} & {\arrow}  &{\terminal{true}}  \\
- & {\delimit}  &{\terminal{false}}  \\
-\end{tabular}\\
 
 \begin{tabular}{lll}
 {\nonterminal{Program}} & {\arrow}  &{\nonterminal{ListStmt}}  \\
@@ -102,11 +114,6 @@ All other symbols are terminals.\\
  & {\delimit}  &{\nonterminal{StmtVar}} {\terminal{;}}  \\
  & {\delimit}  &{\nonterminal{DefFunc}}  \\
  & {\delimit}  &{\nonterminal{CallFunc}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
-{\nonterminal{ListStmt}} & {\arrow}  &{\nonterminal{Stmt}}  \\
- & {\delimit}  &{\nonterminal{Stmt}} {\nonterminal{ListStmt}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
@@ -191,7 +198,43 @@ All other symbols are terminals.\\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{RExpr20}} & {\arrow}  &{\nonterminal{Constant}}  \\
+{\nonterminal{RExpr14}} & {\arrow}  &{\terminal{!}} {\nonterminal{RExpr14}}  \\
+ & {\delimit}  &{\terminal{\~{}}} {\nonterminal{RExpr14}}  \\
+ & {\delimit}  &{\nonterminal{RExpr15}}  \\
+\end{tabular}\\
+
+\begin{tabular}{lll}
+{\nonterminal{RExpr15}} & {\arrow}  &{\nonterminal{RExpr15}} {\terminal{reduce}} {\nonterminal{RExpr16}}  \\
+ & {\delimit}  &{\nonterminal{RExpr15}} {\terminal{scan}} {\nonterminal{RExpr16}}  \\
+ & {\delimit}  &{\nonterminal{RExpr15}} {\terminal{dmapped}} {\nonterminal{RExpr16}}  \\
+ & {\delimit}  &{\nonterminal{RExpr16}}  \\
+\end{tabular}\\
+
+\begin{tabular}{lll}
+{\nonterminal{RExpr16}} & {\arrow}  &{\terminal{**}} {\nonterminal{RExpr16}}  \\
+ & {\delimit}  &{\nonterminal{RExpr17}}  \\
+\end{tabular}\\
+
+\begin{tabular}{lll}
+{\nonterminal{RExpr17}} & {\arrow}  &{\nonterminal{RExpr17}} {\terminal{:}} {\nonterminal{RExpr18}}  \\
+ & {\delimit}  &{\nonterminal{RExpr18}}  \\
+\end{tabular}\\
+
+\begin{tabular}{lll}
+{\nonterminal{RExpr18}} & {\arrow}  &{\terminal{by}} {\nonterminal{RExpr18}}  \\
+ & {\delimit}  &{\nonterminal{RExpr19}}  \\
+\end{tabular}\\
+
+\begin{tabular}{lll}
+{\nonterminal{RExpr19}} & {\arrow}  &{\nonterminal{RExpr19}} {\terminal{.}} {\nonterminal{RExpr20}}  \\
+ & {\delimit}  &{\nonterminal{RExpr19}} {\terminal{(}} {\terminal{)}}  \\
+ & {\delimit}  &{\nonterminal{RExpr19}} {\terminal{(}} {\nonterminal{ListArg}} {\terminal{)}}  \\
+ & {\delimit}  &{\nonterminal{RExpr19}} {\terminal{[}} {\nonterminal{RExpr}} {\terminal{]}}  \\
+ & {\delimit}  &{\nonterminal{RExpr20}}  \\
+\end{tabular}\\
+
+\begin{tabular}{lll}
+{\nonterminal{RExpr20}} & {\arrow}  &{\nonterminal{BasicType}}  \\
  & {\delimit}  &{\nonterminal{RExpr21}}  \\
 \end{tabular}\\
 
@@ -205,41 +248,34 @@ All other symbols are terminals.\\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{RExpr14}} & {\arrow}  &{\nonterminal{RExpr15}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
-{\nonterminal{RExpr15}} & {\arrow}  &{\nonterminal{RExpr16}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
-{\nonterminal{RExpr16}} & {\arrow}  &{\nonterminal{RExpr17}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
-{\nonterminal{RExpr17}} & {\arrow}  &{\nonterminal{RExpr18}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
-{\nonterminal{RExpr18}} & {\arrow}  &{\nonterminal{RExpr19}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
-{\nonterminal{RExpr19}} & {\arrow}  &{\nonterminal{RExpr20}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
 {\nonterminal{Assignment-op}} & {\arrow}  &{\terminal{{$=$}}}  \\
+ & {\delimit}  &{\terminal{{$+$}{$=$}}}  \\
+ & {\delimit}  &{\terminal{{$-$}{$=$}}}  \\
+ & {\delimit}  &{\terminal{*{$=$}}}  \\
+ & {\delimit}  &{\terminal{/{$=$}}}  \\
+ & {\delimit}  &{\terminal{\%{$=$}}}  \\
+ & {\delimit}  &{\terminal{**{$=$}}}  \\
+ & {\delimit}  &{\terminal{\&{$=$}}}  \\
+ & {\delimit}  &{\terminal{\&\&{$=$}}}  \\
+ & {\delimit}  &{\terminal{{$|$}{$=$}}}  \\
+ & {\delimit}  &{\terminal{{$|$}{$|$}{$=$}}}  \\
+ & {\delimit}  &{\terminal{{$<$}{$<$}{$=$}}}  \\
+ & {\delimit}  &{\terminal{{$>$}{$>$}{$=$}}}  \\
+ & {\delimit}  &{\terminal{\^{$=$}}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
 {\nonterminal{StmtWrite}} & {\arrow}  &{\terminal{writeInt}} {\terminal{(}} {\nonterminal{Integer}} {\terminal{)}}  \\
  & {\delimit}  &{\terminal{writeReal}} {\terminal{(}} {\nonterminal{Double}} {\terminal{)}}  \\
+ & {\delimit}  &{\terminal{writeChar}} {\terminal{(}} {\nonterminal{Char}} {\terminal{)}}  \\
+ & {\delimit}  &{\terminal{writeString}} {\terminal{(}} {\nonterminal{String}} {\terminal{)}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
 {\nonterminal{StmtRead}} & {\arrow}  &{\terminal{readInt}} {\terminal{(}} {\nonterminal{Integer}} {\terminal{)}}  \\
  & {\delimit}  &{\terminal{readReal}} {\terminal{(}} {\nonterminal{Double}} {\terminal{)}}  \\
+ & {\delimit}  &{\terminal{readChar}} {\terminal{(}} {\nonterminal{Char}} {\terminal{)}}  \\
+ & {\delimit}  &{\terminal{readString}} {\terminal{(}} {\nonterminal{String}} {\terminal{)}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
@@ -249,6 +285,7 @@ All other symbols are terminals.\\
 
 \begin{tabular}{lll}
 {\nonterminal{StmtWhile}} & {\arrow}  &{\terminal{while}} {\nonterminal{RExpr}} {\terminal{do}} {\nonterminal{Stmt}}  \\
+ & {\delimit}  &{\terminal{while}} {\nonterminal{RExpr}} {\terminal{\{}} {\nonterminal{ListStmt}} {\terminal{\}}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
@@ -256,11 +293,12 @@ All other symbols are terminals.\\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{StmtFor}} & {\arrow}  &{\terminal{for}} {\nonterminal{RExpr}} {\terminal{in}} {\nonterminal{Aggr}} {\terminal{do}} {\terminal{\{}} {\nonterminal{ListStmt}} {\terminal{\}}}  \\
+{\nonterminal{StmtFor}} & {\arrow}  &{\terminal{for}} {\nonterminal{Ident}} {\terminal{in}} {\nonterminal{Aggr}} {\terminal{do}} {\terminal{\{}} {\nonterminal{ListStmt}} {\terminal{\}}}  \\
+ & {\delimit}  &{\terminal{for}} {\nonterminal{Ident}} {\terminal{in}} {\nonterminal{Aggr}} {\terminal{\{}} {\nonterminal{ListStmt}} {\terminal{\}}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{Aggr}} & {\arrow}  &{\nonterminal{Constant}} {\terminal{..}} {\nonterminal{Constant}}  \\
+{\nonterminal{Aggr}} & {\arrow}  &{\nonterminal{Integer}} {\terminal{..}} {\nonterminal{Integer}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
@@ -269,21 +307,12 @@ All other symbols are terminals.\\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{Param}} & {\arrow}  &{\nonterminal{RExpr20}}  \\
- & {\delimit}  &{\terminal{*}} {\nonterminal{RExpr}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
-{\nonterminal{Constant}} & {\arrow}  &{\nonterminal{Integer}}  \\
-\end{tabular}\\
-
-\begin{tabular}{lll}
 {\nonterminal{StmtVar}} & {\arrow}  &{\terminal{var}} {\nonterminal{ListBlockVar}}  \\
- & {\delimit}  &{\terminal{const}} {\nonterminal{Ident}} {\terminal{:}} {\nonterminal{TypeSpec}} {\terminal{{$=$}}} {\nonterminal{RExpr}}  \\
+ & {\delimit}  &{\terminal{const}} {\nonterminal{Ident}} {\terminal{:}} {\nonterminal{Type}} {\terminal{{$=$}}} {\nonterminal{RExpr}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{BlockVar}} & {\arrow}  &{\nonterminal{Ident}} {\terminal{:}} {\nonterminal{TypeSpec}} {\terminal{{$=$}}} {\nonterminal{RExpr}}  \\
+{\nonterminal{BlockVar}} & {\arrow}  &{\nonterminal{Ident}} {\terminal{:}} {\nonterminal{Type}} {\terminal{{$=$}}} {\nonterminal{RExpr}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
@@ -295,21 +324,35 @@ All other symbols are terminals.\\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{Arg}} & {\arrow}  &{\nonterminal{Ident}} {\terminal{:}} {\nonterminal{TypeSpec}}  \\
+{\nonterminal{Arg}} & {\arrow}  &{\nonterminal{Ident}} {\terminal{:}} {\nonterminal{Type}}  \\
+ & {\delimit}  &{\terminal{*}} {\nonterminal{Ident}} {\terminal{:}} {\nonterminal{Type}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{TypeSpec}} & {\arrow}  &{\nonterminal{BasicType}}  \\
+{\nonterminal{BasicType}} & {\arrow}  &{\nonterminal{Integer}}  \\
+ & {\delimit}  &{\nonterminal{Double}}  \\
+ & {\delimit}  &{\nonterminal{Char}}  \\
+ & {\delimit}  &{\nonterminal{String}}  \\
+ & {\delimit}  &{\nonterminal{Boolean}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}
-{\nonterminal{BasicType}} & {\arrow}  &{\terminal{bool}}  \\
- & {\delimit}  &{\terminal{uint}}  \\
- & {\delimit}  &{\terminal{int}}  \\
+{\nonterminal{Boolean}} & {\arrow}  &{\terminal{true}}  \\
+ & {\delimit}  &{\terminal{false}}  \\
+\end{tabular}\\
+
+\begin{tabular}{lll}
+{\nonterminal{Type}} & {\arrow}  &{\terminal{int}}  \\
  & {\delimit}  &{\terminal{real}}  \\
- & {\delimit}  &{\terminal{imag}}  \\
- & {\delimit}  &{\terminal{complex}}  \\
+ & {\delimit}  &{\terminal{char}}  \\
  & {\delimit}  &{\terminal{string}}  \\
+ & {\delimit}  &{\terminal{boolean}}  \\
+\end{tabular}\\
+
+\begin{tabular}{lll}
+{\nonterminal{ListStmt}} & {\arrow}  &{\emptyP} \\
+ & {\delimit}  &{\nonterminal{Stmt}}  \\
+ & {\delimit}  &{\nonterminal{Stmt}} {\terminal{;}} {\nonterminal{ListStmt}}  \\
 \end{tabular}\\
 
 \begin{tabular}{lll}

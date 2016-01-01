@@ -83,12 +83,6 @@ instance Print Ident where
 
 
 
-instance Print Boolean where
-  prt i e = case e of
-   Boolean_true  -> prPrec i 0 (concatD [doc (showString "true")])
-   Boolean_false  -> prPrec i 0 (concatD [doc (showString "false")])
-
-
 instance Print Program where
   prt i e = case e of
    Prog stmts -> prPrec i 0 (concatD [prt 0 stmts])
@@ -109,8 +103,9 @@ instance Print Stmt where
    CFunc callfunc -> prPrec i 0 (concatD [prt 0 callfunc])
 
   prtList es = case es of
+   [] -> (concatD [])
    [x] -> (concatD [prt 0 x])
-   x:xs -> (concatD [prt 0 x , prt 0 xs])
+   x:xs -> (concatD [prt 0 x , doc (showString ";") , prt 0 xs])
 
 instance Print LExpr where
   prt i e = case e of
@@ -144,8 +139,20 @@ instance Print RExpr where
    Emul rexpr0 rexpr -> prPrec i 13 (concatD [prt 13 rexpr0 , doc (showString "*") , prt 14 rexpr])
    Ediv rexpr0 rexpr -> prPrec i 13 (concatD [prt 13 rexpr0 , doc (showString "/") , prt 14 rexpr])
    Emod rexpr0 rexpr -> prPrec i 13 (concatD [prt 13 rexpr0 , doc (showString "%") , prt 14 rexpr])
-   Econs constant -> prPrec i 20 (concatD [prt 0 constant])
-   LExprR lexpr -> prPrec i 21 (concatD [prt 0 lexpr])
+   Eneg rexpr -> prPrec i 14 (concatD [doc (showString "!") , prt 14 rexpr])
+   Ebneg rexpr -> prPrec i 14 (concatD [doc (showString "~") , prt 14 rexpr])
+   Ereduce rexpr0 rexpr -> prPrec i 15 (concatD [prt 15 rexpr0 , doc (showString "reduce") , prt 16 rexpr])
+   Escan rexpr0 rexpr -> prPrec i 15 (concatD [prt 15 rexpr0 , doc (showString "scan") , prt 16 rexpr])
+   Edmapped rexpr0 rexpr -> prPrec i 15 (concatD [prt 15 rexpr0 , doc (showString "dmapped") , prt 16 rexpr])
+   Eexp rexpr -> prPrec i 16 (concatD [doc (showString "**") , prt 16 rexpr])
+   Ecast rexpr0 rexpr -> prPrec i 17 (concatD [prt 17 rexpr0 , doc (showString ":") , prt 18 rexpr])
+   Enew rexpr -> prPrec i 18 (concatD [doc (showString "by") , prt 18 rexpr])
+   Emember rexpr0 rexpr -> prPrec i 19 (concatD [prt 19 rexpr0 , doc (showString ".") , prt 20 rexpr])
+   Efunc rexpr -> prPrec i 19 (concatD [prt 19 rexpr , doc (showString "(") , doc (showString ")")])
+   EfuncPar rexpr args -> prPrec i 19 (concatD [prt 19 rexpr , doc (showString "(") , prt 0 args , doc (showString ")")])
+   Eindex rexpr0 rexpr -> prPrec i 19 (concatD [prt 19 rexpr0 , doc (showString "[") , prt 0 rexpr , doc (showString "]")])
+   Econs basictype -> prPrec i 20 (concatD [prt 0 basictype])
+   LExpr lexpr -> prPrec i 21 (concatD [prt 0 lexpr])
 
   prtList es = case es of
    [] -> (concatD [])
@@ -161,12 +168,16 @@ instance Print StmtWrite where
   prt i e = case e of
    WriteInt n -> prPrec i 0 (concatD [doc (showString "writeInt") , doc (showString "(") , prt 0 n , doc (showString ")")])
    WriteReal d -> prPrec i 0 (concatD [doc (showString "writeReal") , doc (showString "(") , prt 0 d , doc (showString ")")])
+   WriteChar c -> prPrec i 0 (concatD [doc (showString "writeChar") , doc (showString "(") , prt 0 c , doc (showString ")")])
+   WriteString str -> prPrec i 0 (concatD [doc (showString "writeString") , doc (showString "(") , prt 0 str , doc (showString ")")])
 
 
 instance Print StmtRead where
   prt i e = case e of
    ReadInt n -> prPrec i 0 (concatD [doc (showString "readInt") , doc (showString "(") , prt 0 n , doc (showString ")")])
    ReadReal d -> prPrec i 0 (concatD [doc (showString "readReal") , doc (showString "(") , prt 0 d , doc (showString ")")])
+   ReadChar c -> prPrec i 0 (concatD [doc (showString "readChar") , doc (showString "(") , prt 0 c , doc (showString ")")])
+   ReadString str -> prPrec i 0 (concatD [doc (showString "readString") , doc (showString "(") , prt 0 str , doc (showString ")")])
 
 
 instance Print StmtCondition where
@@ -178,6 +189,7 @@ instance Print StmtCondition where
 instance Print StmtWhile where
   prt i e = case e of
    WhileDo rexpr stmt -> prPrec i 0 (concatD [doc (showString "while") , prt 0 rexpr , doc (showString "do") , prt 0 stmt])
+   WhileDoS rexpr stmts -> prPrec i 0 (concatD [doc (showString "while") , prt 0 rexpr , doc (showString "{") , prt 0 stmts , doc (showString "}")])
 
 
 instance Print StmtDo where
@@ -187,12 +199,13 @@ instance Print StmtDo where
 
 instance Print StmtFor where
   prt i e = case e of
-   SForDo rexpr aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 rexpr , doc (showString "in") , prt 0 aggr , doc (showString "do") , doc (showString "{") , prt 0 stmts , doc (showString "}")])
+   SForDo id aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 id , doc (showString "in") , prt 0 aggr , doc (showString "do") , doc (showString "{") , prt 0 stmts , doc (showString "}")])
+   SForDoBloc id aggr stmts -> prPrec i 0 (concatD [doc (showString "for") , prt 0 id , doc (showString "in") , prt 0 aggr , doc (showString "{") , prt 0 stmts , doc (showString "}")])
 
 
 instance Print Aggr where
   prt i e = case e of
-   ForAggr constant0 constant -> prPrec i 0 (concatD [prt 0 constant0 , doc (showString "..") , prt 0 constant])
+   ForAggr n0 n -> prPrec i 0 (concatD [prt 0 n0 , doc (showString "..") , prt 0 n])
 
 
 instance Print StmtJump where
@@ -201,26 +214,15 @@ instance Print StmtJump where
    Continue  -> prPrec i 0 (concatD [doc (showString "continue")])
 
 
-instance Print Param where
-  prt i e = case e of
-   Pval rexpr -> prPrec i 0 (concatD [prt 20 rexpr])
-   Pref rexpr -> prPrec i 0 (concatD [doc (showString "*") , prt 0 rexpr])
-
-
-instance Print Constant where
-  prt i e = case e of
-   Int n -> prPrec i 0 (concatD [prt 0 n])
-
-
 instance Print StmtVar where
   prt i e = case e of
    SVarBlock blockvars -> prPrec i 0 (concatD [doc (showString "var") , prt 0 blockvars])
-   SVarCon id typespec rexpr -> prPrec i 0 (concatD [doc (showString "const") , prt 0 id , doc (showString ":") , prt 0 typespec , doc (showString "=") , prt 0 rexpr])
+   SVarCon id type' rexpr -> prPrec i 0 (concatD [doc (showString "const") , prt 0 id , doc (showString ":") , prt 0 type' , doc (showString "=") , prt 0 rexpr])
 
 
 instance Print BlockVar where
   prt i e = case e of
-   SBlockVar id typespec rexpr -> prPrec i 0 (concatD [prt 0 id , doc (showString ":") , prt 0 typespec , doc (showString "=") , prt 0 rexpr])
+   SBlockVar id type' rexpr -> prPrec i 0 (concatD [prt 0 id , doc (showString ":") , prt 0 type' , doc (showString "=") , prt 0 rexpr])
 
   prtList es = case es of
    [] -> (concatD [])
@@ -239,27 +241,36 @@ instance Print CallFunc where
 
 instance Print Arg where
   prt i e = case e of
-   SArg id typespec -> prPrec i 0 (concatD [prt 0 id , doc (showString ":") , prt 0 typespec])
+   SArg id type' -> prPrec i 0 (concatD [prt 0 id , doc (showString ":") , prt 0 type'])
+   PArg id type' -> prPrec i 0 (concatD [doc (showString "*") , prt 0 id , doc (showString ":") , prt 0 type'])
 
   prtList es = case es of
    [] -> (concatD [])
    [x] -> (concatD [prt 0 x])
    x:xs -> (concatD [prt 0 x , doc (showString ",") , prt 0 xs])
 
-instance Print TypeSpec where
-  prt i e = case e of
-   BasTyp basictype -> prPrec i 0 (concatD [prt 0 basictype])
-
-
 instance Print BasicType where
   prt i e = case e of
-   BasicType_bool  -> prPrec i 0 (concatD [doc (showString "bool")])
-   BasicType_uint  -> prPrec i 0 (concatD [doc (showString "uint")])
-   BasicType_int  -> prPrec i 0 (concatD [doc (showString "int")])
-   BasicType_real  -> prPrec i 0 (concatD [doc (showString "real")])
-   BasicType_imag  -> prPrec i 0 (concatD [doc (showString "imag")])
-   BasicType_complex  -> prPrec i 0 (concatD [doc (showString "complex")])
-   BasicType_string  -> prPrec i 0 (concatD [doc (showString "string")])
+   RInt n -> prPrec i 0 (concatD [prt 0 n])
+   RDouble d -> prPrec i 0 (concatD [prt 0 d])
+   RChar c -> prPrec i 0 (concatD [prt 0 c])
+   RString str -> prPrec i 0 (concatD [prt 0 str])
+   RBoolean boolean -> prPrec i 0 (concatD [prt 0 boolean])
+
+
+instance Print Boolean where
+  prt i e = case e of
+   RTrue  -> prPrec i 0 (concatD [doc (showString "true")])
+   RFalse  -> prPrec i 0 (concatD [doc (showString "false")])
+
+
+instance Print Type where
+  prt i e = case e of
+   RTypeInt  -> prPrec i 0 (concatD [doc (showString "int")])
+   RTypeDouble  -> prPrec i 0 (concatD [doc (showString "real")])
+   RTypeChar  -> prPrec i 0 (concatD [doc (showString "char")])
+   RTypeString  -> prPrec i 0 (concatD [doc (showString "string")])
+   RTypeBool  -> prPrec i 0 (concatD [doc (showString "boolean")])
 
 
 

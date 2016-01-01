@@ -1,0 +1,62 @@
+entrypoints Program ;	
+
+RProg.   	Program 	::= [Stmt] ;
+
+-- comando: assegnamento
+RAssign.	Stmt 		::= LExpr "=" RExpr ; 
+-- comando: dichiarazione variabili
+RDecVar.	Stmt 		::= StmtVar ; 
+Cond.       Stmt    	::= StmtCondition ;
+While.      Stmt   		::= StmtWhile ;
+For.        Stmt    	::= StmtFor ;
+
+
+--elementi di base
+RInt. 		BasicType	::= Integer ;
+RFloat. 	BasicType 	::= Double ;
+RChar. 		BasicType 	::= Char ;
+RString. 	BasicType 	::= String ;
+RBoolean. 	BasicType 	::= Boolean ;
+
+-- left expression
+RLExpr. 	LExpr 		::= Iden ;
+
+-- right expression
+RAdd. 		RExpr 		::= RExpr "+" RExpr ;
+RGre. 		RExpr 		::= RExpr ">" RExpr ;
+RDiv. 		RExpr 		::= RExpr "/" RExpr ;
+RComp. 		RExpr 		::= RExpr "==" RExpr ;
+RElem. 		RExpr 		::= BasicType ;
+LExprR.     RExpr 		::= LExpr ;
+
+-- Dichiarazione variabili
+RVarBlock. 	StmtVar 	::= "var" [BlockVar];
+RBlockVar.	BlockVar 	::= Iden ":" Type "=" RExpr ;
+
+-- Statement per le condizioni if
+If1.        StmtCondition     ::= "if" RExpr "then" Stmt ;
+If2.        StmtCondition     ::= "if" "(" RExpr ")" "{" [Stmt] "}" ;
+
+--  Statement per il while
+WhileDo.    StmtWhile     ::= "while" RExpr "do" Stmt ;
+WhileDoS.  	StmtWhile     ::= "while" RExpr "{" [Stmt] "}" ;
+
+-- Statement per il for
+SForDoBloc. StmtFor 	::= "for" Iden "in" Aggr "{" [Stmt] "}" ;
+ForAggr. 	Aggr  		::= Integer ".." Integer ;
+
+-- booleani
+RTrue. 		Boolean 	::= "true" ;
+RFalse. 	Boolean 	::= "false" ;
+
+-- tipi 
+RTypeInt. 	Type 		::= "int" ;
+RTypeFloat. Type 		::= "real" ;
+RTypeChar. 	Type 		::= "char" ;
+RTypeString. Type 		::= "string" ;
+RTypeBool. 	Type 		::= "boolean" ;
+
+token Iden (letter | '_')(letter | digit | '_')* ;
+
+separator BlockVar "," ;
+separator Stmt ";" ;

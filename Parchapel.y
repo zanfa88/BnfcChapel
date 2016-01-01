@@ -99,6 +99,8 @@ L_integ  { PT _ (TI $$) }
 L_doubl  { PT _ (TD $$) }
 L_charac { PT _ (TC $$) }
 L_quoted { PT _ (TL $$) }
+L_err    { _ }
+
 
 %%
 
