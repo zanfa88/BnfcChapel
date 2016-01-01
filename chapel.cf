@@ -1,5 +1,4 @@
 entrypoints Program ;
-rules Boolean ::= "true" | "false" ;
 
 -- Commenti
 comment "//" ;
