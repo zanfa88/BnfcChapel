@@ -219,7 +219,26 @@ RExpr
         )
     ) ;
   }
-  | RExpr '!=' RExpr { $$ = Eneq $1 $3 }
+  | RExpr '!=' RExpr { 
+    $$ = Eneq $1 $3 ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (
+          if ($1.tip == VarNotDec) 
+            then Bad $ (prntErrNotDec $1 )
+            else (
+              if ($3.tip == VarNotDec) 
+                then Bad $ (prntErrNotDec $3 )
+                else Bad $ (prntErrComp $2 )
+            )
+        )
+    ) ;
+  }
   | RExpr '<=' RExpr { $$ = Eleq $1 $3 } 
   | RExpr '>=' RExpr {$$ =  Egeq $1 $3 }
   | RExpr '<' RExpr { $$ = El $1 $3 }
