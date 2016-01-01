@@ -303,8 +303,17 @@ StmtCondition
       else (Bad $ (prntErrCondNotBool $1))
     ) ;
   } 
-  | 'if' '(' RExpr ')' '{' ListStmt '}' { $$ = If2 $3 $6 }
-
+  | 'if' '(' RExpr ')' '{' ListStmt '}' { 
+    $$ = If2 $3 $6 ;
+    $3.envIn = $$.envIn ;
+    $6.envIn = $$.envIn ;
+    $$.envOut = $6.envOut ;
+    $$.err  = (checkEqualType $3.tip RTypeBool) ;
+    where ( if ($$.err == "")   
+      then (Ok())
+      else (Bad $ (prntErrCondNotBool $1))
+    ) ;
+  }
 
 StmtWhile 
   : 'while' RExpr 'do' Stmt { 
