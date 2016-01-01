@@ -108,3 +108,27 @@ echo "-----------------"
 echo "-----------------" 
 echo "[OK] if: test sempre true:"
 echo "var a:int=1;if true then a=3;" | ./Testchapel 
+echo "-----------------" 
+echo "-----------------" 
+echo "[OK] while do: "
+echo "var a:int=1;while a==1 do a=1;" | ./Testchapel 
+echo "-----------------" 
+echo "-----------------" 
+echo "[OK] while: "
+echo "var a:int=1;while a==1 {a=1;a=2;}" | ./Testchapel 
+echo "-----------------" 
+echo "-----------------" 
+echo "[BAD] while do: "
+echo "var a:int=1;while a do a=1;" | ./Testchapel 
+echo "-----------------" 
+echo "-----------------" 
+echo "[BAD] while: "
+echo "var a:int=1;while a==1.0 {a=1;a=2;}" | ./Testchapel 
+echo "-----------------" 
+echo "-----------------" 
+echo "[OK] for : "
+echo "var a:int=1;for b in 1..10 {a=1;b=1;};a=1;" | ./Testchapel 
+echo "-----------------" 
+echo "-----------------" 
+echo "[BAD] for uso iteratore fuori dal ciclo: "
+echo "var a:int=1;for b in 1..10 {a=1;b=1;};a=1;b=1;" | ./Testchapel 

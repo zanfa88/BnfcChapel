@@ -142,17 +142,25 @@ Stmt
     $$ =  While $1 ;
     $$.tip    = TypeVoid ;
     $1.envIn  = $$.envIn ;
+<<<<<<< HEAD
     $$.envOut = $$.envOut ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+=======
+    $$.envOut = $1.envOut ;
+>>>>>>> 5a7c37e6e4431e3aaa7f12fbcb4d846066401579
     }
   | StmtDo { 
     $$ =  Do $1 ;
     $$.tip    = TypeVoid ;
     $1.envIn  = $$.envIn ;
+<<<<<<< HEAD
     $$.envOut = $$.envOut ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+=======
+    $$.envOut = $1.envOut ;
+>>>>>>> 5a7c37e6e4431e3aaa7f12fbcb4d846066401579
     }
   | StmtFor { 
     $$ = For $1 ;
@@ -462,15 +470,21 @@ StmtCondition
     $3.envIn = $$.envIn ;
     $6.envIn = $$.envIn ;
     $$.envOut = $6.envOut ;
+<<<<<<< HEAD
     $6.envFunIn = $$.envFunIn ;
     $$.envFunOut = $6.envFunOut ;
+=======
+>>>>>>> 5a7c37e6e4431e3aaa7f12fbcb4d846066401579
     $$.err  = (checkEqualType $3.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
       else (Bad $ (prntErrCondNotBool $1))
     ) ;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5a7c37e6e4431e3aaa7f12fbcb4d846066401579
 
 StmtWhile 
   : 'while' RExpr 'do' Stmt { 
@@ -481,6 +495,20 @@ StmtWhile
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
     $$.inLoop = True;
+    $2.envIn = $$.envIn ;
+    $4.envIn = $$.envIn ;
+    $$.envOut = $4.envOut ;
+    $$.err  = (checkEqualType $2.tip RTypeBool) ;
+    where ( if ($$.err == "")   
+      then (Ok())
+      else (Bad $ (prntErrCondNotBool $1))
+    ) ;
+  }
+  | 'while' RExpr '{' ListStmt '}' { 
+    $$ = WhileDoS $2 $4 ;
+    $2.envIn = $$.envIn ;
+    $4.envIn = $$.envIn ;
+    $$.envOut = $4.envOut ;
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
@@ -506,6 +534,7 @@ StmtWhile
 StmtDo 
   : 'do' '{' ListStmt '}' 'while' RExpr ';' { 
     $$ = SDo $3 $6 ;
+<<<<<<< HEAD
     $3.envIn = $$.envIn;
     $6.envIn = $$.envIn;
     $$.envOut = $6.envOut;
@@ -518,6 +547,18 @@ StmtDo
       else (Bad $ (prntErrCondNotBool $1))
     )
   } 
+=======
+    $3.envIn = $$.envIn ;
+    $6.envIn = $$.envIn ;
+    $$.envOut = $3.envOut ;
+    $$.err  = (checkEqualType $6.tip RTypeBool) ;
+      where ( if ($$.err == "")   
+        then (Ok())
+        else (Bad $ (prntErrCondNotBool $1))
+      ) ;
+  } 
+
+>>>>>>> 5a7c37e6e4431e3aaa7f12fbcb4d846066401579
 
 -- inserisco nel contesto di ListStmt l'iteratore
 StmtFor 

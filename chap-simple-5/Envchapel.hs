@@ -49,6 +49,7 @@ tokenPos2 (Err (Pn _ l r) ) = "line " ++ show l ++ " column " ++ show r
 -- inserimento variabile in ambiente
 insVarEnv x@(Var i _) xs 
 	| (isVarPres i xs) == Just i = xs  	-- se è già presente la scarta
+<<<<<<< HEAD
 	| otherwise = x:xs					-- altrimenti la sostituisce
 
 -- Append degli argomenti della funzione
@@ -72,12 +73,22 @@ checkDoubleFun y (x:xs)
 						
 appendFun xs y = (xs ++ [y])
 
+=======
+	| otherwise = x:xs					-- altrimenti la aggiunge
+								
+>>>>>>> 5a7c37e6e4431e3aaa7f12fbcb4d846066401579
 -- verfica se la variabile è già stata definita dell'ambiente 
 isVarPres id [] =  Nothing
 isVarPres id ((Var i _):xs) 
 	| id == i = Just i
 	| otherwise = isVarPres id xs
-
+	
+-- elimina variabile dall' ambiente
+delVarEnv x [] 		= [] 
+delVarEnv x@(Var i t) (y@(Var j u):ys) 
+	| x == y 		= ys  					-- se ho trovato la mia variabile la emilino
+	| otherwise 	= x:(delVarEnv x ys)	-- altrimenti controllo nelle restanti variabili
+	
 -- Messaggi di errore:
 prntErrAss pos tipL tipR 	= "Error at "++(tokenPos2 pos)++": assigment of a "++(showType tipR)++" value to a variable of type "++(showType tipL)++" not allowed."
 prntErrNotDec var 			= "Error: variable "++(show var)++" not declared."
