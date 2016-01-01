@@ -107,7 +107,7 @@ Program
     $$.envFunIn = [] ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
-    $$.inLoop = False ;
+    $1.inLoop = False ;
     }
 
 Stmt 
@@ -137,6 +137,7 @@ Stmt
     $$.envOut = $$.envOut ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+    $1.inLoop = $$.inLoop;
   }
   | StmtWhile { 
     $$ =  While $1 ;
@@ -145,6 +146,7 @@ Stmt
     $$.envOut = $$.envOut ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+    $1.inLoop = $$.inLoop;
     }
   | StmtDo { 
     $$ =  Do $1 ;
@@ -153,6 +155,7 @@ Stmt
     $$.envOut = $$.envOut ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+    $1.inLoop = $$.inLoop;
     }
   | StmtFor { 
     $$ = For $1 ;
@@ -161,6 +164,7 @@ Stmt
     $$.envOut = $$.envIn ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+    $1.inLoop = $$.inLoop;
     }
   | StmtJump { 
     $$ =  Jump $1 ;
@@ -169,6 +173,7 @@ Stmt
     $$.envOut = $$.envIn ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+    $1.inLoop = $$.inLoop;
   }
   | StmtWrite { 
     $$ =  Write $1 ;
@@ -452,6 +457,7 @@ StmtCondition
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
+    $4.inLoop = True ;
     where ( if ($$.err == "")   
       then (Ok())
       else (Bad $ (prntErrCondNotBool $1))
@@ -465,6 +471,7 @@ StmtCondition
     $6.envFunIn = $$.envFunIn ;
     $$.envFunOut = $6.envFunOut ;
     $$.err  = (checkEqualType $3.tip RTypeBool) ;
+    $6.inLoop = True ;
     where ( if ($$.err == "")   
       then (Ok())
       else (Bad $ (prntErrCondNotBool $1))
@@ -480,7 +487,7 @@ StmtWhile
     $$.envOut = $4.envOut;
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
-    $$.inLoop = True;
+    $4.inLoop = True;
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
@@ -494,7 +501,7 @@ StmtWhile
     $$.envOut = $4.envOut;
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
-    $$.inLoop = True;
+    $4.inLoop = True;
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
@@ -511,7 +518,7 @@ StmtDo
     $$.envOut = $6.envOut;
     $3.envFunIn = $$.envFunIn ;
     $$.envFunOut = $3.envFunOut ;
-    $$.inLoop = True;
+    $3.inLoop = True;
     $$.err  = (checkEqualType $6.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
@@ -528,6 +535,7 @@ StmtFor
     $$.envOut = $$.envIn;
     $7.envFunIn = $$.envFunIn ;
     $$.envFunOut = $7.envFunOut ;
+    $7.inLoop = True ;
   }
   | 'for' Ident 'in' Aggr '{' ListStmt '}' { 
     $$ = SForDoBloc $2 $4 $6 ;
@@ -536,6 +544,7 @@ StmtFor
     $$.envOut = $$.envIn;
     $6.envFunIn = $$.envFunIn ;
     $$.envFunOut = $6.envFunOut ;
+    $6.inLoop = True ;
   }
 
 
@@ -549,7 +558,7 @@ StmtJump
     $$.envIn = $$.envOut;
     $$.err = (if ($$.inLoop) 
       then ""
-      else "Syntax error: break statement not in a loop statement! At " ++ tokenPos2 $1
+      else ("Syntax error: break statement not in a loop statement! At " ++ (tokenPos2 $1))
     );
     where (if ($$.inLoop) 
       then Ok()
@@ -561,7 +570,7 @@ StmtJump
     $$.envIn = $$.envOut;
     $$.err = (if ($$.inLoop) 
       then ""
-      else "Syntax error: continue statement not in a loop statement! At " ++ tokenPos2 $1
+      else ("Syntax error: continue statement not in a loop statement! At " ++ (tokenPos2 $1))
     );
     where (if ($$.inLoop) 
       then Ok()
@@ -606,6 +615,7 @@ DefFunc
     $7.envFunIn = $$.envFunIn ++ [$2] ;
     $$.envFunOut = $$.envFunIn ++ [$2] ;
     $$.err = (checkDoubleFun $2 $$.envFunIn);
+    $7.inLoop = False ;
     where (if ($$.err == "") 
       then (Ok())
       else (Bad $ (prntErr $$.err $1))
@@ -689,6 +699,7 @@ ListStmt
     $$.envOut = $1.envOut ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+    $1.inLoop = $$.inLoop;
   }
   | Stmt ';' ListStmt {
     $$ = (:) $1 $3 ;
@@ -698,6 +709,8 @@ ListStmt
     $1.envFunIn = $$.envFunIn ;
     $3.envFunIn = $1.envFunOut ;
     $$.envFunOut = $3.envFunOut ;
+    $1.inLoop = $$.inLoop;
+    $3.inLoop = $1.inLoop;
   }
 
 
