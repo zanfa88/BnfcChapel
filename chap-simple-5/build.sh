@@ -5,4 +5,4 @@
 #rm M
 #echo "Creo il compilatore..."
 make
-#./test.sh
+./test2.sh

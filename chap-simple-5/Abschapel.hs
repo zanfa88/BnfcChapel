@@ -81,8 +81,8 @@ data StmtDo =
   deriving (Eq,Ord,Show)
 
 data StmtFor =
-   SForDo RExpr Aggr [Stmt]
- | SForDoBloc RExpr Aggr [Stmt]
+   SForDo Ident Aggr [Stmt]
+ | SForDoBloc Ident Aggr [Stmt]
   deriving (Eq,Ord,Show)
 
 data Aggr =

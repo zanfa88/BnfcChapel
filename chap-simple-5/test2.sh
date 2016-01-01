@@ -1,47 +1,16 @@
 
 echo "Lancio dei test..."
 
-echo "[OK] Assegnamento normale:"
-echo "var a:int=3;" | ./Testchapel 
-echo "-----------------"
-echo "-----------------"
-echo "[BAD] Assegnamento di real a variabile int:" 
-echo "var a:int=3.0;a=3;" | ./Testchapel 
-echo "-----------------"
-echo "-----------------" 
-echo "[BAD] Assegnamento a una variabile non dichiarata:" 
-echo "var a:int=3;c=3;" | ./Testchapel 
-echo "-----------------"
-echo "-----------------" 
-echo "[BAD] Assegno un valore real ad una variabile int:" 
-echo "var a:int=3;a=3.0;" | ./Testchapel 
-echo "-----------------"
-echo "-----------------" 
-echo "[OK] Modifica valore di una variabile int ad un tipo int:" 
-echo "var a:int=3;a=4;" | ./Testchapel 
-echo "-----------------"
-echo "-----------------" 
-echo "[OK] Più dichiarazioni e più variabili:" 
-echo "var a:real=1.0,b:int=4;b=20+1;a=2.0+2.3;" | ./Testchapel 
-echo "-----------------" 
-echo "-----------------"
-echo "[BAD] Somma tipi diversi:" 
-echo "var a:real=1.0,b:int=4;b=20+1.0;a=2.0+2.3;" | ./Testchapel 
-echo "-----------------" 
-echo "-----------------"
-echo "[BAD] Assegnamento tipi diversi:" 
-echo "var a:real=1.0,b:int=4;b=20.0+1.0;a=2.0+2.3;" | ./Testchapel 
-echo "-----------------" 
-echo "-----------------"
+
 echo "[OK] While"
-echo "var a:real=1.0,b:int=4;while a == 3.0 do a = a + 1.0 ; " | ./Testchapel 
+echo "var a:real=1.0,b:int=4;while a < 3.0 do a = a + 1 ; " | ./Testchapel 
 echo "-----------------" 
 echo "-----------------"
 echo "[OK] "
 echo "var q:int=2;if q<=2 then q=3;" | ./Testchapel 
 echo "-----------------" 
 echo "-----------------"
-echo "[BAD] If q > 2 : missing declaration declared"
+echo "[OK] If q > 2"
 echo "if (q>2) {a=3;c=3;}" | ./Testchapel
 echo "-----------------" 
 echo "-----------------"
@@ -95,7 +64,7 @@ echo "var a:int=1;if true==a then a=3;" | ./Testchapel
 echo "-----------------" 
 echo "-----------------" 
 echo "[OK] if: testo stesso valore:"
-echo "var a:int=1;if a==a then a=3;" | ./Testchapel 
+echo "var a:int=1;if a==a then c=3;" | ./Testchapel 
 echo "-----------------" 
 echo "-----------------" 
 echo "[OK] if: testo stesso valore con operando diverso:" 

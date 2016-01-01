@@ -31,6 +31,11 @@ checkDefVar tipL tipR 		= case (tipL) of
 												else "Assegnamento non permesso"
 								VarNotDec	-> "variabile non assegnata"
 
+-- controllo se entrambi sono di tipo boolean
+checkEqualAndBoolType tipL tipR		= if (tipL == tipR && tipL == RTypeBool) 
+										then ""
+										else "Invalid logical operation. Operators must be bool." 
+
 -- funzione ausiliaria per sviluppo e stampa errore
 printE ([])  				= "Environment vuoto"
 printE (x@(Var i _):[])  	= "Environment var:"++(show i)
@@ -45,7 +50,28 @@ tokenPos2 (Err (Pn _ l r) ) = "line " ++ show l ++ " column " ++ show r
 insVarEnv x@(Var i _) xs 
 	| (isVarPres i xs) == Just i = xs  	-- se è già presente la scarta
 	| otherwise = x:xs					-- altrimenti la sostituisce
-								
+
+-- Append degli argomenti della funzione
+insVarFuncEnv x xs = x:xs	
+
+
+
+-- Controlla se ci sono doppioni nella lista
+checkDoubleParam xs = chheck (listt xs)
+chheck [] = ""
+chheck (x:xs)  
+	| length ( filter (==x) (x:xs)) > 1 = "Parameter "++(show x)++"is not unique."
+	| otherwise 						= chheck xs	 
+listt [] = []
+listt ((Var i _):xs) = i:(listt xs)
+
+checkDoubleFun _ [] 		= ""
+checkDoubleFun y (x:xs) 
+	| x == y  				= "Function is already defined."
+	| otherwise 			= checkDoubleFun y xs
+						
+appendFun xs y = (xs ++ [y])
+
 -- verfica se la variabile è già stata definita dell'ambiente 
 isVarPres id [] =  Nothing
 isVarPres id ((Var i _):xs) 
@@ -59,6 +85,8 @@ prntErrDiffType pos         = "Error at "++(tokenPos2 pos)++": invalid declarati
 prntErrAdd pos  			= "Error at "++(tokenPos2 pos)++": operation between different type not allowed."
 prntErrComp pos  			= "Error at "++(tokenPos2 pos)++": unable to compare different type."
 prntErrCondNotBool pos 		= "Error at "++(tokenPos2 pos)++": condition must derivate to a bool."
+prntErrBothBool err pos 	= "Error at "++(tokenPos2 pos)++":"++ err
+prntErr err pos 			= "Error at "++(tokenPos2 pos)++":"++ err
 
 -- Funzioni ausiliarie per messaggi di errore
 showType RTypeInt = (show "int") 
