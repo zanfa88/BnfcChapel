@@ -57,6 +57,7 @@ prntErrAss pos tipL tipR 	= "Error at "++(tokenPos2 pos)++": assigment of a "++(
 prntErrNotDec var 			= "Error: variable "++(show var)++" not declared."
 prntErrDiffType pos         = "Error at "++(tokenPos2 pos)++": invalid declaration, type are different."
 prntErrAdd pos  			= "Error at "++(tokenPos2 pos)++": operation between different type not allowed."
+prntErrComp pos  			= "Error at "++(tokenPos2 pos)++": unable to compare different type."
 
 
 -- Funzioni ausiliarie per messaggi di errore

@@ -125,7 +125,7 @@ Stmt
     $$ =  Cond $1 ;
     $$.tip    = TypeVoid ;
     $1.envIn  = $$.envIn ;
-    $$.envOut = $$.envIn ;
+    $$.envOut = $1.envOut ;
   }
   | StmtWhile { 
     $$ =  While $1 ;
@@ -185,6 +185,7 @@ Stmt
 LExpr 
   : Ident { 
     $$ =  Id $1 ;
+    $$.envOut = $$.envIn ; 
     $$.tip  = (getVarTip $$.envIn $1) ; 
     where ( if ($$.tip == VarNotDec)
               then (Bad $ (prntErrNotDec $1))
@@ -198,7 +199,26 @@ RExpr
   : RExpr '#' RExpr { $$ = Ecount $1 $3 } 
   | RExpr '||' RExpr { $$ = Elor $1 $3 } 
   | RExpr '&&' RExpr { $$ = Eland $1 $3 } 
-  | RExpr '==' RExpr { $$ = Eeq $1 $3 } 
+  | RExpr '==' RExpr { 
+    $$ = Eeq $1 $3 ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (
+          if ($1.tip == VarNotDec) 
+            then Bad $ (prntErrNotDec $1 )
+            else (
+              if ($3.tip == VarNotDec) 
+                then Bad $ (prntErrNotDec $3 )
+                else Bad $ (prntErrComp $2 )
+            )
+        )
+    ) ;
+  }
   | RExpr '!=' RExpr { $$ = Eneq $1 $3 }
   | RExpr '<=' RExpr { $$ = Eleq $1 $3 } 
   | RExpr '>=' RExpr {$$ =  Egeq $1 $3 }
@@ -213,7 +233,6 @@ RExpr
       then (Ok())
       else (Bad $ (prntErrAdd $2 ))
     ) ;
-
   } 
   | RExpr '-' RExpr { $$ = Esub $1 $3 }
   | RExpr '|' RExpr { $$ = Ebitor $1 $3 } 
@@ -231,6 +250,8 @@ RExpr
   | LExpr { 
     $$ = LExprR $1 ;
     $$.tip  = $1.tip ;
+    $1.envIn = $$.envIn ; 
+    $$.envOut = $1.envOut ; 
   } 
   | '(' RExpr ')' { $$ = $2 }
 
@@ -250,7 +271,12 @@ StmtRead
 
 
 StmtCondition 
-  : 'if' RExpr 'then' Stmt { $$ = If1 $2 $4 } 
+  : 'if' RExpr 'then' Stmt {
+    $$ = If1 $2 $4 ; 
+    $2.envIn = $$.envIn ;
+    $4.envIn = $$.envIn ;
+    $$.envOut = $4.envOut ;
+  } 
   | 'if' '(' RExpr ')' '{' ListStmt '}' { $$ = If2 $3 $6 }
 
 
@@ -351,9 +377,18 @@ BasicType
     $$.tip = RTypeDouble ;
     $$.err = "" ;
   }
-  | Char { $$ = RChar $1 }
-  | String { $$ = RString $1 }
-  | Boolean { $$ = RBoolean $1 }
+  | Char      { 
+    $$ = RChar $1 ;
+    $$.tip = RTypeChar ;
+  }
+  | String    { 
+    $$ = RString $1 ;
+    $$.tip = RTypString ;
+  }
+  | Boolean   { 
+    $$ = RBoolean $1 ;
+    $$.tip = RTypeBool ;
+  }
 
 
 Boolean   
