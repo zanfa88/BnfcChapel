@@ -58,7 +58,7 @@ prntErrNotDec var 			= "Error: variable "++(show var)++" not declared."
 prntErrDiffType pos         = "Error at "++(tokenPos2 pos)++": invalid declaration, type are different."
 prntErrAdd pos  			= "Error at "++(tokenPos2 pos)++": operation between different type not allowed."
 prntErrComp pos  			= "Error at "++(tokenPos2 pos)++": unable to compare different type."
-
+prntErrCondNotBool pos 		= "Error at "++(tokenPos2 pos)++": condition must derivate to a bool."
 
 -- Funzioni ausiliarie per messaggi di errore
 showType RTypeInt = (show "int") 

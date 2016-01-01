@@ -95,3 +95,15 @@ echo "-----------------"
 echo "-----------------" 
 echo "[OK] if: testo stesso valore:"
 echo "var a:int=1;if a==a then c=3;" | ./Testchapel 
+echo "-----------------" 
+echo "-----------------" 
+echo "[OK] if: testo stesso valore con operando diverso:" 
+echo "var a:int=1;if a!=a then a=3;" | ./Testchapel  
+echo "-----------------" 
+echo "-----------------" 
+echo "[BAD] if: testo una variabile - senza condizione:"
+echo "var a:int=1;if a then a=3;" | ./Testchapel 
+echo "-----------------" 
+echo "-----------------" 
+echo "[OK] if: test sempre true:"
+echo "var a:int=1;if true then a=3;" | ./Testchapel 

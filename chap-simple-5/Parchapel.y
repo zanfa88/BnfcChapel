@@ -201,6 +201,7 @@ RExpr
   | RExpr '&&' RExpr { $$ = Eland $1 $3 } 
   | RExpr '==' RExpr { 
     $$ = Eeq $1 $3 ;
+    $$.tip = RTypeBool ;
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
@@ -221,6 +222,7 @@ RExpr
   }
   | RExpr '!=' RExpr { 
     $$ = Eneq $1 $3 ;
+    $$.tip = RTypeBool ;
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
@@ -295,6 +297,11 @@ StmtCondition
     $2.envIn = $$.envIn ;
     $4.envIn = $$.envIn ;
     $$.envOut = $4.envOut ;
+    $$.err  = (checkEqualType $2.tip RTypeBool) ;
+    where ( if ($$.err == "")   
+      then (Ok())
+      else (Bad $ (prntErrCondNotBool $1))
+    ) ;
   } 
   | 'if' '(' RExpr ')' '{' ListStmt '}' { $$ = If2 $3 $6 }
 
@@ -303,6 +310,11 @@ StmtWhile
   : 'while' RExpr 'do' Stmt { 
     $$ = WhileDo $2 $4 ;
     $$.inLoop = True;
+    $$.err  = (checkEqualType $2.tip RTypeBool) ;
+    where ( if ($$.err == "")   
+      then (Ok())
+      else (Bad $ (prntErrCondNotBool $1))
+    ) ;
   }
   | 'while' RExpr '{' ListStmt '}' { $$ = WhileDoS $2 $4 }
 
