@@ -131,13 +131,13 @@ Stmt
     $$ =  While $1 ;
     $$.tip    = TypeVoid ;
     $1.envIn  = $$.envIn ;
-    $$.envOut = $$.envIn ;
+    $$.envOut = $1.envOut ;
     }
   | StmtDo { 
     $$ =  Do $1 ;
     $$.tip    = TypeVoid ;
     $1.envIn  = $$.envIn ;
-    $$.envOut = $$.envIn ;
+    $$.envOut = $1.envOut ;
     }
   | StmtFor { 
     $$ = For $1 ;
@@ -310,17 +310,40 @@ StmtWhile
   : 'while' RExpr 'do' Stmt { 
     $$ = WhileDo $2 $4 ;
     $$.inLoop = True;
+    $2.envIn = $$.envIn ;
+    $4.envIn = $$.envIn ;
+    $$.envOut = $4.envOut ;
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
       else (Bad $ (prntErrCondNotBool $1))
     ) ;
   }
-  | 'while' RExpr '{' ListStmt '}' { $$ = WhileDoS $2 $4 }
+  | 'while' RExpr '{' ListStmt '}' { 
+    $$ = WhileDoS $2 $4 ;
+    $2.envIn = $$.envIn ;
+    $4.envIn = $$.envIn ;
+    $$.envOut = $4.envOut ;
+    $$.err  = (checkEqualType $2.tip RTypeBool) ;
+    where ( if ($$.err == "")   
+      then (Ok())
+      else (Bad $ (prntErrCondNotBool $1))
+    ) ;
+  }
 
 
 StmtDo 
-  : 'do' '{' ListStmt '}' 'while' RExpr ';' { $$ = SDo $3 $6 } 
+  : 'do' '{' ListStmt '}' 'while' RExpr ';' { 
+    $$ = SDo $3 $6 ;
+    $3.envIn = $$.envIn ;
+    $6.envIn = $$.envIn ;
+    $$.envOut = $3.envOut ;
+    $$.err  = (checkEqualType $6.tip RTypeBool) ;
+      where ( if ($$.err == "")   
+        then (Ok())
+        else (Bad $ (prntErrCondNotBool $1))
+      ) ;
+  } 
 
 
 StmtFor 
