@@ -63,7 +63,7 @@ echo "writeInt(4);" | ./Testchapel
 echo "-----------------" 
 echo "-----------------"
 echo "[OK] functions"
-echo "var a:int=3;function mainA (a:int) { a=3; c=z; }; a=5; c=7; function mainB () { 	a=3; 	c=z; }; function mainC (a:int,b:int) { 	a=3; 	c=z; }; mainC(c,2); mainB(); mainA(a==true); " | ./Testchapel 
+echo "var a:int=3;function mainA (a:int) { a=3; a=1; }; a=5; c=7; function mainB () { 	a=3; 	c=z; }; function mainC (a:int,b:int) { 	a=3; 	c=z; }; mainC(c,2); mainB(); mainA(a==true); " | ./Testchapel 
 echo "-----------------" 
 echo "-----------------" 
 echo "[OK] if: testo una variabile già dichiarata con lo stesso tipo:"

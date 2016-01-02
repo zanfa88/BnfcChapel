@@ -88,6 +88,16 @@ L_charac { PT _ (TC $$) }
 L_quoted { PT _ (TL $$) }
 L_err    { _ }
 
+--Precedenze degli operatori
+%left '#' 
+%left '&&' '||' 
+%nonassoc '<' '<=' '=' '==' '>' '>=' '!=' 
+%left '..'
+%left '+' '-'
+%left '|'
+%left '^'
+%left '&'
+%left '*' '/' '%'
 
 %%
 
@@ -117,7 +127,8 @@ Stmt
     $1.envIn  = $$.envIn ;
     $3.envIn  = $$.envIn ;
     $$.envOut = $$.envIn ;
-    $3.envFunIn = $$.envFunIn ;
+    $1.envFunIn = $$.envFunIn ;
+    $3.envFunIn = $1.envFunOut ;
     $$.envFunOut = $3.envFunOut ;
     $$.err    = (checkDefVar $1.tip $3.tip) ;
     where ( 
@@ -216,6 +227,7 @@ LExpr
   : Ident { 
     $$ =  Id $1 ;
     $$.envOut = $$.envIn ; 
+    $$.envFunOut = $$.envFunIn ;
     $$.tip  = (getVarTip $$.envIn $1) ; 
     where ( if ($$.tip == VarNotDec)
               then (Bad $ (prntErrNotDec $1))
@@ -226,13 +238,21 @@ LExpr
 
 
 RExpr 
-  : RExpr '#' RExpr { $$ = Ecount $1 $3 } 
+  : RExpr '#' RExpr { 
+    $$ = Ecount $1 $3 ;
+    $$.tip = RTypeInt ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
   | RExpr '||' RExpr { 
     $$ = Elor $1 $3 ;
     $$.tip = RTypeBool ;
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualAndBoolType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -246,6 +266,7 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualAndBoolType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -259,6 +280,7 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -280,6 +302,7 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -301,6 +324,7 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -322,6 +346,7 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -343,6 +368,7 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -364,6 +390,7 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -385,6 +412,7 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualType $1.tip $3.tip) ;
     where ( 
       if ($$.err == "") 
@@ -406,36 +434,101 @@ RExpr
     $1.envIn = $$.envIn ;
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
     $$.err  = (checkEqualType $1.tip $3.tip) ;
     where ( if ($$.err == "") 
       then (Ok())
       else (Bad $ (prntErrAdd $2 ))
     ) ;
   } 
-  | RExpr '-' RExpr { $$ = Esub $1 $3 }
-  | RExpr '|' RExpr { $$ = Ebitor $1 $3 } 
-  | RExpr '^' RExpr { $$ = Ebitxor $1 $3 } 
-  | RExpr '&' RExpr { $$ = Ebitand $1 $3 } 
-  | '+' RExpr { $$ = Eupos $2 } 
-  | '-' RExpr {$$ =  Euneg $2 }
-  | RExpr '*' RExpr { $$ = Emul $1 $3 } 
-  | RExpr '/' RExpr { $$ = Ediv $1 $3 }
-  | RExpr '%' RExpr { $$ = Emod $1 $3 }
+  | RExpr '-' RExpr { 
+    $$ = Esub $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  }
+  | RExpr '|' RExpr { 
+    $$ = Ebitor $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | RExpr '^' RExpr { 
+    $$ = Ebitxor $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | RExpr '&' RExpr { 
+    $$ = Ebitand $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    } 
+  | '+' RExpr { 
+    $$ = Eupos $2 ;
+    $$.tip = $2.tip ;
+    $2.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | '-' RExpr {
+    $$ =  Euneg $2 ;
+    $$.tip = $2.tip ;
+    $2.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  }
+  | RExpr '*' RExpr { 
+    $$ = Emul $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | RExpr '/' RExpr { 
+    $$ = Ediv $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  }
+  | RExpr '%' RExpr { 
+    $$ = Emod $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  }
   | BasicType { 
     $$ = Econs $1 ;
     $$.tip  = $1.tip ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
   } 
   | LExpr { 
     $$ = LExprR $1 ;
     $$.tip  = $1.tip ;
     $1.envIn = $$.envIn ; 
     $$.envOut = $1.envOut ; 
+    $$.envFunOut = $$.envFunIn ;
   } 
   | '(' RExpr ')' { $$ = $2 }
 
 
 StmtWrite 
-  : 'writeInt' '(' Integer ')' { $$ = WriteInt $3 } 
+  : 'writeInt' '(' Integer ')' { $$ = WriteInt $3 ; } 
   | 'writeReal' '(' Double ')' { $$ = WriteReal $3 }
   | 'writeChar' '(' Char ')' { $$ = WriteChar $3 }
   | 'writeString' '(' String ')' { $$ = WriteString $3 }
@@ -454,6 +547,7 @@ StmtCondition
     $2.envIn = $$.envIn ;
     $4.envIn = $$.envIn ;
     $$.envOut = $4.envOut ;
+    $2.envFunIn = $$.envFunIn ;
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
@@ -468,6 +562,7 @@ StmtCondition
     $3.envIn = $$.envIn ;
     $6.envIn = $$.envIn ;
     $$.envOut = $6.envOut ;
+    $3.envFunIn = $$.envFunIn ;
     $6.envFunIn = $$.envFunIn ;
     $$.envFunOut = $6.envFunOut ;
     $$.err  = (checkEqualType $3.tip RTypeBool) ;
@@ -485,6 +580,7 @@ StmtWhile
     $2.envIn = $$.envIn;
     $4.envIn = $$.envIn;
     $$.envOut = $4.envOut;
+    $2.envFunIn = $$.envFunIn ;
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
     $4.inLoop = True;
@@ -499,6 +595,7 @@ StmtWhile
     $2.envIn = $$.envIn;
     $4.envIn = $$.envIn;
     $$.envOut = $4.envOut;
+    $2.envFunIn = $$.envFunIn ;
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
     $4.inLoop = True;
@@ -516,6 +613,7 @@ StmtDo
     $3.envIn = $$.envIn;
     $6.envIn = $$.envIn;
     $$.envOut = $6.envOut;
+    $6.envFunIn = $$.envFunIn ;
     $3.envFunIn = $$.envFunIn ;
     $$.envFunOut = $3.envFunOut ;
     $3.inLoop = True;
@@ -556,6 +654,7 @@ StmtJump
   : 'break' { 
     $$ = Break ;
     $$.envIn = $$.envOut;
+    $$.envFunOut = $$.envFunIn ;
     $$.err = (if ($$.inLoop) 
       then ""
       else ("Syntax error: break statement not in a loop statement! At " ++ (tokenPos2 $1))
@@ -568,6 +667,7 @@ StmtJump
   | 'continue' { 
     $$ = Continue ;
     $$.envIn = $$.envOut;
+    $$.envFunOut = $$.envFunIn ;
     $$.err = (if ($$.inLoop) 
       then ""
       else ("Syntax error: continue statement not in a loop statement! At " ++ (tokenPos2 $1))
@@ -583,9 +683,17 @@ StmtVar
   : 'var' ListBlockVar { 
     $$ = SVarBlock $2 ;
     $2.envIn = $$.envIn ;
-    $$.envOut = $2.envOut ; 
+    $$.envOut = $2.envOut ;
+    $2.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $2.envFunOut ; 
   } 
-  | 'const' ListBlockVar { $$ = SVarCon $2 }
+  | 'const' ListBlockVar { 
+    $$ = SVarCon $2 ;
+    $2.envIn = $$.envIn ;
+    $$.envOut = $2.envOut ;
+    $2.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $2.envFunOut ; 
+  }
 
 
 BlockVar 
@@ -593,6 +701,7 @@ BlockVar
     $$ = SBlockVar $1 $3 $5 ;
     $$.envOut   = (insVarEnv (Var $1 $3.tip) $$.envIn);
     $$.err      = (checkDefVar $3 $5.tip) ;
+    $$.envFunOut = $$.envFunIn ;
     where ( if ($$.err == "")   
       then (Ok())
       else (Bad $ (prntErrDiffType $2))
@@ -691,7 +800,6 @@ Type
   | 'boolean' { $$ = RTypeBool ; $$.tip = $$ ;}
 
 
--- TODO manca solo Stmt. Puo essere un errore?
 ListStmt 
   : {- empty -} { 
     $$ =[] ;
@@ -736,22 +844,27 @@ ListRExpr
   }
 
 
--- TODO manca solo BlockVar. Puo essere un errore?
 ListBlockVar 
   : {- empty -} { 
     $$ = [] ; 
     $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
   } 
   | BlockVar { 
     $$ = (:[]) $1 ;
     $1.envIn  = $$.envIn ;
     $$.envOut = $1.envOut ;
+    $1.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $$.envFunIn ;
   }
   | BlockVar ',' ListBlockVar { 
     $$ = (:) $1 $3 ;
     $1.envIn = $$.envIn ;
     $3.envIn = $1.envOut ;
     $$.envOut = $3.envOut ; 
+    $1.envFunIn = $$.envFunIn ;
+    $3.envFunIn = $1.envFunOut ;
+    $$.envFunOut = $$.envFunIn ;
   }
 
 
@@ -759,17 +872,23 @@ ListArg
   : {- empty -} { 
     $$ = [] ;
     $$.envOut = $$.envIn;
+    $$.envFunOut = $$.envFunIn ;
   } 
   | Arg { 
     $$ = (:[]) $1 ;
     $1.envIn = $$.envIn ;
     $$.envOut = $1.envOut ;
+    $1.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $$.envFunIn ;
   }
   | Arg ',' ListArg { 
     $$ = (:) $1 $3 ;
     $1.envIn = $$.envIn ;
     $3.envIn = $1.envOut ;
-    $$.envOut = $3.envOut ; 
+    $$.envOut = $3.envOut ;
+    $1.envFunIn = $$.envFunIn ;
+    $3.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $$.envFunIn ;
   }
 
 
