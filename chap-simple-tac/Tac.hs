@@ -9,13 +9,17 @@ data TacEl =
   BinaryOperation Operator A A A
  | SimpleAssignment [Char] [Char]
  | VariableDeclaration [Char]
+ | WriteIntOperation Integer
+ | ReadntOperation Integer [Char]
   deriving(Eq,Ord,Show)
 	
 printTac []   = ""
 printTac (x:xs) = case x of { 
-			BinaryOperation op res x y -> res ++ " = " ++ x ++ op ++ y ++ "\n";
-			SimpleAssignment i x -> i ++ " = " ++ x ++ "\n";
-			VariableDeclaration id -> "new variable " ++ id ++ "\n";
+			BinaryOperation op res x y -> "\t" ++ res ++ " = " ++ x ++ op ++ y ++ "\n";
+			SimpleAssignment i x -> "\t" ++ i ++ " = " ++ x ++ "\n";
+			VariableDeclaration id -> "\t" ++ "new variable " ++ id ++ "\n";
+			WriteIntOperation int -> "\t" ++ "writeInt " ++ (show int) ++ "\n";
+			ReadntOperation  int i -> "\t" ++ i ++ " = " ++ "readInt " ++ (show int) ++ "\n";
 		} ++ (printTac xs)
 
 type A = String

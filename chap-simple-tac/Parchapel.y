@@ -22,12 +22,12 @@ import Tac
 
 %attribute tac    {[TacEl]} --contiene gli elementi del three address code
 %attribute addr   {String}  --contiene l'address per il tac del nodo
-%attribute addrLs {[String]}  --contiene una lista di address per il tac del nodo
+%attribute addrLs {[String]}                --contiene una lista di address per il tac del nodo
 %attribute countIn  {Int}   --contatore per le variabili temporane del tac (input)
 %attribute countOut {Int}   --contatore per le variabili temporane del tac (output)
-%attribute labelIn  {Int}   --contatore per le label del tac (input)
-%attribute labelOut {Int}   --contatore per le label del tac (output)
-%attribute tempSize   {Integer} --contiene la quantità di spazio occupato in memoria per il nodo
+%attribute labelIn  {Int}                   --contatore per le label del tac (input)
+%attribute labelOut {Int}                   --contatore per le label del tac (output)
+%attribute tempSize   {Integer}             --contiene la quantità di spazio occupato in memoria per il nodo
 %attribute tmp    {Ident} 
 
 %name pProgram Program
@@ -103,12 +103,14 @@ L_err    { _ }
 %left '#' 
 %left '&&' '||' 
 %nonassoc '<' '<=' '=' '==' '>' '>=' '!=' 
+-- <, <=, >, >= no sono non associative ma hanno precedenza a sinistra
 %left '..'
 %left '+' '-'
 %left '|'
 %left '^'
 %left '&'
 %left '*' '/' '%'
+%left NEG
 
 %%
 
@@ -209,12 +211,17 @@ Stmt
     $$.tip    = TypeVoid ;
     $1.envIn  = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.tac = $1.tac;
+    $$.countOut = $$.countIn;
   }
   | StmtRead { 
     $$ =  Read $1 ;
     $$.tip    = TypeVoid ;
     $1.envIn  = $$.envIn ;
     $$.envOut = $$.envIn ;
+    $$.tac = $1.tac;
+    $1.countIn = $$.countIn;
+    $$.countOut = $1.countOut;
     }
   | StmtVar { 
     $$ =  VarD $1 ;
@@ -467,7 +474,7 @@ RExpr
     $3.countIn = $1.countOut;
     $$.countOut = $3.countOut + 1;
     $$.addr = "t"++ show $3.countOut;
-    $$.tac = [BinaryOperation " + " $$.addr $1.addr $3.addr];
+    $$.tac = $1.tac ++ $3.tac  ++ [BinaryOperation " + " $$.addr $1.addr $3.addr];
   } 
   | RExpr '-' RExpr { 
     $$ = Esub $1 $3 ;
@@ -476,6 +483,16 @@ RExpr
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
     $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( if ($$.err == "") 
+      then (Ok())
+      else (Bad $ (prntErrAdd $2 ))
+    ) ;
+    $1.countIn = $$.countIn;
+    $3.countIn = $1.countOut;
+    $$.countOut = $3.countOut + 1;
+    $$.addr = "t"++ show $3.countOut;
+    $$.tac = $1.tac ++ $3.tac  ++ [BinaryOperation " - " $$.addr $1.addr $3.addr];
   }
   | RExpr '|' RExpr { 
     $$ = Ebitor $1 $3 ;
@@ -508,12 +525,13 @@ RExpr
     $$.envOut = $$.envIn ;
     $$.envFunOut = $$.envFunIn ;
   } 
-  | '-' RExpr {
+  | '-' RExpr %prec NEG {
     $$ =  Euneg $2 ;
     $$.tip = $2.tip ;
     $2.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
     $$.envFunOut = $$.envFunIn ;
+
   }
   | RExpr '*' RExpr { 
     $$ = Emul $1 $3 ;
@@ -522,6 +540,16 @@ RExpr
     $3.envIn = $$.envIn ;
     $$.envOut = $$.envIn ;
     $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( if ($$.err == "") 
+      then (Ok())
+      else (Bad $ (prntErrAdd $2 ))
+    ) ;
+    $1.countIn = $$.countIn;
+    $3.countIn = $1.countOut;
+    $$.countOut = $3.countOut + 1;
+    $$.addr = "t"++ show $3.countOut;
+    $$.tac = $1.tac ++ $3.tac  ++ [BinaryOperation " * " $$.addr $1.addr $3.addr];
   } 
   | RExpr '/' RExpr { 
     $$ = Ediv $1 $3 ;
@@ -560,14 +588,27 @@ RExpr
 
 
 StmtWrite 
-  : 'writeInt' '(' Integer ')' { $$ = WriteInt $3 ; } 
+  : 'writeInt' '(' Integer ')' { 
+    $$ = WriteInt $3 ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ; 
+    $$.countOut = $$.countIn;
+    $$.tac = [WriteIntOperation $3];
+  } 
   | 'writeReal' '(' Double ')' { $$ = WriteReal $3 }
   | 'writeChar' '(' Char ')' { $$ = WriteChar $3 }
   | 'writeString' '(' String ')' { $$ = WriteString $3 }
 
 
 StmtRead 
-  : 'readInt' '(' Integer ')' { $$ = ReadInt $3 } 
+  : 'readInt' '(' Integer ')' { 
+    $$ = ReadInt $3; 
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ; 
+    $$.countOut = $$.countIn + 1;    
+    $$.addr = "t"++ show $$.countIn;
+    $$.tac = [ReadntOperation $3 $$.addr];
+    } 
   | 'readReal' '(' Double ')' { $$ = ReadReal $3 }
   | 'readChar' '(' Char ')' { $$ = ReadChar $3 }
   | 'readString' '(' String ')' { $$ = ReadString $3 }
