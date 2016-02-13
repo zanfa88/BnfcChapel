@@ -188,6 +188,12 @@ Stmt
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
     $1.inLoop = $$.inLoop;
+
+    $1.labelIn = $$.labelIn ;
+    $$.labelOut = $1.labelOut ;
+    $1.countIn = $$.countIn ;
+    $$.countOut = $1.countOut ;
+    $$.tac = $1.tac;
     }
   | StmtDo { 
     $$ =  Do $1 ;
@@ -197,6 +203,12 @@ Stmt
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
     $1.inLoop = $$.inLoop;
+
+    $1.labelIn = $$.labelIn ;
+    $$.labelOut = $1.labelOut ;
+    $1.countIn = $$.countIn ;
+    $$.countOut = $1.countOut ;
+    $$.tac = $1.tac ;
     }
   | StmtFor { 
     $$ = For $1 ;
@@ -206,6 +218,12 @@ Stmt
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
     $1.inLoop = $$.inLoop;
+
+    $1.labelIn = $$.labelIn ;
+    $$.labelOut = $1.labelOut ;
+    $1.countIn = $$.countIn ;
+    $$.countOut = $1.countOut ;
+    $$.tac = $1.tac ;
     }
   | StmtJump { 
     $$ =  Jump $1 ;
@@ -679,6 +697,10 @@ StmtCondition
     $$.envFunOut = $6.envFunOut ;
     $$.err  = (checkEqualType $3.tip RTypeBool) ;
     $6.inLoop = True ;
+
+
+    
+
     where ( if ($$.err == "")   
       then (Ok())
       else (Bad $ (prntErrCondNotBool $1))
@@ -696,6 +718,12 @@ StmtWhile
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
     $4.inLoop = True;
+
+    $2.labelIn = $$.labelIn;
+    $4.labelIn = $2.labelOut;
+    $$.labelOut = $4.labelOut + 3;
+    $$.tac = [Label ($4.labelOut +1)] ++ $2.tac ++ [Then $2.addr ($4.labelOut +2)] ++ [Goto ($4.labelOut +3)] ++ $4.tac ++ [Goto ($4.labelOut +1)] ++ [Label ($4.labelOut +3)];
+
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
@@ -711,6 +739,12 @@ StmtWhile
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
     $4.inLoop = True;
+
+    $2.labelIn = $$.labelIn;
+    $4.labelIn = $2.labelOut;
+    $$.labelOut = $4.labelOut + 3;
+    $$.tac = [Label ($4.labelOut +1)] ++ $2.tac ++ [Then $2.addr ($4.labelOut +2)] ++ [Goto ($4.labelOut +3)] ++ $4.tac ++ [Goto ($4.labelOut +1)] ++ [Label ($4.labelOut +3)];
+
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
@@ -729,6 +763,12 @@ StmtDo
     $3.envFunIn = $$.envFunIn ;
     $$.envFunOut = $3.envFunOut ;
     $3.inLoop = True;
+
+    $3.labelIn = $$.labelIn;
+    $6.labelIn = $3.labelOut;
+    $$.labelOut = $6.labelOut + 1;
+    $$.tac = [Label ($6.labelOut +1)] ++ $3.tac ++ [Then $6.addr ($6.labelOut +1)] ;
+
     $$.err  = (checkEqualType $6.tip RTypeBool) ;
     where ( if ($$.err == "")   
       then (Ok())
