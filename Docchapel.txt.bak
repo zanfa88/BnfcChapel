@@ -183,7 +183,7 @@ All other symbols are terminals.
   |  |  **|**  | ``const`` //Ident// ``:`` //Type// ``=`` //RExpr// 
   | //BlockVar// | -> | //Ident// ``:`` //Type// ``=`` //RExpr// 
   | //DefFunc// | -> | ``function`` //Ident// ``(`` //[Arg]// ``)`` ``{`` //[Stmt]// ``}`` 
-  | //CallFunc// | -> | //Ident// ``(`` //[RExpr]// ``)`` 
+  | //CallFunc// | -> | //Ident// ``(`` //[RExpr]// ``)`` ``;`` 
   | //Arg// | -> | //Ident// ``:`` //Type// 
   |  |  **|**  | ``*`` //Ident// ``:`` //Type// 
   | //BasicType// | -> | //Integer// 

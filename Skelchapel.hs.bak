@@ -105,8 +105,8 @@ transStmtRead x = case x of
 
 transStmtCondition :: StmtCondition -> Result
 transStmtCondition x = case x of
-  If1 rexpr stmt1 stmt2  -> failure x
-  If2 rexpr stmts1 stmts2  -> failure x
+  If1 rexpr stmt  -> failure x
+  If2 rexpr stmts  -> failure x
 
 
 transStmtWhile :: StmtWhile -> Result

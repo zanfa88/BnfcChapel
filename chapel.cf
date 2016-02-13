@@ -8,34 +8,34 @@ comment "/*" "*/" ;
 Prog.       Program ::= [Stmt] ;
 
 -- Statements generali
-Assgn.         Stmt     ::= LExpr Assignment_op RExpr ";" ;
+Assgn.       Stmt     ::= LExpr Assignment_op RExpr ;
 Cond.        Stmt     ::= StmtCondition ;
-While.        Stmt     ::= StmtWhile ;
-Do.            Stmt     ::= StmtDo ;
-For.        Stmt     ::= StmtFor ;
-Jump.        Stmt     ::= StmtJump ";" ;
-Write.        Stmt     ::= StmtWrite ";" ;
-Read.        Stmt     ::= StmtRead ";" ;
-VarD.        Stmt     ::= StmtVar ";" ;
-DFunc.        Stmt     ::= DefFunc ;
-CFunc.        Stmt     ::= CallFunc ;
+While.       Stmt     ::= StmtWhile ;
+Do.          Stmt     ::= StmtDo ;
+For.         Stmt     ::= StmtFor ;
+Jump.        Stmt     ::= StmtJump ;
+Write.       Stmt     ::= StmtWrite ;
+Read.        Stmt     ::= StmtRead ;
+VarD.        Stmt     ::= StmtVar  ;
+DFunc.       Stmt     ::= DefFunc ;
+CFunc.       Stmt     ::= CallFunc ;
 
 -- Left Expression
-Id.            LExpr     ::= Ident ;
-ArrayEl.    LExpr    ::=    LExpr "[" RExpr20 "]" ;
+Id.         LExpr     	::= Ident ;
+ArrayEl.    LExpr    	::=    LExpr "[" RExpr20 "]" ;
 
 -- Right Expressions
 Eby. 		RExpr ::= RExpr "by" RExpr2;
 Ecount. 	RExpr ::= RExpr "#" RExpr2;
-Ealign. 	RExpr ::= RExpr "align" RExpr2; -- ??
+Ealign. 	RExpr ::= RExpr "align" RExpr2; 
 Elor. 		RExpr2 ::= RExpr2 "||" RExpr3;
 Eland. 		RExpr3 ::= RExpr3 "&&" RExpr4;
 Eeq. 		RExpr4 ::= RExpr4 "==" RExpr5;
 Eneq. 		RExpr4 ::= RExpr4 "!=" RExpr5;
-Eleq. 		RExpr5 ::= RExpr5 "<=" RExpr6;	-- <=
-Egeq. 		RExpr5 ::= RExpr5 ">=" RExpr6;	-- >=
-El. 		RExpr5 ::= RExpr5 "<" RExpr6;	-- <
-Eg. 		RExpr5 ::= RExpr5 ">" RExpr6;	-- >
+Eleq. 		RExpr5 ::= RExpr5 "<=" RExpr6;	
+Egeq. 		RExpr5 ::= RExpr5 ">=" RExpr6;	
+El. 		RExpr5 ::= RExpr5 "<" RExpr6;	
+Eg. 		RExpr5 ::= RExpr5 ">" RExpr6;	
 Erange. 	RExpr6 ::= RExpr6 ".." RExpr7;
 Eadd. 		RExpr7 ::= RExpr7 "+" RExpr8;
 Esub. 		RExpr7 ::= RExpr7 "-" RExpr8;
@@ -65,8 +65,6 @@ Econs.      RExpr20    ::= BasicType ;
 LExpr.		RExpr21 ::= LExpr ;
 coercions	RExpr 21 ;
 
-
-
 -- Assegnazioni possibili tra LExpr e RExpr
 AssgnBase.       Assignment_op ::= "=";
 AssgnBase.       Assignment_op ::= "+=";
@@ -84,46 +82,47 @@ AssgnBase.       Assignment_op ::= ">>=";
 AssgnBase.       Assignment_op ::= "^=";
 
 -- Statement per write
-WriteInt.      StmtWrite ::= "writeInt" "(" Integer  ")" ;
+WriteInt.      	StmtWrite ::= "writeInt" "(" Integer  ")" ;
 WriteReal.      StmtWrite ::= "writeReal" "(" Double  ")" ;
-WriteChar.     StmtWrite ::= "writeChar" "(" Char  ")" ;
-WriteString.   StmtWrite ::= "writeString" "(" String  ")" ;
+WriteChar.     	StmtWrite ::= "writeChar" "(" Char  ")" ;
+WriteString.   	StmtWrite ::= "writeString" "(" String  ")" ;
 
 -- Statement per read
-ReadInt.      StmtRead ::= "readInt" "(" Integer  ")" ;
-ReadReal.      StmtRead ::= "readReal" "(" Double  ")" ;
-ReadChar.     StmtRead ::= "readChar" "(" Char  ")" ;
-ReadString.   StmtRead ::= "readString" "(" String  ")" ;
+ReadInt.      	StmtRead ::= "readInt" "(" Integer  ")" ;
+ReadReal.      	StmtRead ::= "readReal" "(" Double  ")" ;
+ReadChar.     	StmtRead ::= "readChar" "(" Char  ")" ;
+ReadString.   	StmtRead ::= "readString" "(" String  ")" ;
 
 -- Statement per le condizioni if
-If1.        StmtCondition     ::= "if" RExpr "then" Stmt ;
-If2.        StmtCondition     ::= "if" "(" RExpr ")" "{" [Stmt] "}" ;
+If1.        StmtCondition     ::= "if" RExpr "then" Stmt "else" Stmt;
+If2.        StmtCondition     ::= "if" "(" RExpr ")" "{" [Stmt] "}" "else" "{" [Stmt] "}";
 
 --  Statement per il while
-WhileDo.    StmtWhile     ::= "while" RExpr "do" Stmt ;
-WhileDoS.  	StmtWhile     ::= "while" RExpr "{" [Stmt] "}" ;
-SDo.        StmtDo     ::= "do" "{" [Stmt] "}" "while" RExpr ";" ;
+WhileDo.    StmtWhile     	::= "while" RExpr "do" Stmt ;
+WhileDoS.  	StmtWhile     	::= "while" RExpr "{" [Stmt] "}" ;
+SDo.        StmtDo     		::= "do" "{" [Stmt] "}" "while" RExpr ;
 
 -- Statement per il for
-SForDo.        StmtFor    ::=    "for" Ident "in" Aggr "do" "{" [Stmt] "}" ;
-SForDoBloc. StmtFor 	::= "for" Ident "in" Aggr "{" [Stmt] "}" ;
-ForAggr.    Aggr     ::= Integer ".." Integer ;
+SForDo.        	StmtFor    	::=    "for" Ident "in" Aggr "do" "{" [Stmt] "}" ;
+SForDoBloc. 	StmtFor 	::= "for" Ident "in" Aggr "{" [Stmt] "}" ;
+ForAggr.    	Aggr     	::= Integer ".." Integer ;
 
 -- Statement per break e continue
-Break.        StmtJump ::= "break" ;
-Continue.    StmtJump ::= "continue";
+Break.        	StmtJump 	::= "break" ;
+Continue.    	StmtJump 	::= "continue";
 
 -- Dichiarazione variabili
-SVarBlock.         StmtVar     ::= "var" [BlockVar];
-SVarCon.         StmtVar     ::= "const" Ident ":" Type "=" RExpr ;
+SVarBlock.         	StmtVar     ::= "var" [BlockVar];
+SVarCon.         	StmtVar     ::= "const" Ident ":" Type "=" RExpr ;
 
-SBlockVar.        BlockVar     ::= Ident ":" Type "=" RExpr ;
+-- Blocchi di variabili
+SBlockVar.        	BlockVar    ::= Ident ":" Type "=" RExpr ;
 
 -- Definizione delle funzioni
 SDefFunc.     DefFunc     ::= "function" Ident "(" [Arg] ")" "{" [Stmt] "}" ;
 
 -- Definizione delle chiamate alle funzioni
-SCallFunc.     CallFunc     ::= Ident "(" [RExpr] ")" ";" ;
+SCallFunc.     CallFunc     ::= Ident "(" [RExpr] ")" ;
 
 -- Argomenti delle funzioni
 SArg.         Arg     ::= Ident ":" Type ;
@@ -141,13 +140,13 @@ RTrue. 		Boolean 	::= "true" ;
 RFalse. 	Boolean 	::= "false" ;
 
 -- tipi 
-RTypeInt. 	Type 		::= "int" ;
-RTypeDouble. Type 		::= "real" ;
-RTypeChar. 	Type 		::= "char" ;
-RTypeString. Type 		::= "string" ;
-RTypeBool. 	Type 		::= "boolean" ;
+RTypeInt. 		Type 		::= "int" ;
+RTypeDouble. 	Type 		::= "real" ;
+RTypeChar. 		Type 		::= "char" ;
+RTypeString. 	Type 		::= "string" ;
+RTypeBool. 		Type 		::= "boolean" ;
 
--- sepratori e terminatori
+-- sepratori 
 separator Stmt 		";" ;
 separator RExpr     "," ;
 separator BlockVar  "," ;
