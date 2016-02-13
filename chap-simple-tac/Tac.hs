@@ -11,19 +11,25 @@ data TacEl =
  | VariableDeclaration [Char]
  | WriteIntOperation Integer
  | ReadntOperation Integer [Char]
+ | Then A Int
+ | Else I
+ | Label I
   deriving(Eq,Ord,Show)
 	
 printTac []   = ""
 printTac (x:xs) = case x of { 
-			BinaryOperation op res x y -> "\t" ++ res ++ " = " ++ x ++ op ++ y ++ "\n";
-			SimpleAssignment i x -> "\t" ++ i ++ " = " ++ x ++ "\n";
-			VariableDeclaration id -> "\t" ++ "new variable " ++ id ++ "\n";
-			WriteIntOperation int -> "\t" ++ "writeInt " ++ (show int) ++ "\n";
-			ReadntOperation  int i -> "\t" ++ i ++ " = " ++ "readInt " ++ (show int) ++ "\n";
+			BinaryOperation op res x y -> "\t " ++ res ++ " = " ++ x ++ op ++ y ++ "\n";
+			SimpleAssignment i x -> "\t " ++ i ++ " = " ++ x ++ "\n";
+			VariableDeclaration id -> "\t " ++ "new variable " ++ id ++ "\n";
+			WriteIntOperation int -> "\t " ++ "writeInt " ++ (show int) ++ "\n";
+			ReadntOperation  int i -> "\t " ++ i ++ " = " ++ "readInt " ++ (show int) ++ "\n";
+			Then check i -> "\t " ++ "if not(" ++ check ++ ") goto Lab" ++ show i ++ ";" ++ "\n";
+			Else i -> "\t " ++ "goto Lab" ++ show i ++ ";" ++ "\n";
+			Label i -> "Lab"++ show i ++ ": ";
 		} ++ (printTac xs)
 
 type A = String
-type I = Integer
+type I = Int
 type Operator = String
 
 

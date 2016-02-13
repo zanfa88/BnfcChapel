@@ -135,6 +135,9 @@ Program
     $$.countIn = 0;
     $1.countIn = 0;
     $$.countOut = $1.countOut;
+    $$.labelIn = 0;
+    $1.labelIn = 0;
+    $$.labelOut = $1.labelOut;
     }
 
 Stmt 
@@ -159,6 +162,8 @@ Stmt
     ) ;
     $3.countIn = $$.countIn;
     $$.countOut = $3.countOut;
+    $3.labelIn = $$.labelIn;
+    $$.labelOut = $3.labelOut;
     $$.tac = $1.tac ++ $3.tac ++ [SimpleAssignment (showIdentificator $1.tmp) ($3.addr)] ;
   } 
   | StmtCondition { 
@@ -168,7 +173,12 @@ Stmt
     $$.envOut = $$.envOut ;
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $1.envFunOut ;
+    $1.labelIn = $$.labelIn ;
+    $$.labelOut = $1.labelOut ;
+    $1.countIn = $$.countIn ;
+    $$.countOut = $1.countOut ;
     $1.inLoop = $$.inLoop;
+    $$.tac = $1.tac;
   }
   | StmtWhile { 
     $$ =  While $1 ;
@@ -231,6 +241,7 @@ Stmt
     $$.envFunOut = $1.envFunOut ;
     $$.tac = $1.tac ;
     $$.countOut = $$.countIn;
+    $$.labelOut = $$.labelIn;
   }
   | DefFunc { 
     $$ =  DFunc $1 ;
@@ -260,8 +271,10 @@ LExpr
               then (Bad $ (prntErrNotDec $1))
               else (Ok())
     ) ;
+    $$.addr = showIdentificator $1;
     $$.tmp = $1;
     $$.tac = [];
+    $$.labelOut = $$.labelIn;
     $$.countOut = $$.countIn;
   } 
   | LExpr '[' RExpr ']' { $$ =  ArrayEl $1 $3 }
@@ -413,6 +426,14 @@ RExpr
             )
         )
     );
+    $1.countIn = $$.countIn;
+    $3.countIn = $1.countOut;
+    $$.countOut = $3.countOut + 1;
+    $1.labelIn = $$.labelIn;
+    $3.labelIn = $1.labelOut;
+    $$.labelOut = $3.labelOut;
+    $$.addr = "t" ++ show $3.countOut;
+    $$.tac = $1.tac ++ $3.tac ++ [BinaryOperation " < " $$.addr $1.addr $3.addr];
   }
   | RExpr '>' RExpr {
     $$ =  Eg $1 $3 ;
@@ -473,6 +494,7 @@ RExpr
     $1.countIn = $$.countIn;
     $3.countIn = $1.countOut;
     $$.countOut = $3.countOut + 1;
+    $$.labelOut = $$.labelIn;
     $$.addr = "t"++ show $3.countOut;
     $$.tac = $1.tac ++ $3.tac  ++ [BinaryOperation " + " $$.addr $1.addr $3.addr];
   } 
@@ -491,6 +513,7 @@ RExpr
     $1.countIn = $$.countIn;
     $3.countIn = $1.countOut;
     $$.countOut = $3.countOut + 1;
+    $$.labelOut = $$.labelIn;
     $$.addr = "t"++ show $3.countOut;
     $$.tac = $1.tac ++ $3.tac  ++ [BinaryOperation " - " $$.addr $1.addr $3.addr];
   }
@@ -548,6 +571,7 @@ RExpr
     $1.countIn = $$.countIn;
     $3.countIn = $1.countOut;
     $$.countOut = $3.countOut + 1;
+    $$.labelOut = $$.labelIn;
     $$.addr = "t"++ show $3.countOut;
     $$.tac = $1.tac ++ $3.tac  ++ [BinaryOperation " * " $$.addr $1.addr $3.addr];
   } 
@@ -583,6 +607,10 @@ RExpr
     $1.envIn = $$.envIn ; 
     $$.envOut = $1.envOut ; 
     $$.envFunOut = $$.envFunIn ;
+    $$.tac = [] ;
+    $$.addr = $1.addr ;
+    $$.countOut = $$.countIn; 
+    $$.labelOut = $$.labelIn; 
   } 
   | '(' RExpr ')' { $$ = $2 }
 
@@ -593,6 +621,7 @@ StmtWrite
     $$.envOut = $$.envIn ;
     $$.envFunOut = $$.envFunIn ; 
     $$.countOut = $$.countIn;
+    $$.labelOut = $$.labelIn;
     $$.tac = [WriteIntOperation $3];
   } 
   | 'writeReal' '(' Double ')' { $$ = WriteReal $3 }
@@ -606,6 +635,7 @@ StmtRead
     $$.envOut = $$.envIn ;
     $$.envFunOut = $$.envFunIn ; 
     $$.countOut = $$.countIn + 1;    
+    $$.labelOut = $$.labelIn;
     $$.addr = "t"++ show $$.countIn;
     $$.tac = [ReadntOperation $3 $$.addr];
     } 
@@ -625,6 +655,15 @@ StmtCondition
     $$.envFunOut = $4.envFunOut ;
     $$.err  = (checkEqualType $2.tip RTypeBool) ;
     $4.inLoop = True ;
+    $2.countIn = $$.countIn;
+    $4.countIn = $2.countOut;
+    $$.countOut = $4.countOut + 1;
+
+    $2.labelIn = $$.labelIn;
+    $4.labelIn = $2.labelOut;
+    $$.labelOut = $4.labelOut + 2;
+    $$.tac = $2.tac ++ [Then $2.addr ($4.labelOut +1)] ++ $4.tac ++ [Label ($2.labelOut +1)];
+
     where ( if ($$.err == "")   
       then (Ok())
       else (Bad $ (prntErrCondNotBool $1))
@@ -759,6 +798,8 @@ StmtVar
     $$.envOut = $2.envOut ;
     $2.envFunIn = $$.envFunIn ;
     $$.envFunOut = $2.envFunOut ; 
+    $2.labelIn = $$.labelIn ;
+    $$.labelOut = $2.labelOut ; 
     $$.tac = $2.tac ;
   } 
   | 'const' ListBlockVar { 
@@ -883,7 +924,8 @@ ListStmt
     $$ =[] ;
     $$.envOut = $$.envIn ;  
     $$.tac = []; 
-    $$.countOut = $$.countIn;   
+    $$.countOut = $$.countIn;  
+    $$.labelOut = $$.labelIn;   
   } 
   | Stmt { 
     $$ = (:[]) $1 ;
@@ -894,7 +936,9 @@ ListStmt
     $1.inLoop = $$.inLoop ;
     $$.tac = $1.tac ;
     $1.countIn = $$.countIn;
-    $$.countOut = $1.countOut;   
+    $$.countOut = $1.countOut;  
+    $1.labelIn = $$.labelIn;   
+    $$.labelOut = $1.labelOut;    
   }
   | Stmt ';' ListStmt {
     $$ = (:) $1 $3 ;
@@ -909,7 +953,10 @@ ListStmt
     $$.tac = $1.tac ++ $3.tac;
     $1.countIn = $$.countIn;
     $3.countIn = $1.countOut;
-    $$.countOut = $3.countOut;   
+    $$.countOut = $3.countOut; 
+    $1.labelIn = $$.labelIn;
+    $3.labelIn = $1.labelOut;
+    $$.labelOut = $3.labelOut;   
   }
 
 
@@ -935,7 +982,8 @@ ListBlockVar
   : {- empty -} { 
     $$ = [] ; 
     $$.envOut = $$.envIn ;
-    $$.envFunOut = $$.envFunIn ;
+    $$.envFunOut = $$.envFunIn ; 
+    $$.labelOut = $$.labelIn; 
   } 
   | BlockVar { 
     $$ = (:[]) $1 ;
@@ -944,6 +992,8 @@ ListBlockVar
     $1.envFunIn = $$.envFunIn ;
     $$.envFunOut = $$.envFunIn ;
     $$.tac = $1.tac ;
+    $1.labelIn = $$.labelIn;   
+    $$.labelOut = $1.labelOut;  
   }
   | BlockVar ',' ListBlockVar { 
     $$ = (:) $1 $3 ;
@@ -953,6 +1003,9 @@ ListBlockVar
     $1.envFunIn = $$.envFunIn ;
     $3.envFunIn = $1.envFunOut ;
     $$.envFunOut = $$.envFunIn ;
+    $1.labelIn = $$.labelIn;
+    $3.labelIn = $1.labelOut;
+    $$.labelOut = $3.labelOut;  
   }
 
 
