@@ -786,6 +786,42 @@ StmtFor
     $7.envFunIn = $$.envFunIn ;
     $$.envFunOut = $7.envFunOut ;
     $7.inLoop = True ;
+
+    $4.countIn = $$.countOut ;
+    $7.countIn = $4.countOut ;
+    $$.countIn = $7.countOut ;
+    $4.labelIn = $$.labelIn ;
+    $2.labelIn = $4.labelOut ;
+    $7.labelIn = $2.labelOut ;
+    $$.labelOut = $7.labelOut + 1 ;
+
+    $$.tac = [SimpleAssignment (showIdentificator $2.tmp) ($4.count -1)] ++
+             [Label ($$.labelOut +1)] ++
+             [For [] ($$.labelOut +2)] ++
+             $7.tac ++
+             [BinaryOperation " + " $2.addr $2.addr "1"] ++
+             [Goto ($$.labelOut +1)] ++
+             [Label ($$.labelOut +2)] ;
+
+
+    -- $$.tac = [] ++  ++ [Else [] ($$.labelOut +2)] ++  ;
+
+    $3.countIn = $$.countIn;
+    $$.countOut = $3.countOut;
+    $3.labelIn = $$.labelIn;
+    $$.labelOut = $3.labelOut;
+    $$.tac = $1.tac ++ $3.tac ++  ;
+
+
+      t1 := 0                ; initialize i
+L1:  if t1 >= 10 goto L2    ; conditional jump
+     t2 := t1 * t1          ; square of i
+     t3 := t1 * 4           ; word-align address
+     t4 := b + t3           ; address to store i*i
+     *t4 := t2              ; store through pointer
+     t1 := t1 + 1           ; increase i
+     goto L1                ; repeat loop
+L2:
   }
   | 'for' Ident 'in' Aggr '{' ListStmt '}' { 
     $$ = SForDoBloc $2 $4 $6 ;
@@ -799,7 +835,10 @@ StmtFor
 
 
 Aggr 
-  : Integer '..' Integer { $$ = ForAggr $1 $3 } 
+  : Integer '..' Integer { 
+    $$ = ForAggr $1 $3 ;
+
+  } 
 
 
 StmtJump 

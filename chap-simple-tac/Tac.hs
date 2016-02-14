@@ -13,6 +13,7 @@ data TacEl =
  | ReadntOperation Integer [Char]
  | Then A Int
  | Else I
+ | For A A I
  | Goto I
  | Label I
   deriving(Eq,Ord,Show)
@@ -26,6 +27,7 @@ printTac (x:xs) = case x of {
 			ReadntOperation  int i -> "\t " ++ i ++ " = " ++ "readInt " ++ (show int) ++ "\n";
 			Then check i -> "\t " ++ "if not(" ++ check ++ ") goto Lab" ++ show i ++ ";" ++ "\n";
 			Else i -> "\t " ++ "goto Lab" ++ show i ++ ";" ++ "\n";
+			For idA idB i -> "\t " ++ "if not(" ++ idA ++ " < " ++ idB ++ ") goto Lab" ++ show i ++ ";"  ++ "\n";
 			Goto i -> "\t" ++ "goto Lab" ++ show i ++ ";" ++ "\n";
 			Label i -> "Lab"++ show i ++ ": ";
 		} ++ (printTac xs)
