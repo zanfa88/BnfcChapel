@@ -1,0 +1,535 @@
+Stmt 
+  : 
+  | StmtFor { 
+    $$ = For $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $1.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $1.envFunOut ;
+    $1.inLoop = $$.inLoop;
+
+    $1.labelIn = $$.labelIn ;
+    $$.labelOut = $1.labelOut ;
+    $1.countIn = $$.countIn ;
+    $$.countOut = $1.countOut ;
+    $$.tac = $1.tac ;
+    }
+  | StmtJump { 
+    $$ =  Jump $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $1.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $1.envFunOut ;
+    $1.inLoop = $$.inLoop;
+  }
+  | StmtWrite { 
+    $$ =  Write $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.tac = $1.tac;
+    $$.countOut = $$.countIn;
+  }
+  | StmtRead { 
+    $$ =  Read $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.tac = $1.tac;
+    $1.countIn = $$.countIn;
+    $$.countOut = $1.countOut;
+    }
+  | StmtVar { 
+    $$ =  VarD $1 ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $1.envOut ;
+    $1.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $1.envFunOut ;
+    $$.tac = $1.tac ;
+    $$.countOut = $$.countIn;
+    $$.labelOut = $$.labelIn;
+  }
+  | DefFunc { 
+    $$ =  DFunc $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $1.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $1.envFunOut ;
+  }
+  | CallFunc { 
+    $$ =  CFunc $1 ;
+    $$.tip    = TypeVoid ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $1.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $$.envFunIn ;
+  }
+
+
+LExpr 
+  | LExpr '[' RExpr ']' { $$ =  ArrayEl $1 $3 }
+
+
+RExpr 
+  : RExpr '#' RExpr { 
+    $$ = Ecount $1 $3 ;
+    $$.tip = RTypeInt ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | RExpr '||' RExpr { 
+    $$ = Elor $1 $3 ;
+    $$.tip = RTypeBool ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualAndBoolType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (Bad $ (prntErrBothBool $$.err $2 ))
+    );
+  } 
+  | RExpr '&&' RExpr { 
+    $$ = Eland $1 $3 ;
+    $$.tip = RTypeBool ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualAndBoolType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (Bad $ (prntErrBothBool $$.err $2 ))
+    );
+  } 
+  | RExpr '==' RExpr { 
+    $$ = Eeq $1 $3 ;
+    $$.tip = RTypeBool ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (
+          if ($1.tip == VarNotDec) 
+            then Bad $ (prntErrNotDec $1 )
+            else (
+              if ($3.tip == VarNotDec) 
+                then Bad $ (prntErrNotDec $3 )
+                else Bad $ (prntErrComp $2 )
+            )
+        )
+    ) ;
+  }
+  | RExpr '!=' RExpr { 
+    $$ = Eneq $1 $3 ;
+    $$.tip = RTypeBool ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (
+          if ($1.tip == VarNotDec) 
+            then Bad $ (prntErrNotDec $1 )
+            else (
+              if ($3.tip == VarNotDec) 
+                then Bad $ (prntErrNotDec $3 )
+                else Bad $ (prntErrComp $2 )
+            )
+        )
+    ) ;
+  }
+  | RExpr '<=' RExpr { 
+    $$ = Eleq $1 $3 ;
+    $$.tip = RTypeBool ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (
+          if ($1.tip == VarNotDec) 
+            then Bad $ (prntErrNotDec $1 )
+            else (
+              if ($3.tip == VarNotDec) 
+                then Bad $ (prntErrNotDec $3 )
+                else Bad $ (prntErrComp $2 )
+            )
+        )
+    );
+  } 
+  | RExpr '>=' RExpr {
+    $$ =  Egeq $1 $3 ;
+    $$.tip = RTypeBool ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (
+          if ($1.tip == VarNotDec) 
+            then Bad $ (prntErrNotDec $1 )
+            else (
+              if ($3.tip == VarNotDec) 
+                then Bad $ (prntErrNotDec $3 )
+                else Bad $ (prntErrComp $2 )
+            )
+        )
+    );
+  }
+  
+  | RExpr '>' RExpr {
+    $$ =  Eg $1 $3 ;
+    $$.tip = RTypeBool ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (
+          if ($1.tip == VarNotDec) 
+            then Bad $ (prntErrNotDec $1 )
+            else (
+              if ($3.tip == VarNotDec) 
+                then Bad $ (prntErrNotDec $3 )
+                else Bad $ (prntErrComp $2 )
+            )
+        )
+    );
+  }
+  | RExpr '..' RExpr { 
+    $$ = Erange $1 $3 ;
+    $$.tip = RTypeBool ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err  = (checkEqualType $1.tip $3.tip) ;
+    where ( 
+      if ($$.err == "") 
+        then (Ok())
+        else (
+          if ($1.tip == VarNotDec) 
+            then Bad $ (prntErrNotDec $1 )
+            else (
+              if ($3.tip == VarNotDec) 
+                then Bad $ (prntErrNotDec $3 )
+                else Bad $ (prntErrComp $2 )
+            )
+        )
+    );
+  } 
+  
+  
+  | RExpr '|' RExpr { 
+    $$ = Ebitor $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | RExpr '^' RExpr { 
+    $$ = Ebitxor $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | RExpr '&' RExpr { 
+    $$ = Ebitand $1 $3 ;
+    $$.tip = $1.tip ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    } 
+  | '+' RExpr { 
+    $$ = Eupos $2 ;
+    $$.tip = $2.tip ;
+    $2.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | '-' RExpr %prec NEG {
+    $$ =  Euneg $2 ;
+    $$.tip = $2.tip ;
+    $2.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+
+  }
+  
+  | '(' RExpr ')' { $$ = $2 }
+
+
+StmtWrite 
+  : 'writeInt' '(' Integer ')' { 
+    $$ = WriteInt $3 ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ; 
+    $$.countOut = $$.countIn;
+    $$.labelOut = $$.labelIn;
+    $$.tac = [WriteIntOperation $3];
+  } 
+  | 'writeReal' '(' Double ')' { $$ = WriteReal $3 }
+  | 'writeChar' '(' Char ')' { $$ = WriteChar $3 }
+  | 'writeString' '(' String ')' { $$ = WriteString $3 }
+
+
+StmtRead 
+  : 'readInt' '(' Integer ')' { 
+    $$ = ReadInt $3; 
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ; 
+    $$.countOut = $$.countIn + 1;    
+    $$.labelOut = $$.labelIn;
+    $$.addr = "t"++ show $$.countIn;
+    $$.tac = [ReadntOperation $3 $$.addr];
+    } 
+  | 'readReal' '(' Double ')' { $$ = ReadReal $3 }
+  | 'readChar' '(' Char ')' { $$ = ReadChar $3 }
+  | 'readString' '(' String ')' { $$ = ReadString $3 }
+
+
+
+  
+
+
+
+  
+
+
+ 
+
+-- inserisco nel contesto di ListStmt l'iteratore
+StmtFor 
+  : 'for' Ident 'in' Aggr 'do' '{' ListStmt '}' { 
+    $$ = SForDo $2 $4 $7 ;
+    $2.envIn = $$.envIn ;    
+    $7.envIn = (insVarEnv (Var $2 RTypeInt) $$.envIn);
+    $$.envOut = $$.envIn;
+    $7.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $7.envFunOut ;
+    $7.inLoop = True ;
+
+    $4.countIn = $$.countIn ;
+    $7.countIn = $4.countOut ;
+    $$.countOut = $7.countOut ;
+    $4.labelIn = $$.labelIn ;
+    $2.labelIn = $4.labelOut ;
+    $7.labelIn = $2.labelOut ;
+    $$.labelOut = $7.labelOut + 1 ;
+
+    $$.tac = [SimpleAssignment (showIdentificator $2.tmp) ($4.countOut -1)] ++
+             [Label ($$.labelOut +1)] ++
+             [Forc [] ($$.labelOut +2)] ++
+             $7.tac ++
+             [BinaryOperation " + " $2.addr $2.addr "1"] ++
+             [Goto ($$.labelOut +1)] ++
+             [Label ($$.labelOut +2)] ;
+
+
+    -- $$.tac = [] ++  ++ [Else [] ($$.labelOut +2)] ++  ;
+
+    $3.countIn = $$.countIn;
+    $$.countOut = $3.countOut;
+    $3.labelIn = $$.labelIn;
+    $$.labelOut = $3.labelOut;
+    $$.tac = $1.tac ++ $3.tac ++  ;
+
+
+      t1 := 0                ; initialize i
+L1:  if t1 >= 10 goto L2    ; conditional jump
+     t2 := t1 * t1          ; square of i
+     t3 := t1 * 4           ; word-align address
+     t4 := b + t3           ; address to store i*i
+     *t4 := t2              ; store through pointer
+     t1 := t1 + 1           ; increase i
+     goto L1                ; repeat loop
+L2:
+  }
+  | 'for' Ident 'in' Aggr '{' ListStmt '}' { 
+    $$ = SForDoBloc $2 $4 $6 ;
+    $2.envIn = $$.envIn ;    
+    $6.envIn = (insVarEnv (Var $2 RTypeInt) $$.envIn);
+    $$.envOut = $$.envIn;
+    $6.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $6.envFunOut ;
+    $6.inLoop = True ;
+  }
+
+
+Aggr 
+  : Integer '..' Integer { 
+    $$ = ForAggr $1 $3 ;
+    $$.countOut = $$.countIn + 2;
+
+    $$.tac = [SimpleAssignment (showIdentificator $1.tmp) ($$.countOut)] ++
+             [SimpleAssignment (showIdentificator $3.tmp) ($$.countOut +1)] ;
+  } 
+
+
+StmtJump 
+  : 'break' { 
+    $$ = Break ;
+    $$.envIn = $$.envOut;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err = (if ($$.inLoop) 
+      then ""
+      else ("Syntax error: break statement not in a loop statement! At " ++ (tokenPos2 $1))
+    );
+    where (if ($$.inLoop) 
+      then Ok()
+      else Bad $ ($$.err)
+    );
+  } 
+  | 'continue' { 
+    $$ = Continue ;
+    $$.envIn = $$.envOut;
+    $$.envFunOut = $$.envFunIn ;
+    $$.err = (if ($$.inLoop) 
+      then ""
+      else ("Syntax error: continue statement not in a loop statement! At " ++ (tokenPos2 $1))
+    );
+    where (if ($$.inLoop) 
+      then Ok()
+      else Bad $ ($$.err)
+    );
+  }
+
+
+
+
+
+
+
+
+DefFunc 
+  : 'function' Ident '(' ListArg ')' '{' ListStmt '}' { 
+    $$ = SDefFunc $2 $4 $7 ;
+    $$.tip = TypeVoid ;
+    $4.envIn = [] ; 
+    $7.envIn = $4.envOut ;
+    $$.envOut = [] ;
+    $7.envFunIn = $$.envFunIn ++ [$2] ;
+    $$.envFunOut = $$.envFunIn ++ [$2] ;
+    $$.err = (checkDoubleFun $2 $$.envFunIn);
+    $7.inLoop = False ;
+    where (if ($$.err == "") 
+      then (Ok())
+      else (Bad $ (prntErr $$.err $1))
+    );
+  } 
+
+
+CallFunc 
+  : Ident '(' ListRExpr ')' { 
+    $$ = SCallFunc $1 $3 ;
+    $3.envIn = $$.envIn ;
+    $$.envOut = $$.envIn ;
+    $$.envFunOut = $$.envFunIn ;
+    where (
+      if ((checkDoubleFun $1 $$.envFunIn) == "")
+        then (Bad $ (prntErr "Function is not defined." $2 ))
+        else (Ok())
+    );
+  } 
+
+
+Arg 
+  : Ident ':' Type { 
+    $$ = SArg $1 $3 ;
+    $$.envOut = (insVarFuncEnv (Var $1 $3.tip) $$.envIn ) ;
+    $$.err = checkDoubleParam $$.envOut ;
+    where ( if ($$.err == "")
+      then (Ok())
+      else (Bad $ (prntErr $$.err $2 ))
+    );
+  } 
+  | '*' Ident ':' Type { 
+    $$ = PArg $2 $4 ;
+    $$.envOut = (insVarFuncEnv (Var $2 $4.tip) $$.envIn ) ;
+    $$.err = checkDoubleParam $$.envOut ;
+    where ( if ($$.err == "")
+      then (Ok())
+      else (Bad $ (prntErr $$.err $3 ))
+    );
+  }
+
+
+
+
+
+
+
+
+
+ListRExpr 
+  : {- empty -} {
+    $$ = [] ;
+    $$.envOut = $$.envIn ;
+  } 
+  | RExpr { 
+    $$ = (:[]) $1 ;
+    $1.envIn  = $$.envIn ;
+    $$.envOut = $1.envOut ;
+  }
+  | RExpr ',' ListRExpr { 
+    $$ = (:) $1 $3 ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $1.envOut ;
+    $$.envOut = $3.envOut ; 
+  }
+
+
+
+
+
+ListArg 
+  : {- empty -} { 
+    $$ = [] ;
+    $$.envOut = $$.envIn;
+    $$.envFunOut = $$.envFunIn ;
+  } 
+  | Arg { 
+    $$ = (:[]) $1 ;
+    $1.envIn = $$.envIn ;
+    $$.envOut = $1.envOut ;
+    $1.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $$.envFunIn ;
+  }
+  | Arg ',' ListArg { 
+    $$ = (:) $1 $3 ;
+    $1.envIn = $$.envIn ;
+    $3.envIn = $1.envOut ;
+    $$.envOut = $3.envOut ;
+    $1.envFunIn = $$.envFunIn ;
+    $3.envFunIn = $$.envFunIn ;
+    $$.envFunOut = $$.envFunIn ;
+  }
