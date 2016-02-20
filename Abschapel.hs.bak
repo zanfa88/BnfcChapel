@@ -87,8 +87,8 @@ data StmtRead =
   deriving (Eq,Ord,Show)
 
 data StmtCondition =
-   If1 RExpr Stmt Stmt
- | If2 RExpr [Stmt] [Stmt]
+   If1 RExpr Stmt
+ | If2 RExpr [Stmt]
   deriving (Eq,Ord,Show)
 
 data StmtWhile =

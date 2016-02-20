@@ -718,6 +718,9 @@ StmtWhile
     $4.envFunIn = $$.envFunIn ;
     $$.envFunOut = $4.envFunOut ;
     $4.inLoop = True;
+    $2.countIn = $$.countIn;
+    $4.countIn = $2.countOut;
+    $$.countOut = $4.countOut + 1;
 
     $2.labelIn = $$.labelIn;
     $4.labelIn = $2.labelOut;

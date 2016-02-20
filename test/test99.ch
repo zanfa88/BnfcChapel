@@ -1,2 +1,1 @@
-//new test
-a=1;
+// file di test per le condizioni e i cicli
